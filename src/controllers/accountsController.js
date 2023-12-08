@@ -1,4 +1,4 @@
-const { Account } = require('../models/account');
+const { Account } = require('../models/accounts');
 const { validationResult } = require('express-validator');
 
 const handleErrors = (req, res) => {

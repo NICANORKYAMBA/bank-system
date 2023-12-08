@@ -1,7 +1,11 @@
+require('dotenv').config();
+
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('database', 'username', 'password', {
-  host: 'localhost',
-  dialect: 'postgres'
+
+const sequelize = new Sequelize(process.env.DB_NAME,
+  process.env.DB_USER, process.env.DB_PASSWORD, {
+    host: process.env.DB_HOST, port: process.env.DB_PORT,
+    dialect: 'postgres'
 });
 
 const Account = sequelize.define('Account', {
@@ -50,10 +54,5 @@ const Account = sequelize.define('Account', {
     }
   }
 });
-
-// If you have a User model
-const User = require('./user');
-User.hasMany(Account, { as: 'Accounts' });
-Account.belongsTo(User);
 
 module.exports = Account;
