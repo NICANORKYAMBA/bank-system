@@ -25,7 +25,7 @@ This is a RESTful API for a banking system. It allows you to manage bank account
 - **Node.js:** A JavaScript runtime built on Chrome's V8 JavaScript engine.
 - **Express.js:** A fast, unopinionated, minimalist web framework for Node.js.
 - **PostgreSQL:** A powerful, open source object-relational database system.
-- **Sequelize ORM:** A promise-based Node.js ORM for Postgres, MySQL, MariaDB, SQLite and Microsoft SQL Server.
+- **Sequelize ORM:** A promise-based Node.js ORM for Postgres, MySQL, MariaDB, SQLite and Microsoft SQL Server. It supports the dialects PostgreSQL, MySQL, SQLite and MSSQL and features solid transaction support, relations, read replication and more.
 - **bcrypt:** A library to help you hash passwords.
 
 ## Getting Started
@@ -43,7 +43,8 @@ These instructions will get you a copy of the project up and running on your loc
 2. Navigate into the project directory: `cd my-bank-api`
 3. Install the dependencies: `npm install`
 4. Create a `.env` file and add your database configuration. See `.env.example` for a sample configuration.
-5. Start the server: `npm start`
+5. Run the database migrations: `npx sequelize-cli db:migrate`
+6. Start the server: `npm start`
 
 ## API Endpoints
 
