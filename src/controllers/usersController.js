@@ -15,8 +15,8 @@ const handleErrors = (req, res) => {
 
 // Get all users
 exports.getAllUsers = async (req, res) => {
-  const limit = parseInt(req.query.limit) || 10; // number of records per page
-  const offset = parseInt(req.query.offset) || 0; // start index for records
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = parseInt(req.query.offset) || 0;
 
   try {
     const users = await User.findAll({ 
@@ -31,7 +31,7 @@ exports.getAllUsers = async (req, res) => {
     }
   } catch (err) {
     logger.error(`Server error while trying to fetch all users: ${err.message}`);
-    res.status(500).json({ error: 'Server error while trying to fetch all users' });
+    res.status(500).json({ error: 'Server error while trying to fetch all users', message: err.message });
   }
 };
 
@@ -48,7 +48,7 @@ exports.getUserById = async (req, res) => {
     }
   } catch (err) {
     logger.error(`Server error while trying to fetch user: ${err.message}`);
-    res.status(500).json({ error: 'Server error while trying to fetch user' });
+    res.status(500).json({ error: 'Server error while trying to fetch user', message: err.message });
   }
 };
 
@@ -88,7 +88,7 @@ exports.createUser = async (req, res) => {
     res.status(201).json({ message: 'User created', user: user });
   } catch (err) {
     logger.error(`Server error while trying to create user: ${err.message}`);
-    res.status(500).json({ error: 'Server error while trying to create user' });
+    res.status(500).json({ error: 'Server error while trying to create user', message: err.message });
   }
 };
 
@@ -121,7 +121,7 @@ exports.updateUser = async (req, res) => {
       return res.status(400).json({ message: 'Update failed. The update would violate a unique constraint.', fields: error.fields });
     }
     logger.error(`Server error while trying to update user: ${error.message}`);
-    return res.status(500).json({ message: 'Server error while trying to update user' });
+    return res.status(500).json({ message: 'Server error while trying to update user', message: error.message });
   }
 };
 
@@ -142,6 +142,6 @@ exports.deleteUser = async (req, res) => {
     throw new Error('User not deleted');
   } catch (err) {
     logger.error(`Server error while trying to delete user: ${err.message}`);
-    res.status(500).json({ error: 'Server error while trying to delete user' });
+    res.status(500).json({ error: 'Server error while trying to delete user', message: err.message });
   }
 };

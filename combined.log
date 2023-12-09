@@ -1,0 +1,6 @@
+{"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Accounts\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to create user: relation \"Users\" does not exist","service":"user-service"}
+{"level":"error","message":"Server error while trying to create user: relation \"Users\" does not exist","service":"user-service"}
+{"level":"error","message":"Server error while trying to create user: relation \"Users\" does not exist","service":"user-service"}
+{"level":"error","message":"Server error while trying to create user: relation \"Users\" does not exist","service":"user-service"}
+{"level":"error","message":"Server error while trying to create user: relation \"Users\" does not exist","service":"user-service"}
