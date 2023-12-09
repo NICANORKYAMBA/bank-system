@@ -39,3 +39,17 @@
 {"level":"error","message":"Failed to create address: relation \"UserAddresses\" does not exist","service":"user-service"}
 {"level":"error","message":"Failed to create address: null value in column \"id\" of relation \"UserAddresses\" violates not-null constraint","service":"user-service"}
 {"level":"error","message":"Failed to create address: null value in column \"id\" of relation \"UserAddresses\" violates not-null constraint","service":"user-service"}
+{"level":"error","message":"Failed to create address: null value in column \"id\" of relation \"UserAddresses\" violates not-null constraint","service":"user-service"}
+{"level":"error","message":"Failed to create address: null value in column \"id\" of relation \"UserAddresses\" violates not-null constraint","service":"user-service"}
+{"level":"error","message":"Failed to create address: null value in column \"id\" of relation \"UserAddresses\" violates not-null constraint","service":"user-service"}
+{"level":"error","message":"Failed to create address: relation \"UserAddresses\" does not exist","service":"user-service"}
+{"level":"error","message":"Failed to create address: null value in column \"id\" of relation \"UserAddresses\" violates not-null constraint","service":"user-service"}
+{"level":"error","message":"Failed to create address: relation \"UserAddresses\" does not exist","service":"user-service"}
+{"level":"error","message":"Failed to create address: null value in column \"id\" of relation \"UserAddresses\" violates not-null constraint","service":"user-service"}
+{"level":"error","message":"Failed to create address: relation \"UserAddresses\" does not exist","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Accounts\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Accounts\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Accounts\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch user: Association with alias \"Accounts\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch user: Association with alias \"Accounts\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Accounts\" does not exist on User","service":"user-service"}

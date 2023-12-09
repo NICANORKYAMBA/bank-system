@@ -21,7 +21,7 @@ exports.getAllUsers = async (req, res) => {
 
   try {
     const users = await User.findAll({ 
-      include: ['Accounts', 'Addresses'],
+      include: ['Addresses'],
       limit: limit,
       offset: offset
     });
@@ -41,7 +41,7 @@ exports.getUserById = async (req, res) => {
   handleErrors(req, res);
   const { id } = req.params;
   try {
-    const user = await User.findByPk(id, { include: ['Accounts', 'Addresses'] });
+    const user = await User.findByPk(id, { include: ['Addresses'] });
     if (user) {
       res.status(200).json(user);
     } else {
@@ -56,7 +56,7 @@ exports.getUserById = async (req, res) => {
 // Create a new user
 exports.createUser = async (req, res) => {
   handleErrors(req, res);
-  const { email, address, password } = req.body;
+  const { email, address, password, firstName, lastName } = req.body;
   try {
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
@@ -65,26 +65,43 @@ exports.createUser = async (req, res) => {
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    req.body.password = hashedPassword;
 
-    const user = await User.create(req.body);
-    console.log(user);
+    // Create the user
+    const user = await User.create({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+    });
 
     // If an address was provided, create it
     if (address) {
-      address.userId = user.id;
       try {
-        await UserAddress.create(address);
+        await UserAddress.create({
+          street: address.street,
+          city: address.city,
+          state: address.state,
+          country: address.country,
+          zipCode: address.zipCode,
+          userId: user.id,
+        });
       } catch (err) {
         logger.error(`Failed to create address: ${err.message}`);
-        return res.status(400).json({ message: 'User created, but failed to create address', error: err.message, user: user });
+        return res.status(400).json({
+          message: 'User created, but failed to create address',
+          error: err.message,
+          user,
+        });
       }
     }
 
-    res.status(201).json({ message: 'User created', user: user });
+    res.status(201).json({ message: 'User created', user });
   } catch (err) {
     logger.error(`Server error while trying to create user: ${err.message}`);
-    res.status(500).json({ error: 'Server error while trying to create user', message: err.message });
+    res.status(500).json({
+      error: 'Server error while trying to create user',
+      message: err.message,
+    });
   }
 };
 
@@ -107,7 +124,7 @@ exports.updateUser = async (req, res) => {
 
     const [updated] = await User.update(req.body, { where: { id } });
     if (updated) {
-      const updatedUser = await User.findByPk(id, { include: ['Accounts', 'Addresses'] });
+      const updatedUser = await User.findByPk(id, { include: ['Addresses'] });
       return res.status(200).json({ message: 'User updated', user: updatedUser });
     } else {
       return res.status(400).json({ message: 'Update failed. No fields to update or invalid fields provided.' });
