@@ -2,13 +2,19 @@ require('dotenv').config();
 
 const { Sequelize, DataTypes } = require('sequelize');
 
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER,
-    process.env.DB_PASSWORD, {
-    host: process.env.DB_HOST,
+const sequelize = new Sequelize(process.env.DB_NAME_D,
+    process.env.DB_USER_D, process.env.DB_PASSWORD_D, {
+    host: process.env.DB_HOST_D,
     dialect: 'postgres'
 });
 
-const UserAddress = sequelize.define('UserAddress', {
+const UserAddress = sequelize.define('UserAddresses', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        allowNull: false,
+        primaryKey: true
+    },
     street: {
         type: DataTypes.STRING,
         allowNull: true
@@ -33,12 +39,14 @@ const UserAddress = sequelize.define('UserAddress', {
         type: DataTypes.UUID,
         allowNull: false,
         references: {
-            model: 'users',
+            model: 'Users',
             key: 'id',
         }
     }
 }, {
+    tableName: 'UserAddresses',
     timestamps: true,
+    freezeTableName: true,
 });
 
 module.exports = UserAddress;

@@ -2,11 +2,14 @@ const User = require('./user');
 const Account = require('./accounts');
 const UserAddress = require('./userAddress');
 
-User.hasMany(Account, { as: 'Accounts' });
-Account.belongsTo(User);
+User.hasOne(UserAddress, {
+  foreignKey: 'userId',
+  as: 'address',
+});
 
-User.hasMany(UserAddress, { as: 'Addresses' });
-UserAddress.belongsTo(User);
+UserAddress.belongsTo(User, {
+  foreignKey: 'userId',
+});
 
 module.exports = {
   User,

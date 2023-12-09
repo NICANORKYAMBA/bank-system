@@ -4,3 +4,38 @@
 {"level":"error","message":"Server error while trying to create user: relation \"Users\" does not exist","service":"user-service"}
 {"level":"error","message":"Server error while trying to create user: relation \"Users\" does not exist","service":"user-service"}
 {"level":"error","message":"Server error while trying to create user: relation \"Users\" does not exist","service":"user-service"}
+{"level":"error","message":"Failed to create address: UserAddress is not defined","service":"user-service"}
+{"level":"error","message":"Failed to create address: UserAddress is not defined","service":"user-service"}
+{"level":"error","message":"Failed to create address: UserAddress is not defined","service":"user-service"}
+{"level":"error","message":"Failed to create address: UserAddress is not defined","service":"user-service"}
+{"level":"error","message":"Failed to create address: UserAddress is not defined","service":"user-service"}
+{"level":"error","message":"Failed to create address: UserAddress is not defined","service":"user-service"}
+{"level":"error","message":"Failed to create address: UserAddress is not defined","service":"user-service"}
+{"level":"error","message":"Failed to create address: UserAddress is not defined","service":"user-service"}
+{"level":"error","message":"Failed to create address: UserAddress is not defined","service":"user-service"}
+{"level":"error","message":"Failed to create address: UserAddress is not defined","service":"user-service"}
+{"level":"error","message":"Failed to create address: UserAddress is not defined","service":"user-service"}
+{"level":"error","message":"Failed to create address: UserAddress is not defined","service":"user-service"}
+{"level":"error","message":"Failed to create address: UserAddress is not defined","service":"user-service"}
+{"level":"error","message":"Failed to create address: UserAddress is not defined","service":"user-service"}
+{"level":"error","message":"Failed to create address: UserAddress is not defined","service":"user-service"}
+{"level":"error","message":"Failed to create address: UserAddress is not defined","service":"user-service"}
+{"level":"error","message":"Failed to create address: this.build(...).save is not a function","service":"user-service"}
+{"level":"error","message":"Failed to create address: this.build(...).save is not a function","service":"user-service"}
+{"level":"error","message":"Failed to create address: relation \"UserAddresses\" does not exist","service":"user-service"}
+{"level":"error","message":"Failed to create address: relation \"UserAddresses\" does not exist","service":"user-service"}
+{"level":"error","message":"Failed to create address: relation \"UserAddresses\" does not exist","service":"user-service"}
+{"level":"error","message":"Failed to create address: relation \"UserAddresses\" does not exist","service":"user-service"}
+{"level":"error","message":"Failed to create address: this.build(...).save is not a function","service":"user-service"}
+{"level":"error","message":"Failed to create address: relation \"UserAddresses\" does not exist","service":"user-service"}
+{"level":"error","message":"Failed to create address: relation \"UserAddresses\" does not exist","service":"user-service"}
+{"level":"error","message":"Failed to create address: column \"id\" of relation \"UserAddresses\" does not exist","service":"user-service"}
+{"level":"error","message":"Failed to create address: relation \"UserAddresses\" does not exist","service":"user-service"}
+{"level":"error","message":"Failed to create address: relation \"UserAddresses\" does not exist","service":"user-service"}
+{"level":"error","message":"Failed to create address: relation \"UserAddresses\" does not exist","service":"user-service"}
+{"level":"error","message":"Failed to create address: relation \"UserAddresses\" does not exist","service":"user-service"}
+{"level":"error","message":"Failed to create address: relation \"UserAddresses\" does not exist","service":"user-service"}
+{"level":"error","message":"Failed to create address: relation \"UserAddresses\" does not exist","service":"user-service"}
+{"level":"error","message":"Failed to create address: relation \"UserAddresses\" does not exist","service":"user-service"}
+{"level":"error","message":"Failed to create address: null value in column \"id\" of relation \"UserAddresses\" violates not-null constraint","service":"user-service"}
+{"level":"error","message":"Failed to create address: null value in column \"id\" of relation \"UserAddresses\" violates not-null constraint","service":"user-service"}

@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const UserAddress = require('../models/userAddress');
 const logger = require('./logger');
 
 const saltRounds = 10;
@@ -55,7 +56,7 @@ exports.getUserById = async (req, res) => {
 // Create a new user
 exports.createUser = async (req, res) => {
   handleErrors(req, res);
-  const { email, addresses, password } = req.body;
+  const { email, address, password } = req.body;
   try {
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
@@ -67,21 +68,16 @@ exports.createUser = async (req, res) => {
     req.body.password = hashedPassword;
 
     const user = await User.create(req.body);
+    console.log(user);
 
-    // If addresses were provided, create them
-    if (addresses && Array.isArray(addresses)) {
-      const addressErrors = [];
-      for (let address of addresses) {
-        address.userId = user.id;
-        try {
-          await UserAddress.create(address);
-        } catch (err) {
-          addressErrors.push(`Failed to create address: ${err.message}`);
-          logger.error(`Failed to create address: ${err.message}`);
-        }
-      }
-      if (addressErrors.length > 0) {
-        return res.status(400).json({ message: 'User created, but some addresses failed to be created', errors: addressErrors, user: user });
+    // If an address was provided, create it
+    if (address) {
+      address.userId = user.id;
+      try {
+        await UserAddress.create(address);
+      } catch (err) {
+        logger.error(`Failed to create address: ${err.message}`);
+        return res.status(400).json({ message: 'User created, but failed to create address', error: err.message, user: user });
       }
     }
 
