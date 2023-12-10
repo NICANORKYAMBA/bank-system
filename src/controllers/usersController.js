@@ -19,12 +19,15 @@ const handleErrors = (req, res) => {
 exports.getAllUsers = async (req, res) => {
   const limit = parseInt(req.query.limit) || 10;
   const offset = parseInt(req.query.offset) || 0;
+  const sort = req.query.sort || 'createdAt';
+  const order = req.query.order || 'DESC';
 
   try {
-    const users = await User.findAll({ 
+    const users = await User.findAll({
       include: ['Addresses'],
-      limit: limit,
-      offset: offset
+      limit,
+      offset,
+      order: [[sort, order]]
     });
     if (users.length > 0) {
       res.status(200).json(users);
@@ -32,7 +35,7 @@ exports.getAllUsers = async (req, res) => {
       res.status(404).json({ message: 'No users found' });
     }
   } catch (err) {
-    logger.error(`Server error while trying to fetch all users: ${err.message}`);
+    logger.error(`Server error while trying to fetch all users: ${err}`);
     res.status(500).json({
       error: 'Server error while trying to fetch all users',
       message: err.message
@@ -52,7 +55,7 @@ exports.getUserById = async (req, res) => {
       res.status(404).json({ message: `User with ID ${id} not found` });
     }
   } catch (err) {
-    logger.error(`Server error while trying to fetch user: ${err.message}`);
+    logger.error(`Server error while trying to fetch user: ${err}`);
     res.status(500).json({
       error: 'Server error while trying to fetch user',
       message: err.message
@@ -80,7 +83,7 @@ exports.createUser = async (req, res) => {
       firstName,
       lastName,
       email,
-      password: hashedPassword,
+      password: hashedPassword
     });
 
     // If an address was provided, create it
@@ -92,14 +95,14 @@ exports.createUser = async (req, res) => {
           state: address.state,
           country: address.country,
           zipCode: address.zipCode,
-          userId: user.id,
+          userId: user.id
         });
       } catch (err) {
         logger.error(`Failed to create address: ${err.message}`);
         return res.status(400).json({
           message: 'User created, but failed to create address',
           error: err.message,
-          user,
+          user
         });
       }
     }
@@ -109,7 +112,7 @@ exports.createUser = async (req, res) => {
     logger.error(`Server error while trying to create user: ${err.message}`);
     res.status(500).json({
       error: 'Server error while trying to create user',
-      message: err.message,
+      message: err.message
     });
   }
 };
@@ -153,7 +156,7 @@ exports.updateUser = async (req, res) => {
     }
     logger.error(`Server error while trying to update user: ${error.message}`);
     return res.status(500).json({
-      message: 'Server error while trying to update user',
+      error: 'Server error while trying to update user',
       message: error.message
     });
   }

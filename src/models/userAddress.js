@@ -34,13 +34,13 @@ const UserAddress = sequelize.define('UserAddress', {
     allowNull: false,
     references: {
       model: 'Users',
-      key: 'id',
+      key: 'id'
     }
   }
 }, {
   tableName: 'UserAddresses',
   timestamps: true,
-  freezeTableName: true,
+  freezeTableName: true
 });
 
 module.exports = UserAddress;

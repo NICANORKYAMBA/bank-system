@@ -15,21 +15,21 @@ app.use('/api/accounts', accountsRoutes);
 app.use('/api/users', userRoutes);
 
 app.get('/', (req, res) => {
-    res.send('Welcome to the Banking API!');
+  res.send('Welcome to the Banking API!');
 });
 
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
 });
 
 const sequelize = new Sequelize(
-    process.env.DB_NAME_D,
-    process.env.DB_USER_D,
-    process.env.DB_PASSWORD_D, {
-        host: process.env.DB_HOST_D,
-        dialect: 'postgres'
-});
+  process.env.DB_NAME_D,
+  process.env.DB_USER_D,
+  process.env.DB_PASSWORD_D, {
+    host: process.env.DB_HOST_D,
+    dialect: 'postgres'
+  });
 
 sequelize.authenticate()
   .then(() => console.log('Database connected...'))
@@ -38,5 +38,5 @@ sequelize.authenticate()
 require('./models/associations');
 
 app.listen(port, () => {
-    console.log(`Banking API listening at http://localhost:${port}`);
+  console.log(`Banking API listening at http://localhost:${port}`);
 });
