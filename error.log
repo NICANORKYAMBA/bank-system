@@ -53,3 +53,17 @@
 {"level":"error","message":"Server error while trying to fetch user: Association with alias \"Accounts\" does not exist on User","service":"user-service"}
 {"level":"error","message":"Server error while trying to fetch user: Association with alias \"Accounts\" does not exist on User","service":"user-service"}
 {"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Accounts\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Addresses\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Addresses\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Addresses\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Addresses\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Addresses\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Addresses\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Addresses\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Addresses\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Addresses\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Addresses\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Addresses\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Addresses\" does not exist on User","service":"user-service"}
+{"level":"error","message":"Server error while trying to delete user: sequelize is not defined","service":"user-service"}
+{"level":"error","message":"Server error while trying to delete user: sequelize is not defined","service":"user-service"}

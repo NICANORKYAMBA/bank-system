@@ -1,8 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize(process.env.DB_NAME_D, process.env.DB_USER_D, process.env.DB_PASSWORD_D, {
-  host: process.env.DB_HOST_D,
-  dialect: 'postgres'
-});
+
+const sequelize = require('../database');
 
 const User = sequelize.define('User', {
   id: {
@@ -34,13 +32,6 @@ const User = sequelize.define('User', {
 }, {
   tableName: "Users",
   timestamps: true
-});
-
-// Define the association with UserAddress
-User.hasOne(UserAddress, {
-  foreignKey: 'userId',
-  as: 'address',
-  onDelete: 'CASCADE',
 });
 
 module.exports = User;

@@ -1,4 +1,5 @@
 const { validationResult } = require('express-validator');
+const sequelize = require('../database');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const UserAddress = require('../models/userAddress');
@@ -32,7 +33,10 @@ exports.getAllUsers = async (req, res) => {
     }
   } catch (err) {
     logger.error(`Server error while trying to fetch all users: ${err.message}`);
-    res.status(500).json({ error: 'Server error while trying to fetch all users', message: err.message });
+    res.status(500).json({
+      error: 'Server error while trying to fetch all users',
+      message: err.message
+    });
   }
 };
 
@@ -49,7 +53,10 @@ exports.getUserById = async (req, res) => {
     }
   } catch (err) {
     logger.error(`Server error while trying to fetch user: ${err.message}`);
-    res.status(500).json({ error: 'Server error while trying to fetch user', message: err.message });
+    res.status(500).json({
+      error: 'Server error while trying to fetch user',
+      message: err.message
+    });
   }
 };
 
@@ -60,7 +67,9 @@ exports.createUser = async (req, res) => {
   try {
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(400).json({ message: `User with email ${email} already exists` });
+      return res.status(400).json({
+        message: `User with email ${email} already exists`
+      });
     }
 
     // Hash the password
@@ -109,7 +118,7 @@ exports.createUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   handleErrors(req, res);
   const { id } = req.params;
-  const { password } = req.body;
+  const { password, address } = req.body;
   try {
     const user = await User.findByPk(id);
     if (!user) {
@@ -124,17 +133,29 @@ exports.updateUser = async (req, res) => {
 
     const [updated] = await User.update(req.body, { where: { id } });
     if (updated) {
+      // If an address was provided, update it
+      if (address) {
+        await UserAddress.update(address, { where: { userId: id } });
+      }
       const updatedUser = await User.findByPk(id, { include: ['Addresses'] });
       return res.status(200).json({ message: 'User updated', user: updatedUser });
     } else {
-      return res.status(400).json({ message: 'Update failed. No fields to update or invalid fields provided.' });
+      return res.status(400).json({
+        message: 'Update failed. No fields to update or invalid fields provided.'
+      });
     }
   } catch (error) {
     if (error.name === 'SequelizeUniqueConstraintError') {
-      return res.status(400).json({ message: 'Update failed. The update would violate a unique constraint.', fields: error.fields });
+      return res.status(400).json({
+        message: 'Update failed. The update would violate a unique constraint.',
+        fields: error.fields
+      });
     }
     logger.error(`Server error while trying to update user: ${error.message}`);
-    return res.status(500).json({ message: 'Server error while trying to update user', message: error.message });
+    return res.status(500).json({
+      message: 'Server error while trying to update user',
+      message: error.message
+    });
   }
 };
 
@@ -145,16 +166,34 @@ exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findByPk(id);
     if (!user) {
-      return res.status(404).json({ message: `User with ID ${id} not found` });
+      return res.status(404).json({
+        message: `User with ID ${id} not found`
+      });
     }
 
-    const deleted = await User.destroy({ where: { id } });
-    if (deleted) {
-      return res.status(200).json({ message: 'User deleted' });
+    // Start a transaction
+    const transaction = await sequelize.transaction();
+
+    try {
+      // Delete the user within the transaction
+      const deleted = await User.destroy({ where: { id } }, { transaction });
+
+      if (deleted) {
+        // If the delete was successful, commit the transaction
+        await transaction.commit();
+        return res.status(200).json({ message: 'User deleted', user });
+      }
+      throw new Error('User not deleted');
+    } catch (err) {
+      // If there was an error, rollback the transaction
+      await transaction.rollback();
+      throw err;
     }
-    throw new Error('User not deleted');
   } catch (err) {
     logger.error(`Server error while trying to delete user: ${err.message}`);
-    res.status(500).json({ error: 'Server error while trying to delete user', message: err.message });
+    res.status(500).json({
+      error: 'Server error while trying to delete user',
+      message: err.message
+    });
   }
 };

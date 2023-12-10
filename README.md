@@ -14,11 +14,11 @@ This is a RESTful API for a banking system. It allows you to manage bank account
 
 ### User Management
 
-- **Create a new user:** Add a new user to the system. The user's password is hashed using bcrypt for security.
-- **Update an existing user:** Modify the details of an existing user. If a new password is provided, it is hashed before being stored.
-- **Retrieve a user by ID:** Fetch the details of a specific user using their ID.
-- **Retrieve all users:** Get a list of all users in the system. Supports pagination to limit the number of users returned in a single request.
-- **Delete a user:** Remove a user from the system.
+- **Create a new user:** Add a new user to the system. The user's password is hashed using bcrypt for security. You can also add an address for the user.
+- **Update an existing user:** Modify the details of an existing user, including their associated address. If a new password is provided, it is hashed before being stored.
+- **Retrieve a user by ID:** Fetch the details of a specific user using their ID, including their associated address.
+- **Retrieve all users:** Get a list of all users in the system, including their associated addresses. Supports pagination to limit the number of users returned in a single request.
+- **Delete a user:** Remove a user from the system, including their associated address.
 
 ## Technologies Used
 

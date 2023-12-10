@@ -23,7 +23,8 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something broke!');
 });
 
-const sequelize = new Sequelize(process.env.DB_NAME_D,
+const sequelize = new Sequelize(
+    process.env.DB_NAME_D,
     process.env.DB_USER_D,
     process.env.DB_PASSWORD_D, {
         host: process.env.DB_HOST_D,
@@ -33,6 +34,8 @@ const sequelize = new Sequelize(process.env.DB_NAME_D,
 sequelize.authenticate()
   .then(() => console.log('Database connected...'))
   .catch(err => console.log('Error: ' + err));
+
+require('./models/associations');
 
 app.listen(port, () => {
     console.log(`Banking API listening at http://localhost:${port}`);

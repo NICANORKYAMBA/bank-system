@@ -5,8 +5,8 @@ module.exports = {
     await queryInterface.createTable('UserAddresses', {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.literal('gen_random_uuid()'),
-        allowNull: false,
+        defaultValue: Sequelize.UUIDV4,
+        allowNull: true,
         primaryKey: true,
       },
       street: {
@@ -36,16 +36,15 @@ module.exports = {
           model: 'Users',
           key: 'id',
         },
-        onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
       createdAt: {
-        type: Sequelize.DATE,
         allowNull: false,
+        type: Sequelize.DATE,
       },
       updatedAt: {
-        type: Sequelize.DATE,
         allowNull: false,
+        type: Sequelize.DATE,
       },
     });
   },
