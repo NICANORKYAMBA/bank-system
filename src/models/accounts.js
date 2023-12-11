@@ -24,11 +24,11 @@ const Account = sequelize.define('Account', {
     }
   },
   balance: {
-    type: DataTypes.DECIMAL,
+    type: DataTypes.DECIMAL(15, 2),
     allowNull: false,
     validate: {
       isDecimal: true,
-      min: 0
+      min: 100
     }
   },
   accountType: {

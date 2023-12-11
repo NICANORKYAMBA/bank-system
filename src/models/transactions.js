@@ -1,0 +1,73 @@
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = require('../database');
+
+const Transaction = sequelize.define('Transaction', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        allowNull: false,
+        primaryKey: true
+    },
+    type: {
+        type: DataTypes.ENUM('deposit', 'withdrawal', 'transfer'),
+        allowNull: false
+    },
+    amount: {
+        type: DataTypes.DECIMAL,
+        allowNull: false,
+        validate: {
+            isDecimal: true,
+            min: 100
+        }
+    },
+    currency: {
+        type: DataTypes.ENUM('USD', 'EUR', 'GBP'),
+        allowNull: false
+    },
+    status: {
+        type: DataTypes.ENUM('pending', 'completed', 'failed'),
+        allowNull: false
+    },
+    sourceAccount: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    destinationAccount: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    transactionDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW
+    },
+    description: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    userId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+            model: 'Users',
+            key: 'id'
+        }
+    },
+    accountId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+            model: 'Accounts',
+            key: 'id'
+        }
+    },
+}, {
+    timestamps: true,
+    hooks: {
+        beforeUpdate: (transaction, options) => {
+            transaction.lastUpdated = new Date();
+        }
+    }
+});
+
+module.exports = Transaction;

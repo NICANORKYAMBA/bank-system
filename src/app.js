@@ -1,6 +1,7 @@
 const express = require('express');
 const accountsRoutes = require('./routes/accounts');
 const userRoutes = require('./routes/users');
+const transactionsRoutes = require('./routes/transactions');
 
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
@@ -13,6 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/accounts', accountsRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/transactions', transactionsRoutes);
 
 app.get('/', (req, res) => {
   res.send('Welcome to the Banking API!');

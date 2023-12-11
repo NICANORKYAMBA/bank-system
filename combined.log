@@ -77,3 +77,6 @@
 {"level":"error","message":"Server error while trying to create account: SequelizeValidationError: Validation error: Validation len on accountNumber failed,\nValidation error: Validation isAlpha on name failed","service":"user-service"}
 {"level":"error","message":"Server error while trying to update account: SequelizeValidationError: Validation error: Validation isAlpha on name failed","service":"user-service"}
 {"level":"error","message":"Server error while trying to delete account: Error: Transaction cannot be rolled back because it has been finished with state: commit","service":"user-service"}
+{"level":"error","message":"Server error while trying to create transaction: SequelizeValidationError: Validation error: Validation isDecimal on balance failed","service":"user-service"}
+{"level":"error","message":"Server error while trying to create transaction: SequelizeDatabaseError: invalid input value for enum \"enum_Transactions_status\": \"complete\"","service":"user-service"}
+{"level":"error","message":"Server error while trying to create transaction: TypeError: (sourceAccount.balance + amount).toFixed is not a function","service":"user-service"}
