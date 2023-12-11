@@ -67,3 +67,13 @@
 {"level":"error","message":"Server error while trying to fetch all users: Association with alias \"Addresses\" does not exist on User","service":"user-service"}
 {"level":"error","message":"Server error while trying to delete user: sequelize is not defined","service":"user-service"}
 {"level":"error","message":"Server error while trying to delete user: sequelize is not defined","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all accounts: TypeError: Cannot read properties of undefined (reading 'findAll')","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all accounts: TypeError: Cannot read properties of undefined (reading 'findAll')","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all accounts: TypeError: Cannot read properties of undefined (reading 'findAll')","service":"user-service"}
+{"level":"error","message":"Server error while trying to fetch all accounts: TypeError: Cannot read properties of undefined (reading 'findAll')","service":"user-service"}
+{"level":"error","message":"Server error while trying to create account: SequelizeValidationError: Validation error: Validation len on accountNumber failed,\nValidation error: Validation isAlpha on name failed","service":"user-service"}
+{"level":"error","message":"Server error while trying to create account: SequelizeValidationError: Validation error: Validation len on accountNumber failed,\nValidation error: Validation isAlpha on name failed","service":"user-service"}
+{"level":"error","message":"Server error while trying to create account: SequelizeValidationError: Validation error: Validation len on accountNumber failed,\nValidation error: Validation isAlpha on name failed","service":"user-service"}
+{"level":"error","message":"Server error while trying to create account: SequelizeValidationError: Validation error: Validation len on accountNumber failed,\nValidation error: Validation isAlpha on name failed","service":"user-service"}
+{"level":"error","message":"Server error while trying to update account: SequelizeValidationError: Validation error: Validation isAlpha on name failed","service":"user-service"}
+{"level":"error","message":"Server error while trying to delete account: Error: Transaction cannot be rolled back because it has been finished with state: commit","service":"user-service"}

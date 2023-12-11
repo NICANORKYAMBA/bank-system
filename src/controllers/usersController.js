@@ -24,7 +24,7 @@ exports.getAllUsers = async (req, res) => {
 
   try {
     const users = await User.findAll({
-      include: ['Addresses'],
+      include: ['Addresses', 'Accounts'],
       limit,
       offset,
       order: [[sort, order]]
@@ -48,7 +48,7 @@ exports.getUserById = async (req, res) => {
   handleErrors(req, res);
   const { id } = req.params;
   try {
-    const user = await User.findByPk(id, { include: ['Addresses'] });
+    const user = await User.findByPk(id, { include: ['Addresses', 'Accounts'] });
     if (user) {
       res.status(200).json(user);
     } else {
@@ -140,7 +140,7 @@ exports.updateUser = async (req, res) => {
       if (address) {
         await UserAddress.update(address, { where: { userId: id } });
       }
-      const updatedUser = await User.findByPk(id, { include: ['Addresses'] });
+      const updatedUser = await User.findByPk(id, { include: ['Addresses', 'Accounts'] });
       return res.status(200).json({ message: 'User updated', user: updatedUser });
     } else {
       return res.status(400).json({

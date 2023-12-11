@@ -1,20 +1,20 @@
 # Banking API
 
-This is a RESTful API for a banking system. It allows you to manage bank accounts and users, including creating new accounts and users, updating existing accounts and users, retrieving accounts and users, and deleting accounts and users.
+This project is a RESTful API for a banking system. It provides a comprehensive set of features for managing bank accounts and users. The API is built with Node.js and Express.js, and uses PostgreSQL for data storage.
 
 ## Features
 
 ### Account Management
 
-- **Create a new account:** Add a new account to the system.
-- **Update an existing account:** Modify the details of an existing account.
-- **Retrieve an account by account number:** Fetch the details of a specific account using its account number.
+- **Create a new account:** Add a new account to the system with a unique account number.
+- **Update an existing account:** Modify the details of an existing account, such as the account name, balance, account type, currency, and status.
+- **Retrieve an account by account number:** Fetch the details of a specific account using its unique account number.
 - **Retrieve all accounts:** Get a list of all accounts in the system.
 - **Delete an account:** Remove an account from the system.
 
 ### User Management
 
-- **Create a new user:** Add a new user to the system. The user's password is hashed using bcrypt for security. You can also add an address for the user.
+- **Create a new user:** Add a new user to the system. The user's password is hashed using bcrypt for security. An address can also be added for the user.
 - **Update an existing user:** Modify the details of an existing user, including their associated address. If a new password is provided, it is hashed before being stored.
 - **Retrieve a user by ID:** Fetch the details of a specific user using their ID, including their associated address.
 - **Retrieve all users:** Get a list of all users in the system, including their associated addresses. Supports pagination to limit the number of users returned in a single request.
@@ -70,8 +70,8 @@ To run the tests, use the following command: `npm test`
 
 ## Contributing
 
-If you want to contribute to this project, please create a pull request. For major changes, please open an issue first to discuss what you would like to change.
+Contributions are welcome! If you want to contribute to this project, please create a pull request. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 
-This project is licensed under Nicanor Kyamba.
+This project is the property of Nicanor Kyamba. All rights reserved.

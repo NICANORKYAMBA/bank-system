@@ -1,19 +1,17 @@
-require('dotenv').config();
-
 const { Sequelize, DataTypes } = require('sequelize');
-
-const sequelize = new Sequelize(process.env.DB_NAME,
-  process.env.DB_USER, process.env.DB_PASSWORD, {
-    host: process.env.DB_HOST, port: process.env.DB_PORT,
-    dialect: 'postgres'
-});
+const sequelize = require('../database');
 
 const Account = sequelize.define('Account', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: Sequelize.UUIDV4,
+    allowNull: false,
+    primaryKey: true
+  },
   accountNumber: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
-    primaryKey: true,
     validate: {
       len: [15, 15]
     }
@@ -44,6 +42,14 @@ const Account = sequelize.define('Account', {
   status: {
     type: DataTypes.ENUM('active', 'inactive'),
     allowNull: false
+  },
+  userId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: 'Users', // name of your model
+      key: 'id'
+    }
   }
 }, {
   // Other model options go here
