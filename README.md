@@ -20,6 +20,14 @@ This project is a RESTful API for a banking system. It provides a comprehensive 
 - **Retrieve all users:** Get a list of all users in the system, including their associated addresses. Supports pagination to limit the number of users returned in a single request.
 - **Delete a user:** Remove a user from the system, including their associated address.
 
+### Transaction Management
+
+- **Create a new transaction:** Add a new transaction to the system. The transaction can be a deposit, withdrawal, or transfer.
+- **Retrieve all transactions:** Get a list of all transactions in the system.
+- **Retrieve a transaction by ID:** Fetch the details of a specific transaction using its ID.
+- **Retrieve transactions by account number:** Fetch all transactions for a specific account using the account number.
+- **Retrieve transactions by user ID:** Fetch all transactions for a specific user using the user ID.
+
 ## Technologies Used
 
 - **Node.js:** A JavaScript runtime built on Chrome's V8 JavaScript engine.
@@ -63,6 +71,14 @@ These instructions will get you a copy of the project up and running on your loc
 - `POST /api/users`: Create a new user
 - `PUT /api/users/:id`: Update a user
 - `DELETE /api/users/:id`: Delete a user
+
+### Transaction Endpoints
+
+- `POST /api/transactions`: Create a new transaction
+- `GET /api/transactions`: Retrieve all transactions
+- `GET /api/transactions/:id`: Retrieve a transaction by ID
+- `GET /api/transactions/account/:accountNumber`: Retrieve transactions by account number
+- `GET /api/transactions/user/:userId`: Retrieve transactions by user ID
 
 ## Running Tests
 
