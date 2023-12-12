@@ -223,3 +223,86 @@ exports.getTransactionsByAccountNumber = async (req, res) => {
     });
   }
 };
+
+exports.getTransactionsByUserId = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const transactions = await Transaction.findAll({
+      where: {
+        userId
+      },
+      include: [
+        {
+          model: Account,
+          as: 'sourceTransactionAccount',
+          attributes: ['accountNumber', 'name', 'balance', 'currency']
+        },
+        {
+          model: Account,
+          as: 'destinationTransactionAccount',
+          attributes: ['accountNumber', 'name', 'balance', 'currency']
+        }
+      ]
+    });
+
+    if (transactions.length > 0) {
+      res.status(200).json({
+        message: `${transactions.length} transactions found`,
+        transactions
+      });
+    } else {
+      res.status(404).json({ message: 'No transactions found' });
+    }
+  } catch (err) {
+    logger.error(`Server error while trying to fetch transactions for user with ID ${userId}: ${err}`);
+    res.status(500).json({
+      error: `Server error while trying to fetch transactions for user with ID ${userId}`,
+      message: err.message
+    });
+  }
+};
+
+exports.getTransactionsByAccountId = async (req, res) => {
+  const { accountId } = req.params;
+  try {
+    const account = await Account.findByPk(accountId);
+    if (!account) {
+      return res.status(404).json({ message: `Account with ID ${accountId} not found` });
+    }
+
+    if (account.status !== 'active') {
+      return res.status(400).json({ message: 'Account is not active' });
+    }
+
+    const transactions = await Transaction.findAll({
+      where: { accountId },
+      include: [
+        {
+          model: Account,
+          as: 'sourceTransactionAccount',
+          attributes: ['accountNumber', 'name', 'balance', 'currency']
+        },
+        {
+          model: Account,
+          as: 'destinationTransactionAccount',
+          attributes: ['accountNumber', 'name', 'balance', 'currency']
+        }
+      ]
+    });
+
+    if (transactions.length > 0) {
+      res.status(200).json({
+        message: `${transactions.length} transactions found`,
+        transactions
+      });
+    } else {
+      res.status(404).json({ message: 'No transactions found' });
+    }
+  } catch (err) {
+    logger.error(`Server error while trying to fetch transactions for account with ID ${accountId}: ${err}`);
+    res.status(500).json({
+      error: `Server error while trying to fetch transactions for account with ID ${accountId}`,
+      message: err.message
+    });
+  }
+};

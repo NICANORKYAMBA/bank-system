@@ -6,6 +6,8 @@ const router = express.Router();
 router.post('/', transactionsController.createTransaction);
 router.get('/', transactionsController.getAllTransactions);
 router.get('/:id', transactionsController.getTransactionById);
-router.get('/account/:accountNumber', transactionsController.getTransactionsByAccountNumber);
+router.get('/account/number/:accountNumber', transactionsController.getTransactionsByAccountNumber);
+router.get('/user/:userId', transactionsController.getTransactionsByUserId);
+router.get('/account/id/:accountId', transactionsController.getTransactionsByAccountId);
 
 module.exports = router;
