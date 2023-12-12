@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize, DataTypes, UUID } = require('sequelize');
 const sequelize = require('../database');
 
 const Transaction = sequelize.define('Transaction', {
@@ -61,6 +61,22 @@ const Transaction = sequelize.define('Transaction', {
             key: 'id'
         }
     },
+    sourceAccountId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+            model: 'Accounts',
+            key: 'id'
+        }
+    },
+    destinationAccountId: {
+        type: DataTypes.UUID,
+        allowNull: true,
+        references: {
+            model: 'Accounts',
+            key: 'id'
+        }
+    }
 }, {
     timestamps: true,
     hooks: {

@@ -51,7 +51,7 @@ exports.createTransaction = async (req, res) => {
             await destinationAccount.save();
         }
 
-        const transaction = await Transaction.create({
+        const transaction = {
             type,
             amount,
             currency: sourceAccount.currency,
@@ -60,8 +60,12 @@ exports.createTransaction = async (req, res) => {
             destinationAccount: destinationAccount ? destinationAccount.accountNumber : sourceAccount.accountNumber,
             userId,
             accountId: sourceAccountId,
+            sourceAccountId,
+            destinationAccountId: destinationAccountId ? destinationAccountId : sourceAccountId, // Set destinationAccountId to sourceAccountId for 'deposit' transactions
             description
-        });
+        };
+
+        await Transaction.create(transaction);
 
         let message = `A ${type} transaction of ${amount} ${sourceAccount.currency} was made on account ${sourceAccount.accountNumber}.`;
         if (type === 'transfer') {
@@ -78,6 +82,40 @@ exports.createTransaction = async (req, res) => {
         logger.error(`Server error while trying to create transaction: ${err}`);
         res.status(500).json({
             error: 'Server error while trying to create transaction',
+            message: err.message
+        });
+    }
+};
+
+exports.getAllTransactions = async (req, res) => {
+    try {
+        const transactions = await Transaction.findAll({
+            include: [
+                {
+                    model: Account,
+                    as: 'sourceTransactionAccount', // Changed 'sourceAccount' to 'sourceTransactionAccount'
+                    attributes: ['accountNumber', 'name', 'balance', 'currency']
+                },
+                {
+                    model: Account,
+                    as: 'destinationTransactionAccount', // Changed 'destinationAccount' to 'destinationTransactionAccount'
+                    attributes: ['accountNumber', 'name', 'balance', 'currency']
+                }
+            ]
+        });
+
+        if (transactions.length > 0) {
+            res.status(200).json({
+                message: `${transactions.length} transactions found`,
+                transactions
+            });
+        } else {
+            res.status(404).json({ message: 'No transactions found' });
+        }
+    } catch (err) {
+        logger.error(`Server error while trying to fetch transactions: ${err}`);
+        res.status(500).json({
+            error: 'Server error while trying to fetch transactions',
             message: err.message
         });
     }
