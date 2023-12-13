@@ -97,3 +97,4 @@
 {"level":"error","message":"Server error while trying to fetch transaction with ID [object Object]: Error: Argument passed to findByPk is invalid: [object Object]","service":"user-service"}
 {"level":"error","message":"Server error while trying to fetch transaction with ID 123456789001234: SequelizeDatabaseError: invalid input syntax for type uuid: \"123456789001234\"","service":"user-service"}
 {"level":"error","message":"Server error while trying to fetch transactions for account with account number 123456789001234: ReferenceError: Sequelize is not defined","service":"user-service"}
+{"level":"error","message":"Cannot read properties of undefined (reading 'or')","service":"user-service"}

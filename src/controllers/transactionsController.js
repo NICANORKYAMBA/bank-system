@@ -1,13 +1,14 @@
 const Transaction = require('../models/transactions');
 const Account = require('../models/accounts');
 const sequelize = require('../database');
+const Sequelize = require('sequelize');
 
 const updateAccountBalance = async (accountId, amount) => {
   const account = await Account.findByPk(accountId);
   account.balance = (Number(account.balance) + amount).toFixed(2);
   await account.save();
   return account;
-}
+};
 
 exports.createTransaction = async (req, res, next) => {
   const { type, amount, sourceAccountId, destinationAccountId, userId, description } = req.body;
@@ -17,7 +18,7 @@ exports.createTransaction = async (req, res, next) => {
     if (!sourceAccount) {
       throw new Error(`Source account with ID ${sourceAccountId} not found`);
     }
-    
+
     if (sourceAccount.status !== 'active') {
       throw new Error('Source account is not active');
     }
@@ -83,6 +84,11 @@ exports.createTransaction = async (req, res, next) => {
 };
 
 exports.getAllTransactions = async (req, res, next) => {
+  const limit = parseInt(req.query.limit, 10) || 10;
+  const offset = parseInt(req.query.offset, 10) || 0;
+  const sort = req.query.sort || 'createdAt';
+  const order = req.query.order || 'DESC';
+
   try {
     const transactions = await Transaction.findAll({
       include: [
@@ -96,7 +102,10 @@ exports.getAllTransactions = async (req, res, next) => {
           as: 'destinationTransactionAccount',
           attributes: ['accountNumber', 'name', 'balance', 'currency']
         }
-      ]
+      ],
+      limit,
+      offset,
+      order: [[sort, order]]
     });
 
     if (transactions.length > 0) {
@@ -144,7 +153,12 @@ exports.getTransactionById = async (req, res, next) => {
 };
 
 exports.getTransactionsByAccountNumber = async (req, res, next) => {
+  const limit = parseInt(req.query.limit, 10) || 10;
+  const offset = parseInt(req.query.offset, 10) || 0;
+  const sort = req.query.sort || 'createdAt';
+  const order = req.query.order || 'DESC';
   const { accountNumber } = req.params;
+
   try {
     const account = await Account.findOne({
       where: {
@@ -180,7 +194,10 @@ exports.getTransactionsByAccountNumber = async (req, res, next) => {
           as: 'destinationTransactionAccount',
           attributes: ['accountNumber', 'name', 'balance', 'currency']
         }
-      ]
+      ],
+      limit,
+      offset,
+      order: [[sort, order]]
     });
 
     if (transactions.length > 0) {
@@ -197,7 +214,12 @@ exports.getTransactionsByAccountNumber = async (req, res, next) => {
 };
 
 exports.getTransactionsByUserId = async (req, res, next) => {
+  const limit = req.query.limit || 10;
+  const offset = req.query.offset || 0;
+  const sort = req.query.sort || 'createdAt';
+  const order = req.query.order || 'DESC';
   const { userId } = req.params;
+
   try {
     const transactions = await Transaction.findAll({
       where: {
@@ -214,7 +236,10 @@ exports.getTransactionsByUserId = async (req, res, next) => {
           as: 'destinationTransactionAccount',
           attributes: ['accountNumber', 'name', 'balance', 'currency']
         }
-      ]
+      ],
+      limit,
+      offset,
+      order: [[sort, order]]
     });
 
     if (transactions.length > 0) {
@@ -231,7 +256,12 @@ exports.getTransactionsByUserId = async (req, res, next) => {
 };
 
 exports.getTransactionsByAccountId = async (req, res, next) => {
+  const limit = parseInt(req.query.limit, 10) || 10;
+  const offset = parseInt(req.query.offset, 10) || 0;
+  const sort = req.query.sort || 'createdAt';
+  const order = req.query.order || 'DESC';
   const { accountId } = req.params;
+
   try {
     const account = await Account.findByPk(accountId);
     if (!account) {
@@ -255,7 +285,10 @@ exports.getTransactionsByAccountId = async (req, res, next) => {
           as: 'destinationTransactionAccount',
           attributes: ['accountNumber', 'name', 'balance', 'currency']
         }
-      ]
+      ],
+      limit,
+      offset,
+      order: [[sort, order]]
     });
 
     if (transactions.length > 0) {
