@@ -2,6 +2,7 @@ const express = require('express');
 const accountsRoutes = require('./routes/accounts');
 const userRoutes = require('./routes/users');
 const transactionsRoutes = require('./routes/transactions');
+const ErrorHandler = require('./middlewares/errorHandler');
 
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
@@ -20,10 +21,7 @@ app.get('/', (req, res) => {
   res.send('Welcome to the Banking API!');
 });
 
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
+app.use(ErrorHandler);
 
 const sequelize = new Sequelize(
   process.env.DB_NAME_D,

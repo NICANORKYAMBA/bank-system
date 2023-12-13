@@ -1,68 +1,53 @@
 const Transaction = require('../models/transactions');
 const Account = require('../models/accounts');
-const { validationResult } = require('express-validator');
-const Sequelize = require('sequelize');
-const logger = require('./logger');
+const sequelize = require('../database');
 
-const handleErrors = (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-};
+const updateAccountBalance = async (accountId, amount) => {
+  const account = await Account.findByPk(accountId);
+  account.balance = (Number(account.balance) + amount).toFixed(2);
+  await account.save();
+  return account;
+}
 
-exports.createTransaction = async (req, res) => {
-  handleErrors(req, res);
+exports.createTransaction = async (req, res, next) => {
   const { type, amount, sourceAccountId, destinationAccountId, userId, description } = req.body;
+  const transaction = await sequelize.transaction();
   try {
     let sourceAccount = await Account.findByPk(sourceAccountId);
     if (!sourceAccount) {
-      return res.status(404).json({
-        message: `Source account with ID ${sourceAccountId} not found`
-      });
+      throw new Error(`Source account with ID ${sourceAccountId} not found`);
     }
-
+    
     if (sourceAccount.status !== 'active') {
-      return res.status(400).json({
-        message: 'Source account is not active'
-      });
+      throw new Error('Source account is not active');
     }
 
-    if (type === 'withdrawal' || type === 'transfer') {
-      if (sourceAccount.balance < amount) {
-        return res.status(400).json({
-          message: 'Insufficient balance'
-        });
+    if (type === 'transfer' || type === 'withdrawal') {
+      if (Number(sourceAccount.balance) < amount) {
+        throw new Error('Insufficient balance');
       }
-      sourceAccount.balance = (Number(sourceAccount.balance) - amount).toFixed(2);
-      await sourceAccount.save();
-      sourceAccount = await Account.findByPk(sourceAccountId);
+      sourceAccount = await updateAccountBalance(sourceAccountId, -amount);
     }
 
     if (type === 'deposit') {
-      sourceAccount.balance = (Number(sourceAccount.balance) + amount).toFixed(2);
-      await sourceAccount.save();
-      sourceAccount = await Account.findByPk(sourceAccountId);
+      sourceAccount = await updateAccountBalance(sourceAccountId, amount);
     }
 
     let destinationAccount;
     if (type === 'transfer') {
       destinationAccount = await Account.findByPk(destinationAccountId);
       if (!destinationAccount) {
-        return res.status(404).json({
-          message: `Destination account with ID ${destinationAccountId} not found`
-        });
+        throw new Error(`Destination account with ID ${destinationAccountId} not found`);
       }
+
       if (destinationAccount.status !== 'active') {
-        return res.status(400).json({
-          message: 'Destination account is not active'
-        });
+        throw new Error('Destination account is not active');
       }
-      destinationAccount.balance = (Number(destinationAccount.balance) + amount).toFixed(2);
-      await destinationAccount.save();
+
+      destinationAccount = await updateAccountBalance(destinationAccountId, amount);
     }
 
-    const transaction = {
+    const transactionData = {
       type,
       amount,
       currency: sourceAccount.currency,
@@ -76,29 +61,28 @@ exports.createTransaction = async (req, res) => {
       description
     };
 
-    await Transaction.create(transaction);
+    await Transaction.create(transactionData, { transaction });
 
-    let message = `A ${type} transaction of ${amount} ${sourceAccount.currency} was made on account ${sourceAccount.accountNumber}.`;
+    await transaction.commit();
+
+    let message = `A ${type} transaction of ${amount} ${sourceAccount.currency} was made on account ${sourceAccount.accountNumber}`;
     if (type === 'transfer') {
-      message += ` The amount was transferred to account ${destinationAccount.accountNumber}.`;
+      message += ` The amount ${amount} was transferred to ${destinationAccount.accountNumber}`;
     }
-    message += ` The balance after the transaction is ${sourceAccount.balance} ${sourceAccount.currency}.`;
+    message += ` The balance after the transaction is ${sourceAccount.balance} ${sourceAccount.currency}`;
 
     res.status(201).json({
-      transaction,
+      transaction: transactionData,
       balanceAfterTransaction: sourceAccount.balance,
       message
     });
   } catch (err) {
-    logger.error(`Server error while trying to create transaction: ${err}`);
-    res.status(500).json({
-      error: 'Server error while trying to create transaction',
-      message: err.message
-    });
+    await transaction.rollback();
+    next(err);
   }
 };
 
-exports.getAllTransactions = async (req, res) => {
+exports.getAllTransactions = async (req, res, next) => {
   try {
     const transactions = await Transaction.findAll({
       include: [
@@ -124,15 +108,11 @@ exports.getAllTransactions = async (req, res) => {
       res.status(404).json({ message: 'No transactions found' });
     }
   } catch (err) {
-    logger.error(`Server error while trying to fetch transactions: ${err}`);
-    res.status(500).json({
-      error: 'Server error while trying to fetch transactions',
-      message: err.message
-    });
+    next(err);
   }
 };
 
-exports.getTransactionById = async (req, res) => {
+exports.getTransactionById = async (req, res, next) => {
   const { id } = req.params;
   try {
     const transaction = await Transaction.findByPk(id, {
@@ -159,15 +139,11 @@ exports.getTransactionById = async (req, res) => {
       res.status(404).json({ message: `Transaction with ID ${id} not found` });
     }
   } catch (err) {
-    logger.error(`Server error while trying to fetch transaction with ID ${id}: ${err}`);
-    res.status(500).json({
-      error: `Server error while trying to fetch transaction with ID ${id}`,
-      message: err.message
-    });
+    next(err);
   }
 };
 
-exports.getTransactionsByAccountNumber = async (req, res) => {
+exports.getTransactionsByAccountNumber = async (req, res, next) => {
   const { accountNumber } = req.params;
   try {
     const account = await Account.findOne({
@@ -216,15 +192,11 @@ exports.getTransactionsByAccountNumber = async (req, res) => {
       res.status(404).json({ message: 'No transactions found' });
     }
   } catch (err) {
-    logger.error(`Server error while trying to fetch transactions for account with account number ${accountNumber}: ${err}`);
-    res.status(500).json({
-      error: `Server error while trying to fetch transactions for account with account number ${accountNumber}`,
-      message: err.message
-    });
+    next(err);
   }
 };
 
-exports.getTransactionsByUserId = async (req, res) => {
+exports.getTransactionsByUserId = async (req, res, next) => {
   const { userId } = req.params;
   try {
     const transactions = await Transaction.findAll({
@@ -254,15 +226,11 @@ exports.getTransactionsByUserId = async (req, res) => {
       res.status(404).json({ message: 'No transactions found' });
     }
   } catch (err) {
-    logger.error(`Server error while trying to fetch transactions for user with ID ${userId}: ${err}`);
-    res.status(500).json({
-      error: `Server error while trying to fetch transactions for user with ID ${userId}`,
-      message: err.message
-    });
+    next(err);
   }
 };
 
-exports.getTransactionsByAccountId = async (req, res) => {
+exports.getTransactionsByAccountId = async (req, res, next) => {
   const { accountId } = req.params;
   try {
     const account = await Account.findByPk(accountId);
@@ -299,10 +267,6 @@ exports.getTransactionsByAccountId = async (req, res) => {
       res.status(404).json({ message: 'No transactions found' });
     }
   } catch (err) {
-    logger.error(`Server error while trying to fetch transactions for account with ID ${accountId}: ${err}`);
-    res.status(500).json({
-      error: `Server error while trying to fetch transactions for account with ID ${accountId}`,
-      message: err.message
-    });
+    next(err);
   }
 };
