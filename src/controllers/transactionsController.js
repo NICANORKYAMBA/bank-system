@@ -5,13 +5,20 @@ const Sequelize = require('sequelize');
 
 const updateAccountBalance = async (accountId, amount) => {
   const account = await Account.findByPk(accountId);
-  account.balance = (Number(account.balance) + amount).toFixed(2);
+  account.balance = (Number(account.balance) + Number(amount)).toFixed(2);
   await account.save();
   return account;
 };
 
 exports.createTransaction = async (req, res, next) => {
   const { type, amount, sourceAccountId, destinationAccountId, userId, description } = req.body;
+
+  if ((type === 'deposit' && amount < 10) || (type !== 'deposit' && amount < 100)) {
+    return res.status(400).json({
+      message: `The transaction amount for a ${type} must be at least ${type === 'deposit' ? 10 : 100}`
+    });
+  }
+
   const transaction = await sequelize.transaction();
   try {
     let sourceAccount = await Account.findByPk(sourceAccountId);
@@ -62,7 +69,7 @@ exports.createTransaction = async (req, res, next) => {
       description
     };
 
-    await Transaction.create(transactionData, { transaction });
+    const newTransaction = await Transaction.create(transactionData, { transaction });
 
     await transaction.commit();
 
@@ -72,9 +79,19 @@ exports.createTransaction = async (req, res, next) => {
     }
     message += ` The balance after the transaction is ${sourceAccount.balance} ${sourceAccount.currency}`;
 
+    const sourceAccountAfter = await Account.findByPk(sourceAccountId);
+    let destinationAccountAfter;
+    if (type === 'transfer') {
+      destinationAccountAfter = await Account.findByPk(destinationAccountId);
+    }
+
     res.status(201).json({
-      transaction: transactionData,
-      balanceAfterTransaction: sourceAccount.balance,
+      transaction: {
+        id: newTransaction.id,
+        ...transactionData
+      },
+      sourceAccountBalanceAfter: sourceAccountAfter.balance,
+      destinationAccountBalanceAfter: destinationAccountAfter ? destinationAccountAfter.balance : null,
       message
     });
   } catch (err) {
@@ -298,6 +315,109 @@ exports.getTransactionsByAccountId = async (req, res, next) => {
       });
     } else {
       res.status(404).json({ message: 'No transactions found' });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteTransaction = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const transaction = await Transaction.findByPk(id);
+    if (!transaction) {
+      return res.status(404).json({
+        message: `Transaction with ID ${id} not found`
+      });
+    }
+
+    await transaction.destroy();
+    res.status(200).json({
+      message: `Transaction with ID ${id} deleted`
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.reverseTransaction = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const transaction = await Transaction.findByPk(id);
+
+    if (!transaction) {
+      return res.status(404).json({
+        message: `Transaction with ID ${id} not found`
+      });
+    }
+
+    if (transaction.reversed) {
+      return res.status(400).json({
+        message: `Transaction ${id} is already reversed`
+      });
+    }
+
+    if (transaction.type === 'deposit' || transaction.type === 'withdrawal') {
+      return res.status(400).json({
+        message: `Cannot reverse a ${transaction.type} transaction`
+      });
+    }
+
+    let reverseType;
+
+    switch (transaction.type) {
+      case 'transfer':
+        reverseType = 'transfer';
+        break;
+      default:
+        throw new Error(`Invalid transaction type: ${transaction.type}`);
+    }
+
+    const t = await sequelize.transaction();
+
+    try {
+      await updateAccountBalance(transaction.destinationAccountId, reverseType === 'deposit' ? transaction.amount : -transaction.amount, t);
+
+      if (reverseType === 'transfer') {
+        const destinationAccount = await Account.findByPk(transaction.sourceAccountId);
+        await updateAccountBalance(transaction.sourceAccountId, transaction.amount, t);
+      }
+
+      transaction.reversed = true;
+      await transaction.save({ transaction: t });
+
+      await t.commit();
+
+      const reverseTransactionData = {
+        type: reverseType,
+        amount: transaction.amount,
+        currency: transaction.currency,
+        status: 'completed',
+        sourceAccount: transaction.destinationAccount,
+        destinationAccount: transaction.sourceAccount,
+        userId: transaction.userId,
+        accountId: transaction.destinationAccountId,
+        sourceAccountId: transaction.destinationAccountId,
+        destinationAccountId: transaction.sourceAccountId,
+        description: `Reverse of transaction ${id}`
+      };
+
+      const sourceAccountAfter = await Account.findByPk(transaction.destinationAccountId);
+      let destinationAccountAfter;
+      if (reverseType === 'transfer') {
+        destinationAccountAfter = await Account.findByPk(transaction.sourceAccountId);
+      }
+
+      res.status(201).json({
+        message: `Transaction ${id} reversed`,
+        transaction: reverseTransactionData,
+        sourceAccountBalanceAfter: sourceAccountAfter.balance,
+        destinationAccountBalanceAfter: destinationAccountAfter ? destinationAccountAfter.balance : null
+      });
+    } catch (err) {
+      await t.rollback();
+      throw err;
     }
   } catch (err) {
     next(err);

@@ -7,16 +7,7 @@ const logger = require('./logger');
 
 const saltRounds = 10;
 
-// Handle validation errors
-const handleErrors = (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-};
-
-// Get all users
-exports.getAllUsers = async (req, res) => {
+exports.getAllUsers = async (req, res, next) => {
   const limit = parseInt(req.query.limit) || 10;
   const offset = parseInt(req.query.offset) || 0;
   const sort = req.query.sort || 'createdAt';
@@ -35,17 +26,11 @@ exports.getAllUsers = async (req, res) => {
       res.status(404).json({ message: 'No users found' });
     }
   } catch (err) {
-    logger.error(`Server error while trying to fetch all users: ${err}`);
-    res.status(500).json({
-      error: 'Server error while trying to fetch all users',
-      message: err.message
-    });
+    next(err);
   }
 };
 
-// Get a user by ID
-exports.getUserById = async (req, res) => {
-  handleErrors(req, res);
+exports.getUserById = async (req, res, next) => {
   const { id } = req.params;
   try {
     const user = await User.findByPk(id, { include: ['Addresses', 'Accounts'] });
@@ -55,17 +40,11 @@ exports.getUserById = async (req, res) => {
       res.status(404).json({ message: `User with ID ${id} not found` });
     }
   } catch (err) {
-    logger.error(`Server error while trying to fetch user: ${err}`);
-    res.status(500).json({
-      error: 'Server error while trying to fetch user',
-      message: err.message
-    });
+    next(err);
   }
-};
+}
 
-// Create a new user
-exports.createUser = async (req, res) => {
-  handleErrors(req, res);
+exports.createUser = async (req, res, next) => {
   const { email, address, password, firstName, lastName } = req.body;
   try {
     const existingUser = await User.findOne({ where: { email } });
@@ -75,10 +54,8 @@ exports.createUser = async (req, res) => {
       });
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Create the user
     const user = await User.create({
       firstName,
       lastName,
@@ -86,7 +63,6 @@ exports.createUser = async (req, res) => {
       password: hashedPassword
     });
 
-    // If an address was provided, create it
     if (address) {
       try {
         await UserAddress.create({
@@ -109,17 +85,11 @@ exports.createUser = async (req, res) => {
 
     res.status(201).json({ message: 'User created', user });
   } catch (err) {
-    logger.error(`Server error while trying to create user: ${err.message}`);
-    res.status(500).json({
-      error: 'Server error while trying to create user',
-      message: err.message
-    });
+    next(err);
   }
 };
 
-// Update a user
-exports.updateUser = async (req, res) => {
-  handleErrors(req, res);
+exports.updateUser = async (req, res, next) => {
   const { id } = req.params;
   const { password, address } = req.body;
   try {
@@ -128,7 +98,6 @@ exports.updateUser = async (req, res) => {
       return res.status(404).json({ message: `User with ID ${id} not found` });
     }
 
-    // If a new password was provided, hash it
     if (password) {
       const hashedPassword = await bcrypt.hash(password, saltRounds);
       req.body.password = hashedPassword;
@@ -136,7 +105,6 @@ exports.updateUser = async (req, res) => {
 
     const [updated] = await User.update(req.body, { where: { id } });
     if (updated) {
-      // If an address was provided, update it
       if (address) {
         await UserAddress.update(address, { where: { userId: id } });
       }
@@ -147,24 +115,18 @@ exports.updateUser = async (req, res) => {
         message: 'Update failed. No fields to update or invalid fields provided.'
       });
     }
-  } catch (error) {
-    if (error.name === 'SequelizeUniqueConstraintError') {
+  } catch (err) {
+    if (err.name === 'SequelizeUniqueConstraintError') {
       return res.status(400).json({
         message: 'Update failed. The update would violate a unique constraint.',
-        fields: error.fields
+        fields: err.fields
       });
     }
-    logger.error(`Server error while trying to update user: ${error.message}`);
-    return res.status(500).json({
-      error: 'Server error while trying to update user',
-      message: error.message
-    });
+    next(err);
   }
 };
 
-// Delete a user
-exports.deleteUser = async (req, res) => {
-  handleErrors(req, res);
+exports.deleteUser = async (req, res, next) => {
   const { id } = req.params;
   try {
     const user = await User.findByPk(id);
@@ -174,29 +136,21 @@ exports.deleteUser = async (req, res) => {
       });
     }
 
-    // Start a transaction
     const transaction = await sequelize.transaction();
 
     try {
-      // Delete the user within the transaction
       const deleted = await User.destroy({ where: { id } }, { transaction });
 
       if (deleted) {
-        // If the delete was successful, commit the transaction
         await transaction.commit();
         return res.status(200).json({ message: 'User deleted', user });
       }
       throw new Error('User not deleted');
     } catch (err) {
-      // If there was an error, rollback the transaction
       await transaction.rollback();
       throw err;
     }
   } catch (err) {
-    logger.error(`Server error while trying to delete user: ${err.message}`);
-    res.status(500).json({
-      error: 'Server error while trying to delete user',
-      message: err.message
-    });
+    next(err);
   }
 };

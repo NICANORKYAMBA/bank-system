@@ -27,6 +27,7 @@ This project is a RESTful API for a banking system. It provides a comprehensive 
 - **Retrieve a transaction by ID:** Fetch the details of a specific transaction using its ID.
 - **Retrieve transactions by account number:** Fetch all transactions for a specific account using the account number.
 - **Retrieve transactions by user ID:** Fetch all transactions for a specific user using the user ID.
+- **Reverse a transaction:** Reverse a transfer transaction.
 
 ## Technologies Used
 
@@ -63,6 +64,7 @@ These instructions will get you a copy of the project up and running on your loc
 - `POST /api/accounts`: Create a new account
 - `PUT /api/accounts/:accountNumber`: Update an account
 - `DELETE /api/accounts/:accountNumber`: Delete an account
+- `GET /api/accounts/name/:name`: Retrieve accounts by name
 
 ### User Endpoints
 
@@ -77,8 +79,10 @@ These instructions will get you a copy of the project up and running on your loc
 - `POST /api/transactions`: Create a new transaction
 - `GET /api/transactions`: Retrieve all transactions
 - `GET /api/transactions/:id`: Retrieve a transaction by ID
-- `GET /api/transactions/account/:accountNumber`: Retrieve transactions by account number
+- `POST /api/transactions/:id/reverse`: Reverse a transaction
+- `GET /api/transactions/account/:accountId`: Retrieve transactions by account ID
 - `GET /api/transactions/user/:userId`: Retrieve transactions by user ID
+- `GET /api/transactions/accountNumber/:accountNumber`: Retrieve transactions by account number
 
 ## Running Tests
 

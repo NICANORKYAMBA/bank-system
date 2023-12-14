@@ -76,7 +76,12 @@ const Transaction = sequelize.define('Transaction', {
       model: 'Accounts',
       key: 'id'
     }
-  }
+  },
+  reversed: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
 }, {
   timestamps: true,
   hooks: {

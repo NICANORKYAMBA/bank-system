@@ -6,8 +6,11 @@ const router = express.Router();
 router.post('/', transactionsController.createTransaction);
 router.get('/', transactionsController.getAllTransactions);
 router.get('/:id', transactionsController.getTransactionById);
-router.get('/account/number/:accountNumber', transactionsController.getTransactionsByAccountNumber);
+router.delete('/:id', transactionsController.deleteTransaction);
+router.post('/:id/reverse', transactionsController.reverseTransaction);
+
+router.get('/account/:accountId', transactionsController.getTransactionsByAccountId);
 router.get('/user/:userId', transactionsController.getTransactionsByUserId);
-router.get('/account/id/:accountId', transactionsController.getTransactionsByAccountId);
+router.get('/accountNumber/:accountNumber', transactionsController.getTransactionsByAccountNumber);
 
 module.exports = router;
