@@ -10,7 +10,10 @@ router.delete('/:id', transactionsController.deleteTransaction);
 router.post('/:id/reverse', transactionsController.reverseTransaction);
 
 router.get('/account/:accountId', transactionsController.getTransactionsByAccountId);
+router.delete('/account/:accountId', transactionsController.deleteTransactionsByAccountId);
+router.delete('/account/:accountNumber', transactionsController.deleteTransactionsByAccountNumber);
+router.delete('/user/:userId', transactionsController.deleteTransactionsByUserId);
 router.get('/user/:userId', transactionsController.getTransactionsByUserId);
-router.get('/accountNumber/:accountNumber', transactionsController.getTransactionsByAccountNumber);
+router.get('/account/:accountNumber', transactionsController.getTransactionsByAccountNumber);
 
 module.exports = router;

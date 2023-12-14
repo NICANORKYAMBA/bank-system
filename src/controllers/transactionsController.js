@@ -1,5 +1,6 @@
 const Transaction = require('../models/transactions');
 const Account = require('../models/accounts');
+const User = require('../models/user');
 const sequelize = require('../database');
 const Sequelize = require('sequelize');
 
@@ -340,6 +341,121 @@ exports.deleteTransaction = async (req, res, next) => {
   }
 };
 
+exports.deleteTransactionsByAccountId = async (req, res, next) => {
+  const { accountId } = req.params;
+
+  try {
+    const account = await Account.findByPk(accountId);
+
+    if (!account) {
+      return res.status(404).json({
+        message: `Account with ID ${accountId} not found`
+      });
+    }
+
+    const deletedTransactions = await Transaction.destroy({ where: { accountId } });
+
+    if (deletedTransactions === 0) {
+      return res.status(404).json({
+        message: `No transactions found for account with ID ${accountId}`
+      });
+    }
+
+    res.status(200).json({
+      message: `Deleted ${deletedTransactions} transactions for account with ID ${accountId}`
+    });
+  } catch (err) {
+    if (err instanceof Sequelize.ValidationError) {
+      return res.status(400).json({ message: err.message });
+    }
+    if (err instanceof Sequelize.DatabaseError) {
+      return res.status(500).json({ message: 'Database error' });
+    }
+    next(err);
+  }
+};
+
+exports.deleteTransactionsByAccountNumber = async (req, res, next) => {
+  const { accountNumber } = req.params;
+
+  try {
+    const account = await Account.findOne({ where: { accountNumber } });
+
+    if (!account) {
+      return res.status(404).json({
+        message: `Account with number ${accountNumber} not found`
+      });
+    }
+
+    const deletedTransactions = await Transaction.destroy({
+      where: {
+        [Sequelize.Op.or]: [
+          { sourceAccount: accountNumber },
+          { destinationAccount: accountNumber }
+        ]
+      }
+    });
+
+    if (deletedTransactions === 0) {
+      return res.status(404).json({
+        message: `No transactions found for account with number ${accountNumber}`
+      });
+    }
+
+    res.status(200).json({
+      message: `Deleted ${deletedTransactions} transactions for account with number ${accountNumber}`
+    });
+  } catch (err) {
+    console.error(err);
+
+    if (err instanceof Sequelize.ValidationError) {
+      return res.status(400).json({ message: err.message });
+    }
+
+    if (err instanceof Sequelize.DatabaseError) {
+      return res.status(500).json({
+        message: 'An error occurred while processing your request. Please try again later.'
+      });
+    }
+
+    next(err);
+  }
+};
+
+exports.deleteTransactionsByUserId = async (req, res, next) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: `User with ID ${userId} not found`
+      });
+    }
+
+    const deletedTransactions = await Transaction.destroy({ where: { userId } });
+
+    if (deletedTransactions === 0) {
+      return res.status(404).json({
+        message: `No transactions found for user with ID ${userId}`
+      });
+    }
+
+    res.status(200).json({
+      message: `Deleted ${deletedTransactions} transactions for user with ID ${userId}`
+    });
+  } catch (err) {
+    if (err instanceof Sequelize.ValidationError) {
+      return res.status(400).json({ message: err.message });
+    }
+    if (err instanceof Sequelize.DatabaseError) {
+      return res.status(500).json({ message: 'Database error' });
+    }
+    next(err);
+  }
+};
+
 exports.reverseTransaction = async (req, res, next) => {
   const { id } = req.params;
 
@@ -380,7 +496,6 @@ exports.reverseTransaction = async (req, res, next) => {
       await updateAccountBalance(transaction.destinationAccountId, reverseType === 'deposit' ? transaction.amount : -transaction.amount, t);
 
       if (reverseType === 'transfer') {
-        const destinationAccount = await Account.findByPk(transaction.sourceAccountId);
         await updateAccountBalance(transaction.sourceAccountId, transaction.amount, t);
       }
 

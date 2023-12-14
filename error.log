@@ -104,3 +104,5 @@
 {"level":"error","message":"Insufficient balance in account 079877854565236 to reverse the transaction","service":"user-service"}
 {"level":"error","message":"Validation error: Validation min on amount failed","service":"user-service"}
 {"level":"error","message":"Validation error: Validation min on amount failed","service":"user-service"}
+{"level":"error","message":"User is not defined","service":"user-service"}
+{"level":"error","message":"Insufficient balance","service":"user-service"}
