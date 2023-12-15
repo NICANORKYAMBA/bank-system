@@ -81,7 +81,7 @@ const Transaction = sequelize.define('Transaction', {
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false
-  },
+  }
 }, {
   timestamps: true,
   hooks: {

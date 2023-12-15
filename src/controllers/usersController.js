@@ -1,5 +1,5 @@
-const { validationResult } = require('express-validator');
 const sequelize = require('../database');
+const Sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
@@ -48,10 +48,10 @@ exports.getAllUsers = async (req, res, next) => {
 
 exports.getUserById = async (req, res, next) => {
   const { id } = req.params;
-  
+
   try {
     const user = await User.findByPk(id, { include: ['Addresses', 'Accounts'] });
-    
+
     if (user) {
       res.status(200).json({
         message: `User with ID ${id} found`, user
@@ -141,7 +141,7 @@ exports.loginUser = async (req, res, next) => {
 
   try {
     const user = await User.findOne({ where: { email } });
-    
+
     if (!user) {
       return res.status(401).json({
         message: 'Authentication failed: User not found'
@@ -163,7 +163,7 @@ exports.loginUser = async (req, res, next) => {
     );
 
     res.status(200).json({
-      message: 'Authentication successful', token: token
+      message: 'Authentication successful', token
     });
   } catch (err) {
     console.error(err);
@@ -203,7 +203,7 @@ exports.forgotPassword = async (req, res, next) => {
         user: process.env.EMAIL_USERNAME,
         clientId: process.env.OAUTH_CLIENT_ID,
         clientSecret: process.env.OAUTH_CLIENT_SECRET,
-        refreshToken: process.env.OAUTH_REFRESH_TOKEN,
+        refreshToken: process.env.OAUTH_REFRESH_TOKEN
       }
     });
 
@@ -297,21 +297,21 @@ exports.updateUser = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
   const { id } = req.params;
-  
+
   try {
     const user = await User.findByPk(id);
-    
+
     if (!user) {
       return res.status(404).json({
         message: `User with ID ${id} not found`
       });
     }
-    
+
     const transaction = await sequelize.transaction();
-    
+
     try {
       const deleted = await User.destroy({ where: { id } }, { transaction });
-      
+
       if (deleted) {
         await transaction.commit();
         return res.status(200).json({
