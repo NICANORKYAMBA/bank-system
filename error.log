@@ -106,3 +106,6 @@
 {"level":"error","message":"Validation error: Validation min on amount failed","service":"user-service"}
 {"level":"error","message":"User is not defined","service":"user-service"}
 {"level":"error","message":"Insufficient balance","service":"user-service"}
+{"level":"error","message":"nodemailer is not defined","service":"user-service"}
+{"level":"error","message":"Unexpected token e in JSON at position 1","service":"user-service"}
+{"level":"error","message":"Unexpected token e in JSON at position 1","service":"user-service"}
