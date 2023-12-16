@@ -1,6 +1,7 @@
 const Transaction = require('../models/transactions');
 const Account = require('../models/accounts');
 const User = require('../models/user');
+//const { sendSMS, sendPushNotification } = require('../notifications');
 const sequelize = require('../database');
 const Sequelize = require('sequelize');
 
@@ -114,6 +115,15 @@ exports.createTransaction = async (req, res, next) => {
       destinationAccountBalanceAfter: destinationAccountAfter ? destinationAccountAfter.balance : null,
       message
     });
+    const user = await User.findByPk(userId);
+    const phoneNumber = user.phoneNumber;
+    const deviceToken = user.deviceToken;
+
+    const notificationMessage = `A ${type} transaction of ${amount} ${sourceAccount.currency} was made on account ${sourceAccount.accountNumber}`;
+
+    await sendSMS(phoneNumber, notificationMessage);
+
+    await sendPushNotification(deviceToken, 'New Transaction', notificationMessage);
   } catch (err) {
     await transaction.rollback();
     next(err);
@@ -125,9 +135,21 @@ exports.getAllTransactions = async (req, res, next) => {
   const offset = parseInt(req.query.offset, 10) || 0;
   const sort = req.query.sort || 'createdAt';
   const order = req.query.order || 'DESC';
+  const type = req.query.type;
+  const status = req.query.status
+
+  const whereClause = {};
+
+  if (type) {
+    whereClause.type = type;
+  }
+  if (status) {
+    whereClause.status = status;
+  }
 
   try {
     const transactions = await Transaction.findAll({
+      where: whereClause,
       include: [
         {
           model: Account,
@@ -146,10 +168,17 @@ exports.getAllTransactions = async (req, res, next) => {
     });
 
     if (transactions.length > 0) {
-      res.status(200).json({
-        message: `${transactions.length} transactions found`,
-        transactions
-      });
+      if (transactions.length === 1) {
+        res.status(200).json({
+          message: `${transactions.length} transaction found`,
+          transactions
+        });
+      } else {
+        res.status(200).json({
+          message: `${transactions.length} transactions found`,
+          transactions
+        });
+      }
     } else {
       res.status(404).json({ message: 'No transactions found' });
     }
@@ -254,10 +283,17 @@ exports.getTransactionsByAccountNumber = async (req, res, next) => {
     });
 
     if (transactions.length > 0) {
-      res.status(200).json({
-        message: `${transactions.length} transactions found`,
-        transactions
-      });
+      if (transactions.length === 1) {
+        res.status(200).json({
+          message: `${transactions.length} transaction found`,
+          transactions
+        });
+      } else {
+        res.status(200).json({
+          message: `${transactions.length} transactions found`,
+          transactions
+        });
+      }
     } else {
       res.status(404).json({
         message: 'No transactions found'
@@ -304,10 +340,17 @@ exports.getTransactionsByUserId = async (req, res, next) => {
     });
 
     if (transactions.length > 0) {
-      res.status(200).json({
-        message: `${transactions.length} transactions found`,
-        transactions
-      });
+      if (transactions.length === 1) {
+        res.status(200).json({
+          message: `${transactions.length} transaction found`,
+          transactions
+        });
+      } else {
+        res.status(200).json({
+          message: `${transactions.length} transactions found`,
+          transactions
+        });
+      }
     } else {
       res.status(404).json({
         message: 'No transactions found'
@@ -365,10 +408,17 @@ exports.getTransactionsByAccountId = async (req, res, next) => {
     });
 
     if (transactions.length > 0) {
-      res.status(200).json({
-        message: `${transactions.length} transactions found`,
-        transactions
-      });
+      if (transactions.length === 1) {
+        res.status(200).json({
+          message: `${transactions.length} transaction found`,
+          transactions
+        });
+      } else {
+        res.status(200).json({
+          message: `${transactions.length} transactions found`,
+          transactions
+        });
+      }
     } else {
       res.status(404).json({
         message: 'No transactions found'
