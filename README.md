@@ -2,6 +2,8 @@
 
 This project is a RESTful API for a banking system. It provides a comprehensive set of features for managing bank accounts and users. The API is built with Node.js and Express.js, and uses PostgreSQL for data storage.
 
+The project has been updated to use ES6 import/export syntax.
+
 ## Features
 
 ### Account Management
@@ -53,7 +55,7 @@ These instructions will get you a copy of the project up and running on your loc
 3. Install the dependencies: `npm install`
 4. Create a `.env` file and add your database configuration. See `.env.example` for a sample configuration.
 5. Run the database migrations: `npx sequelize-cli db:migrate`
-6. Start the server: `npm start`
+6. Start the server: `npm run dev`
 
 ## API Endpoints
 
