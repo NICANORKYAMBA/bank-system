@@ -20,6 +20,13 @@ const Transaction = sequelize.define('Transaction', {
       min: 100
     }
   },
+  balance: {
+    type: DataTypes.DECIMAL,
+    allowNull: false,
+    validate: {
+      isDecimal: true
+    }
+  },
   currency: {
     type: DataTypes.ENUM('USD', 'EUR', 'GBP'),
     allowNull: false

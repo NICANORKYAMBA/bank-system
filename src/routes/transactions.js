@@ -6,12 +6,12 @@ import {
   deleteTransaction,
   reverseTransaction,
   getTransactionsByAccountId,
-  getAccountStatements,
   deleteTransactionsByAccountId,
   deleteTransactionsByAccountNumber,
   deleteTransactionsByUserId,
   getTransactionsByUserId,
-  getTransactionsByAccountNumber
+  getTransactionsByAccountNumber,
+  getAccountStatement
 } from '../controllers/transactionsController.js';
 
 const router = express.Router();
@@ -23,10 +23,10 @@ router.delete('/:id', deleteTransaction);
 router.post('/:id/reverse', reverseTransaction);
 
 router.get('/account/:accountId', getTransactionsByAccountId);
-router.get('/account-statements/:userId', getAccountStatements);
 router.delete('/account/:accountId', deleteTransactionsByAccountId);
 router.delete('/account/:accountNumber', deleteTransactionsByAccountNumber);
 router.delete('/user/:userId', deleteTransactionsByUserId);
+router.get('/statement/:accountNumber', getAccountStatement);
 router.get('/user/:userId', getTransactionsByUserId);
 router.get('/account/:accountNumber', getTransactionsByAccountNumber);
 

@@ -74,6 +74,7 @@ export const createTransaction = async (req, res, next) => {
     const transactionData = {
       type,
       amount,
+      balance: sourceAccount.balance,
       currency: sourceAccount.currency,
       status: 'completed',
       sourceAccount: sourceAccount.accountNumber,
@@ -120,7 +121,9 @@ export const createTransaction = async (req, res, next) => {
 
     await sendPushNotification(deviceToken, 'New Transaction', notificationMessage);
   } catch (err) {
-    await transaction.rollback();
+    if (transaction.finished !== 'commit') {
+      await transaction.rollback();
+    }
     next(err);
   }
 };
@@ -640,12 +643,12 @@ export const reverseTransaction = async (req, res, next) => {
   }
 };
 
-export const getAccountStatements = async (req, res, next) => {
-  const { userId } = req.params;
+export const getAccountStatement = async (req, res, next) => {
+  const { accountNumber } = req.params;
   const { startDate, endDate } = req.query;
 
-  if (!userId || !startDate || !endDate) {
-    return handleValidationError(res, 'userId, startDate and endDate are required');
+  if (!startDate || !endDate) {
+    return handleValidationError(res, 'startDate and endDate are required');
   }
 
   if (isNaN(Date.parse(startDate)) || isNaN(Date.parse(endDate))) {
@@ -653,33 +656,41 @@ export const getAccountStatements = async (req, res, next) => {
   }
 
   try {
-    const user = await User.findByPk(userId);
-    if (!user) {
+    const account = await Account.findOne({ where: { accountNumber } });
+
+    if (!account) {
       return res.status(404).json({
-        message: `User with ID ${userId} not found`
+        message: `Account with account number ${accountNumber} not found`
       });
     }
 
     const transactions = await Transaction.findAll({
       where: {
-        userId,
+        accountId: account.id,
         createdAt: {
-          [Sequelize.between]: [
+          [Sequelize.Op.between]: [
             new Date(startDate).toISOString(),
             new Date(endDate + 'T23:59:59.999Z').toISOString()
           ]
         }
       },
-      order: [['createdAt', 'DESC']]
+      order: [['createdAt', 'ASC']]
     });
 
     if (transactions.length === 0) {
       return res.status(404).json({
-        message: 'No transactions found for this user in the given date range'
+        message: 'No transactions found for this account in the given date range'
       });
     }
 
-    res.status(200).json({ transactions });
+    const openingBalance = transactions[0].balance - transactions[0].amount;
+    const closingBalance = transactions[transactions.length - 1].balance;
+
+    res.status(200).json({
+      openingBalance,
+      closingBalance,
+      transactions
+    });
   } catch (err) {
     if (err instanceof Sequelize.ValidationError) {
       return handleValidationError(res, err.message);

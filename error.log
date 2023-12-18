@@ -113,3 +113,13 @@
 {"level":"error","message":"Unexpected token b in JSON at position 62","service":"user-service"}
 {"level":"error","message":"Cannot reverse a deposit transaction","service":"user-service"}
 {"level":"error","message":"Cannot reverse a deposit transaction","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"Validation error: Validation min on balance failed","service":"user-service"}
+{"level":"error","message":"Validation error: Validation min on balance failed","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"Destination account is not active","service":"user-service"}
