@@ -1,8 +1,8 @@
-const Account = require('../models/accounts');
-const User = require('../models/user');
-const sequelize = require('../database');
-const { validationResult } = require('express-validator');
-const logger = require('./logger');
+import Account from '../models/accounts.js';
+import User from '../models/user.js';
+import sequelize from '../database.js';
+import { validationResult } from 'express-validator';
+import logger from './logger.js';
 
 const handleErrors = (req, res) => {
   const errors = validationResult(req);
@@ -15,7 +15,7 @@ const getAccount = async (accountNumber) => {
   return await Account.findOne({ where: { accountNumber } });
 };
 
-exports.getAllAccounts = async (req, res) => {
+export const getAllAccounts = async (req, res) => {
   const limit = parseInt(req.query.limit) || 10;
   const offset = parseInt(req.query.offset) || 0;
   const sort = req.query.sort || 'createdAt';
@@ -42,7 +42,7 @@ exports.getAllAccounts = async (req, res) => {
   }
 };
 
-exports.getAccountByNumber = async (req, res) => {
+export const getAccountByNumber = async (req, res) => {
   handleErrors(req, res);
   const { accountNumber } = req.params;
   try {
@@ -61,7 +61,7 @@ exports.getAccountByNumber = async (req, res) => {
   }
 };
 
-exports.getAccountByName = async (req, res) => {
+export const getAccountByName = async (req, res) => {
   handleErrors(req, res);
   const { name } = req.params;
   try {
@@ -80,7 +80,7 @@ exports.getAccountByName = async (req, res) => {
   }
 };
 
-exports.createAccount = async (req, res) => {
+export const createAccount = async (req, res) => {
   handleErrors(req, res);
   const { accountNumber, name, balance, accountType, currency, status, userId } = req.body;
   try {
@@ -114,7 +114,7 @@ exports.createAccount = async (req, res) => {
   }
 };
 
-exports.updateAccount = async (req, res) => {
+export const updateAccount = async (req, res) => {
   handleErrors(req, res);
   const { accountNumber } = req.params;
   const { name, balance, accountType, currency, status } = req.body;
@@ -139,7 +139,7 @@ exports.updateAccount = async (req, res) => {
   }
 };
 
-exports.deleteAccount = async (req, res) => {
+export const deleteAccount = async (req, res) => {
   handleErrors(req, res);
   const { accountNumber } = req.params;
   try {

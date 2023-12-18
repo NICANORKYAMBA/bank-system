@@ -1,4 +1,4 @@
-const sequelize = require('../database');
+import sequelize from '../database.js';
 
 sequelize.models.User.hasMany(sequelize.models.Account, {
   foreignKey: 'userId',
@@ -34,23 +34,23 @@ sequelize.models.UserAddress.belongsTo(sequelize.models.User, {
 });
 
 sequelize.models.Account.hasMany(sequelize.models.Transaction, {
-    foreignKey: 'sourceAccountId',
-    as: 'sourceTransactions',
-    onDelete: 'CASCADE'
+  foreignKey: 'sourceAccountId',
+  as: 'sourceTransactions',
+  onDelete: 'CASCADE'
 });
 
 sequelize.models.Transaction.belongsTo(sequelize.models.Account, {
-    foreignKey: 'sourceAccountId',
-    as: 'sourceTransactionAccount',
+  foreignKey: 'sourceAccountId',
+  as: 'sourceTransactionAccount'
 });
 
 sequelize.models.Account.hasMany(sequelize.models.Transaction, {
-    foreignKey: 'destinationAccountId',
-    as: 'destinationTransactions',
-    onDelete: 'CASCADE'
+  foreignKey: 'destinationAccountId',
+  as: 'destinationTransactions',
+  onDelete: 'CASCADE'
 });
 
 sequelize.models.Transaction.belongsTo(sequelize.models.Account, {
-    foreignKey: 'destinationAccountId',
-    as: 'destinationTransactionAccount',
+  foreignKey: 'destinationAccountId',
+  as: 'destinationTransactionAccount'
 });

@@ -1,16 +1,16 @@
-const sequelize = require('../database');
-const Sequelize = require('sequelize');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const nodemailer = require('nodemailer');
-const User = require('../models/user');
-const UserAddress = require('../models/userAddress');
-const logger = require('./logger');
+import sequelize from '../database.js';
+import Sequelize from 'sequelize';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import nodemailer from 'nodemailer';
+import User from '../models/user.js';
+import UserAddress from '../models/userAddress.js';
+import logger from './logger.js';
 
 const saltRounds = 10;
 
-exports.getAllUsers = async (req, res, next) => {
+export const getAllUsers = async (req, res, next) => {
   const limit = parseInt(req.query.limit) || 10;
   const offset = parseInt(req.query.offset) || 0;
   const sort = req.query.sort || 'createdAt';
@@ -46,7 +46,7 @@ exports.getAllUsers = async (req, res, next) => {
   }
 };
 
-exports.getUserById = async (req, res, next) => {
+export const getUserById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
@@ -75,7 +75,7 @@ exports.getUserById = async (req, res, next) => {
   }
 };
 
-exports.createUser = async (req, res, next) => {
+export const createUser = async (req, res, next) => {
   const { email, address, password, firstName, lastName } = req.body;
 
   if (!email || !password || !firstName || !lastName) {
@@ -130,7 +130,7 @@ exports.createUser = async (req, res, next) => {
   }
 };
 
-exports.loginUser = async (req, res, next) => {
+export const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -173,7 +173,7 @@ exports.loginUser = async (req, res, next) => {
   }
 };
 
-exports.forgotPassword = async (req, res, next) => {
+export const forgotPassword = async (req, res, next) => {
   const { email } = req.body;
 
   try {
@@ -233,7 +233,7 @@ exports.forgotPassword = async (req, res, next) => {
   }
 };
 
-exports.updateUser = async (req, res, next) => {
+export const updateUser = async (req, res, next) => {
   const { id } = req.params;
   const { password, address } = req.body;
 
@@ -295,7 +295,7 @@ exports.updateUser = async (req, res, next) => {
   }
 };
 
-exports.deleteUser = async (req, res, next) => {
+export const deleteUser = async (req, res, next) => {
   const { id } = req.params;
 
   try {

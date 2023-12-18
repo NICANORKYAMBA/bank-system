@@ -1,9 +1,10 @@
-const Transaction = require('../models/transactions');
-const Account = require('../models/accounts');
-const User = require('../models/user');
-//const { sendSMS, sendPushNotification } = require('../notifications');
-const sequelize = require('../database');
-const Sequelize = require('sequelize');
+import Transaction from '../models/transactions.js';
+import Account from '../models/accounts.js';
+import User from '../models/user.js';
+import sequelize from '../database.js';
+import Sequelize from 'sequelize';
+// import { sendSMS, sendPushNotification } from '../notifications.js';
+import { handleValidationError, handleDatabaseError } from '../middlewares/errorHandler.js';
 
 const updateAccountBalance = async (accountId, amount, transaction = null) => {
   const account = await Account.findByPk(accountId);
@@ -22,18 +23,7 @@ const updateAccountBalance = async (accountId, amount, transaction = null) => {
   return account;
 };
 
-const handleValidationError = (res, message) => {
-  return res.status(400).json({ message });
-};
-
-const handleDatabaseError = (res, err) => {
-  console.error(err);
-  return res.status(500).json({
-    message: 'Database error: ' + err.message
-  });
-};
-
-exports.createTransaction = async (req, res, next) => {
+export const createTransaction = async (req, res, next) => {
   const { type, amount, sourceAccountId, destinationAccountId, userId, description } = req.body;
 
   if ((type === 'deposit' && amount < 10) || (type !== 'deposit' && amount < 100)) {
@@ -130,13 +120,13 @@ exports.createTransaction = async (req, res, next) => {
   }
 };
 
-exports.getAllTransactions = async (req, res, next) => {
+export const getAllTransactions = async (req, res, next) => {
   const limit = parseInt(req.query.limit, 10) || 10;
   const offset = parseInt(req.query.offset, 10) || 0;
   const sort = req.query.sort || 'createdAt';
   const order = req.query.order || 'DESC';
   const type = req.query.type;
-  const status = req.query.status
+  const status = req.query.status;
 
   const whereClause = {};
 
@@ -193,7 +183,7 @@ exports.getAllTransactions = async (req, res, next) => {
   }
 };
 
-exports.getTransactionById = async (req, res, next) => {
+export const getTransactionById = async (req, res, next) => {
   const { id } = req.params;
   try {
     const transaction = await Transaction.findByPk(id, {
@@ -232,7 +222,7 @@ exports.getTransactionById = async (req, res, next) => {
   }
 };
 
-exports.getTransactionsByAccountNumber = async (req, res, next) => {
+export const getTransactionsByAccountNumber = async (req, res, next) => {
   const limit = parseInt(req.query.limit, 10) || 10;
   const offset = parseInt(req.query.offset, 10) || 0;
   const sort = req.query.sort || 'createdAt';
@@ -310,7 +300,7 @@ exports.getTransactionsByAccountNumber = async (req, res, next) => {
   }
 };
 
-exports.getTransactionsByUserId = async (req, res, next) => {
+export const getTransactionsByUserId = async (req, res, next) => {
   const limit = req.query.limit || 10;
   const offset = req.query.offset || 0;
   const sort = req.query.sort || 'createdAt';
@@ -367,7 +357,7 @@ exports.getTransactionsByUserId = async (req, res, next) => {
   }
 };
 
-exports.getTransactionsByAccountId = async (req, res, next) => {
+export const getTransactionsByAccountId = async (req, res, next) => {
   const limit = parseInt(req.query.limit, 10) || 10;
   const offset = parseInt(req.query.offset, 10) || 0;
   const sort = req.query.sort || 'createdAt';
@@ -435,7 +425,7 @@ exports.getTransactionsByAccountId = async (req, res, next) => {
   }
 };
 
-exports.deleteTransaction = async (req, res, next) => {
+export const deleteTransaction = async (req, res, next) => {
   const { id } = req.params;
   try {
     const transaction = await Transaction.findByPk(id);
@@ -460,7 +450,7 @@ exports.deleteTransaction = async (req, res, next) => {
   }
 };
 
-exports.deleteTransactionsByAccountId = async (req, res, next) => {
+export const deleteTransactionsByAccountId = async (req, res, next) => {
   const { accountId } = req.params;
 
   try {
@@ -494,7 +484,7 @@ exports.deleteTransactionsByAccountId = async (req, res, next) => {
   }
 };
 
-exports.deleteTransactionsByAccountNumber = async (req, res, next) => {
+export const deleteTransactionsByAccountNumber = async (req, res, next) => {
   const { accountNumber } = req.params;
 
   try {
@@ -539,7 +529,7 @@ exports.deleteTransactionsByAccountNumber = async (req, res, next) => {
   }
 };
 
-exports.deleteTransactionsByUserId = async (req, res, next) => {
+export const deleteTransactionsByUserId = async (req, res, next) => {
   const { userId } = req.params;
 
   try {
@@ -573,7 +563,7 @@ exports.deleteTransactionsByUserId = async (req, res, next) => {
   }
 };
 
-exports.reverseTransaction = async (req, res, next) => {
+export const reverseTransaction = async (req, res, next) => {
   const { id } = req.params;
 
   const transaction = await sequelize.transaction();
@@ -645,7 +635,7 @@ exports.reverseTransaction = async (req, res, next) => {
   }
 };
 
-exports.getAccountStatements = async (req, res, next) => {
+export const getAccountStatements = async (req, res, next) => {
   const { userId } = req.params;
   const { startDate, endDate } = req.query;
 

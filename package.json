@@ -1,12 +1,13 @@
 {
   "name": "my-bank-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A RESTful API for a banking system built with Node.js, Express.js, and PostgreSQL",
+  "main": "src/app.js",
+  "type": "module",
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "keywords": [],
   "author": "",

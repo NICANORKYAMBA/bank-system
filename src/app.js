@@ -1,11 +1,17 @@
-const express = require('express');
-const accountsRoutes = require('./routes/accounts');
-const userRoutes = require('./routes/users');
-const transactionsRoutes = require('./routes/transactions');
-const ErrorHandler = require('./middlewares/errorHandler');
+import express from 'express';
+import dotenv from 'dotenv';
+import { Sequelize } from 'sequelize';
+import './models/user.js';
+import './models/accounts.js';
+import './models/transactions.js';
+import './models/userAddress.js';
+import './models/associations.js';
+import accountsRoutes from './routes/accounts.js';
+import userRoutes from './routes/users.js';
+import transactionsRoutes from './routes/transactions.js';
+import ErrorHandler from './middlewares/errorHandler.js';
 
-const { Sequelize } = require('sequelize');
-require('dotenv').config();
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -34,8 +40,6 @@ const sequelize = new Sequelize(
 sequelize.authenticate()
   .then(() => console.log('Database connected...'))
   .catch(err => console.log('Error: ' + err));
-
-require('./models/associations');
 
 app.listen(port, () => {
   console.log(`Banking API listening at http://localhost:${port}`);

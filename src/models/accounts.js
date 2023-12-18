@@ -1,5 +1,5 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../database');
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../database.js';
 
 const Account = sequelize.define('Account', {
   id: {
@@ -47,12 +47,11 @@ const Account = sequelize.define('Account', {
     type: DataTypes.UUID,
     allowNull: false,
     references: {
-      model: 'Users', // name of your model
+      model: 'Users',
       key: 'id'
     }
   }
 }, {
-  // Other model options go here
   timestamps: true,
   hooks: {
     beforeUpdate: (account, options) => {
@@ -61,4 +60,4 @@ const Account = sequelize.define('Account', {
   }
 });
 
-module.exports = Account;
+export default Account;

@@ -1,13 +1,20 @@
-const express = require('express');
-const accountsController = require('../controllers/accountsController');
+import express from 'express';
+import {
+  getAllAccounts,
+  getAccountByNumber,
+  getAccountByName,
+  createAccount,
+  updateAccount,
+  deleteAccount
+} from '../controllers/accountsController.js';
 
 const router = express.Router();
 
-router.post('/', accountsController.createAccount);
-router.get('/', accountsController.getAllAccounts);
-router.get('/:accountNumber', accountsController.getAccountByNumber);
-router.put('/:accountNumber', accountsController.updateAccount);
-router.delete('/:accountNumber', accountsController.deleteAccount);
-router.get('/name/:name', accountsController.getAccountByName);
+router.post('/', createAccount);
+router.get('/', getAllAccounts);
+router.get('/:accountNumber', getAccountByNumber);
+router.put('/:accountNumber', updateAccount);
+router.delete('/:accountNumber', deleteAccount);
+router.get('/name/:name', getAccountByName);
 
-module.exports = router;
+export default router;
