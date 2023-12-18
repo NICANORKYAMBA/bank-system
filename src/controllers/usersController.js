@@ -7,6 +7,10 @@ import nodemailer from 'nodemailer';
 import User from '../models/user.js';
 import UserAddress from '../models/userAddress.js';
 import logger from './logger.js';
+import {
+  handleValidationError,
+  handleDatabaseError
+} from '../middlewares/errorHandler.js';
 
 const saltRounds = 10;
 
@@ -33,15 +37,13 @@ export const getAllUsers = async (req, res, next) => {
       });
     }
   } catch (err) {
-    if (err instanceof Sequelize.ValidationError) {
-      return res.status(400).json({ message: err.message });
-    }
     if (err instanceof Sequelize.DatabaseError) {
-      console.error(err);
-      return res.status(500).json({
-        message: 'Database error: ' + err.message
-      });
+      return handleDatabaseError(res, err);
     }
+    if (err instanceof Sequelize.ValidationError) {
+      return handleValidationError(res, err.message);
+    }
+    logger.error(`Server error while trying to get all accounts: ${err}`);
     next(err);
   }
 };
@@ -62,15 +64,13 @@ export const getUserById = async (req, res, next) => {
       });
     }
   } catch (err) {
-    if (err instanceof Sequelize.ValidationError) {
-      return res.status(400).json({ message: err.message });
-    }
     if (err instanceof Sequelize.DatabaseError) {
-      console.error(err);
-      return res.status(500).json({
-        message: 'Database error: ' + err.message
-      });
+      return handleDatabaseError(res, err);
     }
+    if (err instanceof Sequelize.ValidationError) {
+      return handleValidationError(res, err.message);
+    }
+    logger.error(`Server error while trying to get all accounts: ${err}`);
     next(err);
   }
 };
@@ -126,6 +126,13 @@ export const createUser = async (req, res, next) => {
       message: 'User created', user
     });
   } catch (err) {
+    if (err instanceof Sequelize.DatabaseError) {
+      return handleDatabaseError(res, err);
+    }
+    if (err instanceof Sequelize.ValidationError) {
+      return handleValidationError(res, err.message);
+    }
+    logger.error(`Server error while trying to get all accounts: ${err}`);
     next(err);
   }
 };
@@ -166,10 +173,14 @@ export const loginUser = async (req, res, next) => {
       message: 'Authentication successful', token
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      message: 'An error occurred during authentication'
-    });
+    if (err instanceof Sequelize.DatabaseError) {
+      return handleDatabaseError(res, err);
+    }
+    if (err instanceof Sequelize.ValidationError) {
+      return handleValidationError(res, err.message);
+    }
+    logger.error(`Server error while trying to get all accounts: ${err}`);
+    next(err);
   }
 };
 
@@ -193,7 +204,9 @@ export const forgotPassword = async (req, res, next) => {
       await user.save();
     } catch (err) {
       console.error('Error saving user: ', err);
-      return res.status(500).json({ message: 'Error saving password reset token' });
+      return res.status(500).json({
+        message: 'Error saving password reset token'
+      });
     }
 
     const transporter = nodemailer.createTransport({
@@ -223,12 +236,21 @@ export const forgotPassword = async (req, res, next) => {
     transporter.sendMail(mailOptions, (err, response) => {
       if (err) {
         console.error('Error sending email: ', err);
-        return res.status(500).json({ message: 'Error sending password reset email' });
+        return res.status(500).json({
+          message: 'Error sending password reset email'
+        });
       } else {
         res.status(200).json({ message: 'Password reset link sent' });
       }
     });
   } catch (err) {
+    if (err instanceof Sequelize.DatabaseError) {
+      return handleDatabaseError(res, err);
+    }
+    if (err instanceof Sequelize.ValidationError) {
+      return handleValidationError(res, err.message);
+    }
+    logger.error(`Server error while trying to get all accounts: ${err}`);
     next(err);
   }
 };
@@ -259,7 +281,9 @@ export const updateUser = async (req, res, next) => {
     const [updated] = await User.update(req.body, { where: { id } });
     if (updated) {
       if (address) {
-        const updatedAddress = await UserAddress.update(address, { where: { userId: id } });
+        const updatedAddress = await UserAddress.update(
+          address,
+          { where: { userId: id } });
         if (!updatedAddress) {
           return res.status(400).json({
             message: 'Update failed. No address found to update.'
@@ -282,15 +306,13 @@ export const updateUser = async (req, res, next) => {
         fields: err.fields
       });
     }
-    if (err instanceof Sequelize.ValidationError) {
-      return res.status(400).json({ message: err.message });
-    }
     if (err instanceof Sequelize.DatabaseError) {
-      console.error(err);
-      return res.status(500).json({
-        message: 'Database error: ' + err.message
-      });
+      return handleDatabaseError(res, err);
     }
+    if (err instanceof Sequelize.ValidationError) {
+      return handleValidationError(res, err.message);
+    }
+    logger.error(`Server error while trying to get all accounts: ${err}`);
     next(err);
   }
 };
@@ -330,6 +352,13 @@ export const deleteUser = async (req, res, next) => {
       });
     }
   } catch (err) {
+    if (err instanceof Sequelize.DatabaseError) {
+      return handleDatabaseError(res, err);
+    }
+    if (err instanceof Sequelize.ValidationError) {
+      return handleValidationError(res, err.message);
+    }
+    logger.error(`Server error while trying to get all accounts: ${err}`);
     next(err);
   }
 };

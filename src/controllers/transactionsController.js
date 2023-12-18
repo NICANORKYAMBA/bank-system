@@ -4,7 +4,10 @@ import User from '../models/user.js';
 import sequelize from '../database.js';
 import Sequelize from 'sequelize';
 // import { sendSMS, sendPushNotification } from '../notifications.js';
-import { handleValidationError, handleDatabaseError } from '../middlewares/errorHandler.js';
+import {
+  handleValidationError,
+  handleDatabaseError
+} from '../middlewares/errorHandler.js';
 
 const updateAccountBalance = async (accountId, amount, transaction = null) => {
   const account = await Account.findByPk(accountId);
@@ -27,7 +30,8 @@ export const createTransaction = async (req, res, next) => {
   const { type, amount, sourceAccountId, destinationAccountId, userId, description } = req.body;
 
   if ((type === 'deposit' && amount < 10) || (type !== 'deposit' && amount < 100)) {
-    return handleValidationError(res, `The transaction amount for a ${type} must be at least ${type === 'deposit' ? 10 : 100}`);
+    return handleValidationError(
+      res, `The transaction amount for a ${type} must be at least ${type === 'deposit' ? 10 : 100}`);
   }
 
   const transaction = await sequelize.transaction();
@@ -63,7 +67,8 @@ export const createTransaction = async (req, res, next) => {
         throw new Error('Destination account is not active');
       }
 
-      destinationAccount = await updateAccountBalance(destinationAccountId, amount, transaction);
+      destinationAccount = await updateAccountBalance(
+        destinationAccountId, amount, transaction);
     }
 
     const transactionData = {
