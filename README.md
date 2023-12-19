@@ -67,6 +67,8 @@ These instructions will get you a copy of the project up and running on your loc
 - `PUT /api/accounts/:accountNumber`: Update an account
 - `DELETE /api/accounts/:accountNumber`: Delete an account
 - `GET /api/accounts/name/:name`: Retrieve accounts by name
+- `PUT /api/accounts/:accountNumber/activate`: Activate an account
+- `GET /api/accounts/type/:accountType`: Retrieve accounts by type
 
 ### User Endpoints
 
