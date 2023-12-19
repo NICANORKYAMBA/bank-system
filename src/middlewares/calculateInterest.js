@@ -1,10 +1,10 @@
 import { applyInterest } from '../controllers/accountsController.js';
 import Account from '../models/accounts.js';
 
-async function applyInterestToAllAccounts() {
+async function applyInterestToAllAccounts () {
   const savingsAccounts = await Account.findAll({ where: { accountType: 'savings' } });
 
-  for (let account of savingsAccounts) {
+  for (const account of savingsAccounts) {
     try {
       await applyInterest(account.accountNumber);
     } catch (err) {

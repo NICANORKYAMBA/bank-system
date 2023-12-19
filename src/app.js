@@ -12,6 +12,7 @@ import userRoutes from './routes/users.js';
 import transactionsRoutes from './routes/transactions.js';
 import ErrorHandler from './middlewares/errorHandler.js';
 import applyInterestToAllAccounts from './middlewares/calculateInterest.js';
+import deactivateInactiveAccounts from './middlewares/deactivateInactiveAccounts.js';
 
 dotenv.config();
 
@@ -43,8 +44,14 @@ sequelize.authenticate()
   .then(() => console.log('Database connected...'))
   .catch(err => console.log('Error: ' + err));
 
-cron.schedule('*/2 * * * *', () => {
+cron.schedule('*/4 * * * *', () => {
+  console.log('Applying interest to all savings accounts...');
   applyInterestToAllAccounts();
+});
+
+cron.schedule('*/1 * * * *', () => {
+  console.log('Deactivating inactive accounts...');
+  deactivateInactiveAccounts();
 });
 
 app.listen(port, () => {

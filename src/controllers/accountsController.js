@@ -2,7 +2,6 @@ import Account from '../models/accounts.js';
 import User from '../models/user.js';
 import { Sequelize } from 'sequelize';
 import sequelize from '../database.js';
-import { validationResult } from 'express-validator';
 import {
   handleValidationError,
   handleDatabaseError
@@ -151,8 +150,7 @@ export const getAccountByStatus = async (req, res, next) => {
         message: `Account with status ${status} not found`
       });
     }
-  }
-  catch (err) {
+  } catch (err) {
     if (err instanceof Sequelize.DatabaseError) {
       return handleDatabaseError(res, err);
     }
@@ -209,7 +207,7 @@ export const createAccount = async (req, res, next) => {
     status,
     userId
   } = req.body;
-  
+
   try {
     const user = await User.findByPk(userId);
     if (!user) {
