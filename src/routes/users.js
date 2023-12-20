@@ -8,6 +8,7 @@ import {
   loginUser,
   forgotPassword
 } from '../controllers/usersController.js';
+import { checkCache } from '../redis/redisCache.js';
 
 const router = express.Router();
 
