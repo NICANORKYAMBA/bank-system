@@ -123,3 +123,23 @@
 {"level":"error","message":"Validation error: Validation min on balance failed","service":"user-service"}
 {"level":"error","message":"sendSMS is not defined","service":"user-service"}
 {"level":"error","message":"Destination account is not active","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"invalid input value for enum \"enum_Transactions_type\": \"withdraw\"","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"invalid input syntax for type uuid: \"343cb41-fc83-4fed-9e8b-333c83d7b7d4\"","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"Transfer transaction cannot happen on the same account","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"The userId in the transaction does not match the userId of the source account","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}

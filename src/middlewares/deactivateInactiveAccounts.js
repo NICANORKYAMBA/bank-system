@@ -15,14 +15,21 @@ async function deactivateInactiveAccounts () {
       order: [['transactionDate', 'DESC']]
     });
 
-    const TWO_MINUTES = 2 * 60 * 1000;
-    if (lastTransaction && (Date.now() - new Date(lastTransaction.transactionDate).getTime() > TWO_MINUTES)) {
+    console.log(lastTransaction);
+
+    const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+    if (lastTransaction && (Date.now() - new Date(lastTransaction.transactionDate).getTime() > TWENTY_FOUR_HOURS)) {
       if (account.status !== 'inactive') {
         console.log(`Account with number ${account.accountNumber} is inactive. Updating status...`);
         account.status = 'inactive';
         await account.save();
         console.log(`Account with number ${account.accountNumber} status updated to 'inactive'.`);
       }
+    } else if (!lastTransaction && account.status !== 'inactive') {
+      console.log(`Account with number ${account.accountNumber} has no transactions. Updating status to 'inactive'...`);
+      account.status = 'inactive';
+      await account.save();
+      console.log(`Account with number ${account.accountNumber} status updated to 'inactive'.`);
     } else {
       console.log(`Account with number ${account.accountNumber} is active.`);
     }

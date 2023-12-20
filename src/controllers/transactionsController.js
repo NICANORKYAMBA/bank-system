@@ -41,11 +41,19 @@ export const createTransaction = async (req, res, next) => {
       throw new Error(`Source account with ID ${sourceAccountId} not found`);
     }
 
+    if (sourceAccount.userId !== userId) {
+      throw new Error('The userId in the transaction does not match the userId of the source account');
+    }
+
     if (sourceAccount.status !== 'active') {
       throw new Error('Source account is not active');
     }
 
-    if (type === 'transfer' || type === 'withdrawal') {
+    if (type === 'transfer') {
+      if (sourceAccountId === destinationAccountId) {
+        throw new Error('Transfer transaction cannot happen on the same account');
+      }
+
       if (Number(sourceAccount.balance) < amount) {
         throw new Error('Insufficient balance');
       }

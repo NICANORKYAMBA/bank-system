@@ -44,12 +44,12 @@ sequelize.authenticate()
   .then(() => console.log('Database connected...'))
   .catch(err => console.log('Error: ' + err));
 
-cron.schedule('*/4 * * * *', () => {
+cron.schedule('0 */12 * * *', () => {
   console.log('Applying interest to all savings accounts...');
   applyInterestToAllAccounts();
 });
 
-cron.schedule('*/1 * * * *', () => {
+cron.schedule('0 */12 * * *', () => {
   console.log('Deactivating inactive accounts...');
   deactivateInactiveAccounts();
 });
