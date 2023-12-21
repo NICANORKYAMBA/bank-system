@@ -24,10 +24,10 @@ router.post('/:id/reverse', reverseTransaction);
 
 router.get('/account/:accountId', getTransactionsByAccountId);
 router.delete('/account/:accountId', deleteTransactionsByAccountId);
-router.delete('/account/:accountNumber', deleteTransactionsByAccountNumber);
+router.delete('/accountNumber/:accountNumber', deleteTransactionsByAccountNumber);
 router.delete('/user/:userId', deleteTransactionsByUserId);
 router.get('/statement/:accountNumber', getAccountStatement);
 router.get('/user/:userId', getTransactionsByUserId);
-router.get('/account/:accountNumber', getTransactionsByAccountNumber);
+router.get('/number/:accountNumber', getTransactionsByAccountNumber);
 
 export default router;
