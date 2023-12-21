@@ -370,6 +370,14 @@ export const getTransactionsByUserId = [
     const { userId } = req.params;
     const { limit, offset, sort, order } = req.query;
 
+    // Check if user exists
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: `User with ID ${userId} not found`
+      });
+    }
+
     try {
       const transactions = await Transaction.findAll({
         where: {
