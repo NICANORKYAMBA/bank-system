@@ -28,6 +28,6 @@ router.delete('/account/:accountNumber', deleteTransactionsByAccountNumber);
 router.delete('/user/:userId', deleteTransactionsByUserId);
 router.get('/statement/:accountNumber', getAccountStatement);
 router.get('/user/:userId', getTransactionsByUserId);
-router.get('/account/:accountNumber', getTransactionsByAccountNumber);
+router.get('/number/:accountNumber', getTransactionsByAccountNumber);
 
 export default router;

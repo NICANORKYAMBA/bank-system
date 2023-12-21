@@ -144,3 +144,13 @@
 {"level":"error","message":"The userId in the transaction does not match the userId of the source account","service":"user-service"}
 {"level":"error","message":"sendSMS is not defined","service":"user-service"}
 {"level":"error","message":"Unexpected token } in JSON at position 62","service":"user-service"}
+{"level":"error","message":"Cannot read properties of undefined (reading '_modelAttribute')","service":"user-service"}
+{"level":"error","message":"Cannot read properties of undefined (reading '_modelAttribute')","service":"user-service"}
+{"level":"error","message":"Cannot read properties of undefined (reading '_modelAttribute')","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"Cannot read properties of undefined (reading '_modelAttribute')","service":"user-service"}
+{"level":"error","message":"Cannot read properties of undefined (reading '_modelAttribute')","service":"user-service"}
