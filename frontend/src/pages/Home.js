@@ -5,15 +5,14 @@ import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import CreditCardIcon from '@material-ui/icons/CreditCard';
 import DescriptionIcon from '@material-ui/icons/Description';
 import styles from './Home.module.css';
-//import Footer from '../components/Footer';
 
 function Home() {
   return (
     <Box className={styles.homeContainer}>
       <Container className={styles.homeContent} maxWidth={false}>
-        <Grid container spacing={3} alignItems="center" justify="center">
+        <Grid container spacing={3} alignItems="center" justifyContent="center">
           <Grid item xs={12} sm={6} md={4} lg={3}>
-            <AccountBalanceIcon className={styles.homeIcon} />
+            <AccountBalanceIcon className={styles.homeIcon} fontSize="inherit" />
           </Grid>
           <Grid item xs={12} sm={6} md={8} lg={9}>
             <Typography variant="h4" component="h1" gutterBottom>
@@ -26,6 +25,7 @@ function Home() {
               className={styles.homeButton}
               variant="contained"
               size="large"
+              startIcon={<AccountBalanceIcon />}
             >
               Login
             </Button>
@@ -33,6 +33,7 @@ function Home() {
               className={styles.homeButtonOutlined}
               variant="outlined"
               size="large"
+              startIcon={<DescriptionIcon />}
             >
               Register
             </Button>
@@ -40,7 +41,7 @@ function Home() {
         </Grid>
       </Container>
       <Container maxWidth={false} className={styles.homeFeatureSection}>
-        <Grid container spacing={3} alignItems="center" justify="center">
+        <Grid container spacing={3} alignItems="center" justifyContent="center">
           <Grid item xs={12} sm={6} md={4} lg={3}>
             <MonetizationOnIcon className={styles.homeFeatureIcon} />
             <Typography variant="h6" gutterBottom>

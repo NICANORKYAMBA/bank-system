@@ -1,11 +1,23 @@
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #2ecc71;
+  --highlight-color: #f39c12;
+  --light-color: #ecf0f1;
+  --dark-color: #2c3e50;
+}
+
 .homeContainer {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  width: 100%;
-  background: linear-gradient(45deg, #1e3c72 0%, #2a5298 100%);
+  align-items: center;
+  justify-content: center;
+  max-height: 100vh;
   font-family: 'Poppins', sans-serif;
-  overflow: hidden;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: var(--light-color);
+  padding: 4rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .homeContent {
@@ -13,84 +25,58 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-grow: 1;
-  color: white;
   text-align: center;
-  padding: 80px 20px;
+  max-width: 1200px;
+  margin-bottom: 2rem;
+  gap: 2rem;
 }
 
 .homeIcon {
-  font-size: 5rem;
-  margin-bottom: 20px;
-  color: #ebc60d;
+  font-size: 10rem;
+  color: var(--highlight-color);
 }
 
-.homeButton,
-.homeButtonOutlined {
-  margin: 15px;
-  padding: 12px 24px;
-  font-size: 1rem;
+.homeButton, .homeButtonOutlined {
+  margin: 2rem;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
   font-weight: bold;
   text-transform: uppercase;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s;
 }
 
 .homeButton {
-  background-color: #f9d423;
-  color: #1e3c72;
+  background-color: var(--highlight-color);
+  color: var(--primary-color);
 }
 
-.homeButton:hover {
-  background-color: #f9b500;
+.homeButton:hover,
+.homeButtonOutlined:hover {
+  background-color: var(--secondary-color);
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .homeButtonOutlined {
-  border: 2px solid #f9d423;
-  color: #f9d423;
-}
-
-.homeButtonOutlined:hover {
-  border-color: #f9b500;
-  color: #f9b500;
+  border: 2px solid var(--highlight-color);
+  color: var(--highlight-color);
 }
 
 .homeFeatureSection {
-  background-color: #ffffff;
-  padding: 40px;
-  margin-top: 40px;
+  background-color: var(--light-color);
+  padding: 4rem;
   border-radius: 10px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
-.homeFeatureSection h5 {
-  color: #1e3c72;
-  margin-bottom: 15px;
+.homeFeatureIcon {
+  font-size: 3.5rem;
+  color: var(--primary-color);
+  transition: color 0.3s;
 }
 
-.homeFeatureSection p {
-  color: #4a4a4a;
-  line-height: 1.6;
-}
-
-@media (max-width: 768px) {
-  .homeContent {
-    padding: 60px 20px;
-  }
-
-  .homeIcon {
-    font-size: 4rem;
-  }
-
-  .homeButton,
-  .homeButtonOutlined {
-    margin: 10px;
-    padding: 10px 20px;
-    font-size: 0.9rem;
-  }
-
-  .homeFeatureSection {
-    padding: 20px;
-  }
+.homeFeatureIcon:hover {
+  color: var(--highlight-color);
 }
