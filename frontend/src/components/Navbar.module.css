@@ -1,0 +1,26 @@
+.navbar {
+  background-color: #1e3c72;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.icon {
+  margin-right: 20px;
+  color: #f9d423;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+}
+
+.button {
+  color: white;
+  text-decoration: none;
+  margin-left: 20px;
+}

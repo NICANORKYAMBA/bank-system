@@ -1,0 +1,96 @@
+.homeContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(45deg, #1e3c72 0%, #2a5298 100%);
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden;
+}
+
+.homeContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  color: white;
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.homeIcon {
+  font-size: 5rem;
+  margin-bottom: 20px;
+  color: #ebc60d;
+}
+
+.homeButton,
+.homeButtonOutlined {
+  margin: 15px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.homeButton {
+  background-color: #f9d423;
+  color: #1e3c72;
+}
+
+.homeButton:hover {
+  background-color: #f9b500;
+}
+
+.homeButtonOutlined {
+  border: 2px solid #f9d423;
+  color: #f9d423;
+}
+
+.homeButtonOutlined:hover {
+  border-color: #f9b500;
+  color: #f9b500;
+}
+
+.homeFeatureSection {
+  background-color: #ffffff;
+  padding: 40px;
+  margin-top: 40px;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.homeFeatureSection h5 {
+  color: #1e3c72;
+  margin-bottom: 15px;
+}
+
+.homeFeatureSection p {
+  color: #4a4a4a;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .homeContent {
+    padding: 60px 20px;
+  }
+
+  .homeIcon {
+    font-size: 4rem;
+  }
+
+  .homeButton,
+  .homeButtonOutlined {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+
+  .homeFeatureSection {
+    padding: 20px;
+  }
+}
