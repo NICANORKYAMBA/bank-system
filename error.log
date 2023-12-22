@@ -159,3 +159,4 @@
 {"level":"error","message":"Cannot read properties of undefined (reading '_modelAttribute')","service":"user-service"}
 {"level":"error","message":"Transaction with ID 123e4567-e89b-12d3-a456-426614174000 not found","service":"user-service"}
 {"level":"error","message":"Transaction d8355cdc-7f6a-45c3-9894-2209eb94b6c3 is already reversed","service":"user-service"}
+{"level":"error","message":"Cannot read properties of undefined (reading '_modelAttribute')","service":"user-service"}
