@@ -160,11 +160,22 @@ export const getAccountByType = [
         offset,
         order: [[sort, order]]
       });
-      if (account) {
-        res.status(200).json(account);
+      if (account.length > 0) {
+        res.status(200).json({
+          message: `${account.length} accounts of type ${accountType} retrieved`,
+          limit,
+          offset,
+          sort,
+          order,
+          accounts: account
+        });
       } else {
         res.status(404).json({
-          message: `Account with type ${accountType} not found`
+          message: `No accounts of type ${accountType} found`,
+          limit,
+          offset,
+          sort,
+          order
         });
       }
     } catch (err) {
@@ -205,11 +216,22 @@ export const getAccountByStatus = [
         offset,
         order: [[sort, order]]
       });
-      if (account) {
-        res.status(200).json(account);
+      if (account.length > 0) {
+        res.status(200).json({
+          message: `${account.length} accounts with status ${status} retrieved`,
+          limit,
+          offset,
+          sort,
+          order,
+          accounts: account
+        });
       } else {
         res.status(404).json({
-          message: `Account with status ${status} not found`
+          message: `No accounts with status ${status} found`,
+          limit,
+          offset,
+          sort,
+          order
         });
       }
     } catch (err) {
@@ -258,10 +280,21 @@ export const getAccountsByUserId = [
         order: [[sort, order]]
       });
       if (accounts.length > 0) {
-        res.status(200).json(accounts);
+        res.status(200).json({
+          message: `${accounts.length} accounts found for user with ID ${userId}`,
+          limit,
+          offset,
+          sort,
+          order,
+          accounts
+        });
       } else {
         res.status(404).json({
-          message: `No accounts found for user with ID ${userId}`
+          message: `No accounts found for user with ID ${userId}`,
+          limit,
+          offset,
+          sort,
+          order
         });
       }
     } catch (err) {
