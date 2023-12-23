@@ -1,0 +1,58 @@
+:root {
+  --primary-color: #08c757;
+  --secondary-color: #3498db;
+  --highlight-color: #f1c40f;
+  --light-color: #ecf0f1;
+  --dark-color: #2c3e50;
+  --heading-font: 'Roboto', sans-serif;
+  --default-padding: 1rem;
+  --default-margin: 2rem;
+  --default-border-radius: 10px;
+}
+
+.registerForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--default-padding);
+  background-color: var(--light-color);
+  border-radius: var(--default-border-radius);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+.registerForm h4 {
+  margin-bottom: var(--default-margin);
+  color: var(--primary-color);
+  font-family: var(--heading-font);
+}
+
+.registerInput {
+  width: 100%;
+  margin-bottom: var(--default-margin);
+  color: var(--dark-color);
+}
+
+.registerButton {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: var(--default-margin);
+  background-color: var(--primary-color);
+  color: var(--light-color);
+  border: none;
+  border-radius: var(--default-border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.registerButton:hover {
+  background-color: var(--highlight-color);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .registerForm {
+    padding: var(--default-padding);
+  }
+}
