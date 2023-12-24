@@ -1,0 +1,12 @@
+.container {
+  margin-top: 2rem;
+}
+
+.table {
+  min-width: 650px;
+  padding: 20px;
+}
+
+.tableCell {
+  font-size: 18px;
+}
