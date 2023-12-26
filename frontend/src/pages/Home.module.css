@@ -1,172 +1,83 @@
-:root {
-  --primary-color: #08c757;
-  --secondary-color: #3498db;
-  --highlight-color: #f1c40f;
-  --light-color: #ecf0f1;
-  --dark-color: #2c3e50;
-  --heading-font: 'Roboto', sans-serif;
-  --default-padding: 1rem;
-  --default-margin: 2rem;
-  --default-border-radius: 10px;
+.container {
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.homeContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  font-family: var(--heading-font);
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-  color: var(--light-color);
-  padding: var(--default-padding);
-  border-radius: var(--default-border-radius);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.card {
+  margin-bottom: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.homeContent {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  align-items: center;
-  justify-content: center;
+.darkMode {
+  background-color: #333;
+  color: #fff;
+}
+
+.header {
   text-align: center;
-  max-width: 1200px;
-  margin-bottom: var(--default-margin);
-  gap: var(--default-margin);
+  margin-bottom: 20px;
+}
+
+.authButtonsContainer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.featureCard {
+  padding: 20px;
+  text-align: center;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.featureIcon {
+  font-size: 2em;
+  margin-bottom: 10px;
+  color: #007bff;
+}
+
+.newsUpdateCard {
+  background-color: #f8f9fa;
+}
+
+.promotionCard {
+  background-color: #d4edda;
+}
+
+.welcomeMessage {
+  text-align: center;
 }
 
 .homeIcon {
-  font-size: 10rem;
-  color: var(--highlight-color);
-  transition: transform 0.3s;
+  text-align: center;
+  margin-top: 20px;
 }
 
-.homeIcon:hover {
-  transform: scale(1.1);
+.loginButton,
+.registerButton {
+  margin: 10px;
+  font-size: 1.2em;
 }
 
-.homeButtonOutlined,
-.homeButton {
-  margin: var(--default-margin);
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  border-radius: var(--default-border-radius);
+.dialogContent {
+  padding: 20px;
+}
+
+.darkModeToggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s;
 }
 
-.homeButton {
-  background-color: var(--highlight-color);
-  color: var(--primary-color);
-}
-
-.homeButton:hover,
-.homeButtonOutlined:hover {
-  background-color: var(--secondary-color);
-  transform: scale(1.1);
-  animation: buttonAnimation 1s ease-in-out;
-}
-
-.homeButtonOutlined {
-  border: 2px solid var(--highlight-color);
-  color: var(--highlight-color);
-}
-
-.homeFeatureSection {
-  background-color: var(--light-color);
-  color: var(--dark-color);
-  padding: var(--default-padding);
-  border-radius: var(--default-border-radius);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  gap: var(--default-margin);
-}
-
-.homeFeatureIcon {
-  font-size: 3.5rem;
-  color: var(--primary-color);
-  transition: color 0.3s, transform 0.3s;
-}
-
-.homeFeatureIcon:hover {
-  color: var(--highlight-color);
-  transform: scale(1.1);
-}
-
-/* Add animations */
-@keyframes buttonAnimation {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-/* Add media queries for responsiveness */
-@media (max-width: 768px) {
-  .homeContainer {
-    padding: var(--default-padding);
-  }
-
-  .homeIcon {
-    font-size: 5rem;
-  }
-
-  .homeFeatureIcon {
-    font-size: 2rem;
-  }
-
-  .homeButton,
-  .homeButtonOutlined {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.8rem;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  .homeContainer {
-    padding: var(--default-padding);
-  }
-
-  .homeIcon {
-    font-size: 7rem;
-  }
-
-  .homeFeatureIcon {
-    font-size: 3rem;
-  }
-
-  .homeButton,
-  .homeButtonOutlined {
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem;
-  }
-}
-
-@media (min-width: 1025px) {
-  .homeContainer {
-    padding: var(--default-padding);
-  }
-
-  .homeIcon {
-    font-size: 10rem;
-  }
-
-  .homeFeatureIcon {
-    font-size: 3.5rem;
-  }
-
-  .homeButton,
-  .homeButtonOutlined {
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
-  }
-}
-
-/* Add a dark mode */
-body.dark-mode {
-  --primary-color: #7f8c8d;
-  --secondary-color: #95a5a6;
-  --highlight-color: #f1c40f;
-  --light-color: #2c3e50;
-  --dark-color: #ecf0f1;
+.darkModeToggle:hover {
+  background-color: #0056b3;
 }
