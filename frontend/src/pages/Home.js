@@ -14,7 +14,9 @@ import {
   CardContent,
   Divider,
   List,
-  ListItem
+  ListItem,
+  Paper,
+  makeStyles,
 } from '@material-ui/core';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -36,48 +38,191 @@ import {
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 
-function NewsAndUpdatesSection () {
-  // Sample news and updates data
+const useStyles = makeStyles((theme) => ({
+  sectionContainer: {
+    padding: theme.spacing(4),
+    backgroundColor: theme.palette.background.paper,
+    borderRadius: theme.spacing(2),
+    boxShadow: theme.shadows[3],
+    marginBottom: theme.spacing(3),
+  },
+  card: {
+    borderRadius: theme.spacing(2),
+    boxShadow: theme.shadows[2],
+    marginBottom: theme.spacing(3),
+    transition: 'transform 0.2s',
+    '&:hover': {
+      transform: 'scale(1.02)',
+    },
+  },
+  cardContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  cardTitle: {
+    fontWeight: 'bold',
+    marginBottom: theme.spacing(1),
+  },
+  cardDescription: {
+    color: theme.palette.text.secondary,
+    marginBottom: theme.spacing(2),
+  },
+  button: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark,
+    },
+  },
+  cardDate: {
+    color: theme.palette.text.secondary,
+    marginBottom: theme.spacing(1),
+  },
+  cardContentText: {
+    color: theme.palette.text.primary,
+  },
+  welcomeContainer: {
+    backgroundColor: theme.palette.primary.main,
+    padding: theme.spacing(4),
+    borderRadius: theme.spacing(2),
+    color: theme.palette.primary.contrastText,
+    boxShadow: theme.shadows[3],
+  },
+  welcomeTitle: {
+    fontWeight: 'bold',
+    marginBottom: theme.spacing(2),
+    color: theme.palette.secondary.main,
+    textShadow: `1px 1px 2px ${theme.palette.primary.dark}`,
+  },
+  welcomeText: {
+    fontSize: theme.typography.body1.fontSize,
+    color: theme.palette.common.white,
+    lineHeight: 1.6,
+  },
+  iconContainer: {
+    textAlign: 'center',
+    marginTop: theme.spacing(0),
+  },
+  icon: {
+    fontSize: '7em',
+    color: theme.palette.primary.main,
+    borderRadius: '50%',
+    padding: theme.spacing(3),
+    backgroundColor: theme.palette.common.white,
+  },
+  tooltip: {
+    fontSize: theme.typography.body1.fontSize,
+    fontWeight: 'bold',
+  },
+  loginButton: {
+    backgroundColor: '#1976D2',
+    color: theme.palette.common.white,
+    padding: theme.spacing(1.5, 4),
+    borderRadius: theme.spacing(1),
+    fontSize: '1.2em',
+    marginTop: theme.spacing(6),
+    marginRight: theme.spacing(2),
+    '&:hover': {
+      backgroundColor: '#135895',
+    },
+  },
+  registerButton: {
+    backgroundColor: 'transparent',
+    color: theme.palette.primary.main,
+    border: `2px solid ${theme.palette.primary.main}`,
+    padding: theme.spacing(1.5, 4),
+    borderRadius: theme.spacing(1),
+    fontSize: '1.2em',
+    marginTop: theme.spacing(6),
+    '&:hover': {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.common.white,
+    },
+  },
+  section: {
+    padding: theme.spacing(6),
+    backgroundColor: theme.palette.background.paper,
+    borderRadius: theme.spacing(2),
+    boxShadow: theme.shadows[3],
+    marginTop: theme.spacing(14),
+    marginBottom: theme.spacing(3),
+  },
+  featureItem: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: theme.spacing(3),
+    textAlign: 'center',
+    transition: 'transform 0.3s ease-in-out',
+    minHeight: '250px',
+    height: '50%',
+    '&:hover': {
+      transform: 'scale(1.1)',
+    },
+  },
+  featureIcon: {
+    fontSize: '4em',
+    marginBottom: theme.spacing(2),
+    color: theme.palette.primary.main,
+  },
+  featureTitle: {
+    fontWeight: 'bold',
+    marginBottom: theme.spacing(1),
+  },
+  featureDescription: {
+    color: theme.palette.text.secondary,
+  },
+  darkMode: {
+    backgroundColor: theme.palette.background.default,
+    color: theme.palette.text.primary,
+  },
+}));
+
+function NewsAndUpdatesSection() {
+  const classes = useStyles();
+
   const newsUpdates = [
     {
       title: 'FinTrust Bank Announces New Mobile App Features',
       date: 'December 15, 2022',
-      content: 'Explore the latest features and enhancements in our mobile banking app. Stay connected with your finances on the go!'
+      content:
+        'Explore the latest features and enhancements in our mobile banking app. Stay connected with your finances on the go!',
     },
     {
       title: 'Financial Tips for a Successful Investment Journey',
       date: 'November 28, 2022',
-      content: 'Learn valuable insights and tips for making successful investments. Our experts share their advice for financial growth.'
-    }
+      content:
+        'Learn valuable insights and tips for making successful investments. Our experts share their advice for financial growth.',
+    },
   ];
 
   return (
-    <Grid item xs={12}>
+    <Grid item xs={12} className={classes.sectionContainer}>
       <Container maxWidth='md'>
         <Typography variant='h4' component='h2' gutterBottom>
           News and Updates
         </Typography>
 
-        {/* News Feed */}
         <List>
           {newsUpdates.map((update, index) => (
             <React.Fragment key={index}>
               <ListItem>
-                <Card>
-                  <CardContent>
-                    <Typography variant='h6' gutterBottom>
+                <Card className={classes.card}>
+                  <CardContent className={classes.cardContent}>
+                    <Typography variant='h6' className={classes.cardTitle}>
                       {update.title}
                     </Typography>
-                    <Typography variant='subtitle2' color='textSecondary'>
+                    <Typography variant='subtitle2' className={classes.cardDate}>
                       {update.date}
                     </Typography>
-                    <Typography variant='body1' paragraph>
+                    <Typography variant='body1' className={classes.cardContentText}>
                       {update.content}
                     </Typography>
                   </CardContent>
                 </Card>
               </ListItem>
-              <Divider />
+              {index !== newsUpdates.length - 1 && <Divider />}
             </React.Fragment>
           ))}
         </List>
@@ -86,40 +231,48 @@ function NewsAndUpdatesSection () {
   );
 }
 
-function PromotionsAndOffersSection () {
-  // Sample promotions and offers data
+function PromotionsAndOffersSection() {
+  const classes = useStyles();
+
   const promotions = [
     {
       title: 'New Customer Welcome Bonus',
-      description: 'Open an account and get a $50 welcome bonus! Limited time offer for new customers.',
+      description:
+        'Open an account and get a $50 welcome bonus! Limited time offer for new customers.',
       buttonText: 'Learn More',
-      buttonLink: '/welcome-bonus'
+      buttonLink: '/welcome-bonus',
     },
     {
       title: 'Holiday Savings Special',
-      description: 'Save big this holiday season with our special savings account. Earn higher interest rates for a limited time.',
+      description:
+        'Save big this holiday season with our special savings account. Earn higher interest rates for a limited time.',
       buttonText: 'Explore Savings',
-      buttonLink: '/holiday-savings'
-    }
+      buttonLink: '/holiday-savings',
+    },
   ];
 
   return (
-    <Grid item xs={12}>
+    <Grid item xs={12} className={classes.sectionContainer}>
       <Container maxWidth='md'>
         <Typography variant='h4' component='h2' gutterBottom>
           Promotions and Offers
         </Typography>
 
         {promotions.map((promotion, index) => (
-          <Card key={index} variant='outlined' style={{ marginBottom: '20px' }}>
-            <CardContent>
-              <Typography variant='h6' component='div' gutterBottom>
+          <Card key={index} className={classes.card} variant='outlined'>
+            <CardContent className={classes.cardContent}>
+              <Typography variant='h6' className={classes.cardTitle}>
                 {promotion.title}
               </Typography>
-              <Typography variant='body2' color='text.secondary'>
+              <Typography variant='body2' className={classes.cardDescription}>
                 {promotion.description}
               </Typography>
-              <Button variant='contained' href={promotion.buttonLink} target='_blank'>
+              <Button
+                variant='contained'
+                href={promotion.buttonLink}
+                target='_blank'
+                className={classes.button}
+              >
                 {promotion.buttonText}
               </Button>
             </CardContent>
@@ -130,31 +283,41 @@ function PromotionsAndOffersSection () {
   );
 }
 
-function WelcomeMessage () {
+function WelcomeMessage() {
+  const classes = useStyles();
+
   return (
-    <Grid item xs={12} sm={8} md={9} lg={10} style={{ textAlign: 'center' }}>
-      <Typography variant='h4' component='h1' gutterBottom>
-        Welcome to FinTrust Bank
-      </Typography>
-      <Typography variant='body1' paragraph>
-        Your trusted partner for secure and efficient banking services.
-        We prioritize your financial well-being and offer a range of solutions to meet your needs.
-      </Typography>
+    <Grid item xs={12} sm={8} md={9} lg={10} className={classes.welcomeContainer}>
+      <Container>
+        <Typography variant='h4' component='h1' className={classes.welcomeTitle} gutterBottom>
+          Welcome to FinTrust Bank
+        </Typography>
+        <Typography variant='body1' className={classes.welcomeText} paragraph>
+          Your trusted partner for secure and efficient banking services.
+          We prioritize your financial well-being and offer a range of solutions to meet your needs.
+        </Typography>
+      </Container>
     </Grid>
   );
 }
 
-function HomeIcon () {
+function HomeIcon() {
+  const classes = useStyles();
+
   return (
-    <Grid item xs={12} style={{ textAlign: 'center', marginTop: '20px' }}>
-      <Tooltip title='FinTrust Bank'>
-        <AccountBalanceIcon fontSize='inherit' style={{ fontSize: '5em' }} />
+    <Grid item xs={12} className={classes.iconContainer}>
+      <Tooltip title='FinTrust Bank' classes={{ tooltip: classes.tooltip }}>
+        <Box className={classes.icon}>
+          <AccountBalanceIcon fontSize='inherit' />
+        </Box>
       </Tooltip>
     </Grid>
   );
 }
 
-function LoginButton ({ onClick }) {
+function LoginButton({ onClick }) {
+  const classes = useStyles();
+
   return (
     <Button
       variant='contained'
@@ -162,14 +325,16 @@ function LoginButton ({ onClick }) {
       startIcon={<AccountBalanceIcon />}
       onClick={onClick}
       aria-label='Login'
-      style={{ margin: '10px', fontSize: '1.2em' }}
+      className={classes.loginButton}
     >
       Login
     </Button>
   );
 }
 
-function RegisterButton ({ onClick }) {
+function RegisterButton({ onClick }) {
+  const classes = useStyles();
+
   return (
     <Button
       variant='outlined'
@@ -177,7 +342,7 @@ function RegisterButton ({ onClick }) {
       startIcon={<DescriptionIcon />}
       onClick={onClick}
       aria-label='Register'
-      style={{ margin: '10px', fontSize: '1.2em' }}
+      className={classes.registerButton}
     >
       Register
     </Button>
@@ -192,9 +357,11 @@ function AuthButtonsContainer ({ children }) {
   );
 }
 
-function FeaturesSection ({ features }) {
+function FeaturesSection({ features }) {
+  const classes = useStyles();
+
   return (
-    <Grid item xs={12}>
+    <Grid item xs={12} className={classes.section}>
       <Container maxWidth='md'>
         <Typography variant='h4' component='h2' gutterBottom>
           Key Features
@@ -202,11 +369,17 @@ function FeaturesSection ({ features }) {
         <Grid container spacing={3} alignItems='stretch' justifyContent='center'>
           {features.map((feature, index) => (
             <Grid key={index} item xs={12} sm={6} md={4} lg={4}>
-              <Tooltip title={feature.title}>{feature.icon}</Tooltip>
-              <Typography variant='h6' gutterBottom>
-                {feature.title}
-              </Typography>
-              <Typography variant='body2'>{feature.description}</Typography>
+              <Paper elevation={3} className={classes.featureItem}>
+                <Tooltip title={feature.title}>
+                  <span className={classes.featureIcon}>{feature.icon}</span>
+                </Tooltip>
+                <Typography variant='h6' className={classes.featureTitle} gutterBottom>
+                  {feature.title}
+                </Typography>
+                <Typography variant='body2' className={classes.featureDescription}>
+                  {feature.description}
+                </Typography>
+              </Paper>
             </Grid>
           ))}
         </Grid>
@@ -305,11 +478,13 @@ function Dialogs ({ showLogin, showRegister, handleClose }) {
   );
 }
 
-function Home () {
+function Home() {
   const dispatch = useDispatch();
   const isDarkMode = useSelector((state) => state.isDarkMode);
   const showLogin = useSelector((state) => state.showLogin);
   const showRegister = useSelector((state) => state.showRegister);
+
+  const classes = useStyles();
 
   const handleLoginClick = () => {
     dispatch(showLogin());
@@ -329,7 +504,7 @@ function Home () {
   };
 
   return (
-    <Box className={`${isDarkMode ? 'darkMode' : ''}`}>
+    <Box className = {`${isDarkMode ? classes.darkMode : ''}`}>
       <DarkModeToggle toggleDarkMode={handleToggleDarkMode} />
       <Container>
         <Header
