@@ -7,14 +7,14 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'flex-start',
-    minHeight: '100vh',
+    minHeight: '10vh',
     '& > *': {
       margin: theme.spacing(1)
     }
   }
 }));
 
-function ParentComponent () {
+function AuthButtonsContainer () {
   const classes = useStyles();
 
   return (
@@ -25,4 +25,4 @@ function ParentComponent () {
   );
 }
 
-export default ParentComponent;
+export default AuthButtonsContainer;
