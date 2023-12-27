@@ -1,8 +1,9 @@
 import React from 'react';
 import HomeIcon from './HomeIcon';
 import WelcomeMessage from './WelcomeMessage';
-import LoginButton from './LoginButton';
-import RegisterButton from './RegisterButton';
+//import LoginButton from './LoginButton';
+//import RegisterButton from './RegisterButton';
+import AuthButtonsContainer from './AuthButtonsContainer';
 import FeaturesSection from './FeaturesSection';
 import NewsAndUpdatesSection from './NewsAndUpdatesSection';
 import PromotionsAndOffersSection from './PromotionsAndOffersSection';
@@ -13,9 +14,8 @@ function HomePage () {
     <div>
       <HomeIcon />
       <WelcomeMessage />
-      <LoginButton />
-      <RegisterButton />
       <DarkModeToggle />
+      <AuthButtonsContainer />
       <FeaturesSection />
       <NewsAndUpdatesSection />
       <PromotionsAndOffersSection />
