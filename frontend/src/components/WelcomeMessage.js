@@ -11,11 +11,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(4),
     borderRadius: theme.spacing(2),
     color: '#ffffff',
-    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-    transition: '0.3s',
-    '&:hover': {
-      transform: 'scale(1.02)'
-    }
+    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)'
   },
   welcomeTitle: {
     fontWeight: 600,
