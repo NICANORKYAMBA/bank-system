@@ -112,7 +112,7 @@ function LoginForm () {
   };
 
   return (
-    <Grid container justify='center'>
+    <Grid container justifyContent='center'>
       <Paper className={classes.loginForm}>
         <Typography variant='h4' align='center' className={classes.title}>
           Login
