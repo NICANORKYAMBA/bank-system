@@ -1,41 +1,58 @@
+import React, { useState } from 'react';
 import {
   Button,
+  Dialog,
   makeStyles
 } from '@material-ui/core';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
+import LoginForm from './LoginForm';
 
 const useStyles = makeStyles((theme) => ({
   loginButton: {
     backgroundColor: '#1976D2',
     color: theme.palette.common.white,
-    padding: theme.spacing(1.5, 4),
+    padding: theme.spacing(1, 2),
     borderRadius: theme.spacing(1),
-    fontSize: '1.2em',
+    fontSize: '1em',
     marginTop: theme.spacing(6),
     marginRight: theme.spacing(2),
-    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', // add a subtle shadow
-    transition: '0.3s', // add a transition for hover effect
+    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+    transition: '0.3s',
     '&:hover': {
       backgroundColor: '#135895',
-      transform: 'scale(1.1)' // scale the button on hover
+      transform: 'scale(1.1)'
     }
   }
 }));
 
-function LoginButton ({ onClick, className }) {
+function LoginButton ({ className }) {
   const classes = useStyles();
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
-    <Button
-      variant='contained'
-      size='large'
-      startIcon={<AccountBalanceIcon />}
-      onClick={onClick}
-      aria-label='Login'
-      className={`${classes.loginButton} ${className}`}
-    >
-      Login
-    </Button>
+    <div>
+      <Button
+        variant='contained'
+        size='large'
+        startIcon={<AccountBalanceIcon />}
+        onClick={handleClickOpen}
+        aria-label='Login'
+        className={`${classes.loginButton} ${className}`}
+      >
+        Login
+      </Button>
+      <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
+        <LoginForm handleClose={handleClose} />
+      </Dialog>
+    </div>
   );
 }
 
