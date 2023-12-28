@@ -10,13 +10,13 @@ const useStyles = makeStyles((theme) => ({
   iconContainer: {
     textAlign: 'center',
     marginTop: theme.spacing(0),
-    backgroundColor: '#093A3E'
+    backgroundColor: '#093A3E',
+    height: '20vh'
   },
   icon: {
     fontSize: '5em',
-    color: '#040303', // set the color to #040303
+    color: '#040303',
     padding: theme.spacing(3),
-    // backgroundColor: theme.palette.common.white,
     boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)'
   },
   tooltip: {
