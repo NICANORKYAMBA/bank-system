@@ -9,8 +9,6 @@ import {
 } from '../middlewares/errorHandler.js';
 import logger from './logger.js';
 
-const INTEREST_RATE = 0.05;
-
 const getAccount = async (accountNumber) => {
   return await Account.findOne({ where: { accountNumber } });
 };
@@ -512,51 +510,6 @@ export const deleteAccount = [
       }
       logger.error(`Server error while trying to delete account: ${err}`);
       next(err);
-    }
-  }
-];
-
-export const applyInterest = [
-  param('accountNumber').isString().withMessage('Account number must be a string'),
-  async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { accountNumber } = req.params;
-    try {
-      const account = await Account.findOne({ where: { accountNumber } });
-      if (!account) {
-        throw new Error(`Account with number ${accountNumber} not found`);
-      }
-
-      if (account.status !== 'active') {
-        console.log(`Account with number ${accountNumber} is not active. Skipping interest application.`);
-        return;
-      }
-
-      const transaction = await sequelize.transaction();
-
-      try {
-        const [updatedRows] = await Account.update(
-          { balance: sequelize.literal(`balance * ${1 + INTEREST_RATE}`) },
-          { where: { accountNumber } },
-          { transaction }
-        );
-
-        if (updatedRows > 0) {
-          await transaction.commit();
-          console.log(`Interest applied to account with number ${accountNumber}`);
-        } else {
-          throw new Error('Interest not applied');
-        }
-      } catch (err) {
-        await transaction.rollback();
-        throw err;
-      }
-    } catch (err) {
-      console.error(`Server error while trying to apply interest to account: ${err}`);
     }
   }
 ];

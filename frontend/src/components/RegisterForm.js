@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   Button,
   TextField,
@@ -134,6 +135,8 @@ const RegisterForm = () => {
     return isValid;
   };
 
+  const history = useHistory();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -146,6 +149,8 @@ const RegisterForm = () => {
       console.log(response.data);
       setErrorMessage('');
       setFormErrors({});
+
+      history.push('/dashboard');
     } catch (error) {
       console.error(error);
       if (error.response && error.response.status === 400) {

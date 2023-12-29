@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cron from 'node-cron';
 import { Sequelize } from 'sequelize';
+import cors from 'cors';
 import './models/user.js';
 import './models/accounts.js';
 import './models/transactions.js';
@@ -19,6 +20,7 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

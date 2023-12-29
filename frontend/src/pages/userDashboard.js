@@ -19,7 +19,9 @@ import {
   Link,
   Menu,
   Badge,
-  MenuItem
+  MenuItem,
+  Popover
+  , Avatar
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
@@ -117,6 +119,18 @@ function Dashboard () {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const [profileAnchorEl, setProfileAnchorEl] = React.useState(null);
+
+  const handleProfilePopoverOpen = (event) => {
+    setProfileAnchorEl(event.currentTarget);
+  };
+
+  const handleProfilePopoverClose = () => {
+    setProfileAnchorEl(null);
+  };
+
+  const profileOpen = Boolean(profileAnchorEl);
 
   React.useEffect(() => {
     setOpen(!isSmallScreen);
@@ -233,17 +247,44 @@ function Dashboard () {
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
+              <IconButton
+                edge='end'
+                aria-label='user profile'
+                color='inherit'
+                onClick={handleProfilePopoverOpen}
+              >
+                <Avatar alt='User Profile' src='https://via.placeholder.com/150' />
+              </IconButton>
+              <Popover
+                id='profile-popover'
+                open={profileOpen}
+                anchorEl={profileAnchorEl}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right'
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right'
+                }}
+                onClose={handleProfilePopoverClose}
+                disableRestoreFocus
+              >
+                <Typography>
+                  User details go here
+                </Typography>
+              </Popover>
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
             <Card className={classes.dashboardCard}>
               <CardContent className={classes.dashboardCardContent}>
                 <Typography variant='h6' component='h2' gutterBottom>
-                  User Details
+                  Account Summary
                 </Typography>
-                {/* User details go here */}
+                {/* Account summary goes here */}
                 <Typography color='textSecondary'>
-                  User details will be displayed here.
+                  Account summary will be displayed here.
                 </Typography>
               </CardContent>
             </Card>
@@ -257,19 +298,6 @@ function Dashboard () {
                 {/* Accounts list goes here */}
                 <Typography color='textSecondary'>
                   A list of user's accounts will be displayed here.
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Card className={classes.dashboardCard}>
-              <CardContent className={classes.dashboardCardContent}>
-                <Typography variant='h6' component='h2' gutterBottom>
-                  Account Summary
-                </Typography>
-                {/* Account summary goes here */}
-                <Typography color='textSecondary'>
-                  Account summary will be displayed here.
                 </Typography>
               </CardContent>
             </Card>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   Button,
   TextField,
@@ -82,6 +83,8 @@ function LoginForm () {
     });
   };
 
+  const history = useHistory();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -98,6 +101,8 @@ function LoginForm () {
       const response = await axios.post('http://localhost:5000/api/users/login', formData);
       console.log(response.data);
       setErrors({ email: '', password: '' });
+
+      history.push('/dashboard');
     } catch (error) {
       console.error(error);
       if (error.response && error.response.status === 401) {
