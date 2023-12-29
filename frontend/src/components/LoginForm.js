@@ -103,7 +103,6 @@ function LoginForm () {
       setErrors({ email: '', password: '' });
 
       history.push('/dashboard');
-      
     } catch (error) {
       console.error(error);
       if (error.response && error.response.status === 401) {
