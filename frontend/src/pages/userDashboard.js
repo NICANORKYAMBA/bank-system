@@ -188,6 +188,11 @@ function Dashboard () {
       });
   }, []);
 
+  const userData = React.useState({
+    firstName: sessionStorage.getItem('firstName'),
+    lastName: sessionStorage.getItem('lastName')
+  })[0];
+
   return (
     <div className={classes.root}>
       <Hidden smUp implementation='css'>
@@ -275,7 +280,7 @@ function Dashboard () {
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={4}>
             <Typography variant='h4' component='h1' gutterBottom style={{ marginLeft: '20px' }}>
-              Hello [User Name]'s
+              Hello {userData ? `${userData.firstName} ${userData.lastName}` : 'Loading...'}
             </Typography>
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
