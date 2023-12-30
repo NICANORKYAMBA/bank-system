@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import {
   Box,
   Button,
@@ -93,6 +94,36 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     border: `1px solid ${theme.palette.divider}`,
     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+  },
+  accountsCard: {
+    backgroundColor: '#f5f5f5',
+    boxShadow: '0px 14px 28px rgba(0,0,0,0.25), 0px 10px 10px rgba(0,0,0,0.22)',
+    borderRadius: '15px',
+    padding: theme.spacing(2)
+  },
+  accountsTitle: {
+    marginBottom: theme.spacing(2),
+    color: '#1976D2'
+  },
+  accountCard: {
+    marginBottom: theme.spacing(2),
+    cursor: 'pointer'
+  },
+  accountName: {
+    fontWeight: 'bold'
+  },
+  summaryCard: {
+    backgroundColor: '#f5f5f5',
+    boxShadow: '0px 14px 28px rgba(0,0,0,0.25), 0px 10px 10px rgba(0,0,0,0.22)',
+    borderRadius: '15px',
+    padding: theme.spacing(2)
+  },
+  summaryTitle: {
+    marginBottom: theme.spacing(2),
+    color: '#1976D2'
+  },
+  summaryDetail: {
+    marginBottom: theme.spacing(1)
   }
 }));
 
@@ -135,6 +166,27 @@ function Dashboard () {
   React.useEffect(() => {
     setOpen(!isSmallScreen);
   }, [isSmallScreen]);
+
+  const [selectedAccount, setSelectedAccount] = React.useState(null);
+  const [accountsData, setAccountsData] = React.useState(null);
+
+  React.useEffect(() => {
+    const userId = sessionStorage.getItem('userId');
+    axios.get(`http://localhost:5000/api/accounts/user/${userId}`, {
+      params: {
+        limit: 10,
+        offset: 0,
+        sort: 'createdAt',
+        order: 'DESC'
+      }
+    })
+      .then(response => {
+        setAccountsData(response.data.accounts);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []);
 
   return (
     <div className={classes.root}>
@@ -277,28 +329,68 @@ function Dashboard () {
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Card className={classes.dashboardCard}>
+            <Card className={`${classes.dashboardCard} ${classes.accountsCard}`}>
               <CardContent className={classes.dashboardCardContent}>
-                <Typography variant='h6' component='h2' gutterBottom>
-                  Account Summary
+                <Typography variant='h6' component='h2' gutterBottom className={classes.accountsTitle}>
+                  Accounts
                 </Typography>
-                {/* Account summary goes here */}
-                <Typography color='textSecondary'>
-                  Account summary will be displayed here.
-                </Typography>
+                {accountsData
+                  ? (
+                      accountsData.map((account, index) => (
+                        <Card key={index} variant='outlined' className={classes.accountCard} onClick={() => setSelectedAccount(account)}>
+                          <CardContent>
+                            <Typography variant='h5' component='h2' className={classes.accountName}>
+                              {account.name}
+                            </Typography>
+                            <Typography color='textSecondary'>
+                              Balance: {account.balance}
+                            </Typography>
+                          </CardContent>
+                        </Card>
+                      ))
+                    )
+                  : (
+                    <Typography color='textSecondary'>
+                      Loading accounts...
+                    </Typography>
+                    )}
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Card className={classes.dashboardCard}>
+            <Card className={`${classes.dashboardCard} ${classes.summaryCard}`}>
               <CardContent className={classes.dashboardCardContent}>
-                <Typography variant='h6' component='h2' gutterBottom>
-                  Accounts
+                <Typography variant='h6' component='h2' gutterBottom className={classes.summaryTitle}>
+                  Account Summary
                 </Typography>
-                {/* Accounts list goes here */}
-                <Typography color='textSecondary'>
-                  A list of user's accounts will be displayed here.
-                </Typography>
+                {selectedAccount
+                  ? (
+                    <>
+                      <Typography className={classes.summaryDetail}>
+                        <strong>Account Number:</strong> {selectedAccount.accountNumber}
+                      </Typography>
+                      <Typography className={classes.summaryDetail}>
+                        <strong>Name:</strong> {selectedAccount.name}
+                      </Typography>
+                      <Typography className={classes.summaryDetail} style={{ color: selectedAccount.balance < 0 ? 'red' : 'green' }}>
+                        <strong>Balance:</strong> {selectedAccount.balance}
+                      </Typography>
+                      <Typography className={classes.summaryDetail}>
+                        <strong>Account Type:</strong> {selectedAccount.accountType}
+                      </Typography>
+                      <Typography className={classes.summaryDetail}>
+                        <strong>Currency:</strong> {selectedAccount.currency}
+                      </Typography>
+                      <Typography className={classes.summaryDetail} style={{ color: selectedAccount.status === 'active' ? 'green' : 'red' }}>
+                        <strong>Status:</strong> {selectedAccount.status}
+                      </Typography>
+                    </>
+                    )
+                  : (
+                    <Typography color='textSecondary'>
+                      Click an account to see its summary.
+                    </Typography>
+                    )}
               </CardContent>
             </Card>
           </Grid>
