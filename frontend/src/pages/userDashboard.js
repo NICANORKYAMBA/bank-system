@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import axios from 'axios';
 import {
   Box,
@@ -21,8 +21,8 @@ import {
   Menu,
   Badge,
   MenuItem,
-  Popover
-  , Avatar
+  Popover,
+  Avatar
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
@@ -34,6 +34,12 @@ import BillIcon from '@material-ui/icons/Receipt';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
+import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import Chip from '@material-ui/core/Chip';
+import Paper from '@material-ui/core/Paper';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -106,8 +112,12 @@ const useStyles = makeStyles((theme) => ({
     color: '#1976D2'
   },
   accountCard: {
-    marginBottom: theme.spacing(2),
-    cursor: 'pointer'
+    backgroundColor: '#f5f5f5',
+    boxShadow: '0px 14px 28px rgba(0,0,0,0.25), 0px 10px 10px rgba(0,0,0,0.22)',
+    borderRadius: '15px',
+    cursor: 'pointer',
+    padding: theme.spacing(2),
+    margin: theme.spacing(2, 0)
   },
   accountName: {
     fontWeight: 'bold'
@@ -124,6 +134,13 @@ const useStyles = makeStyles((theme) => ({
   },
   summaryDetail: {
     marginBottom: theme.spacing(1)
+  },
+  transactionCard: {
+    marginBottom: theme.spacing(2),
+    backgroundColor: '#f5f5f5',
+    boxShadow: '0px 14px 28px rgba(0,0,0,0.25), 0px 10px 10px rgba(0,0,0,0.22)',
+    borderRadius: '15px',
+    padding: theme.spacing(2)
   }
 }));
 
@@ -192,6 +209,37 @@ function Dashboard () {
     firstName: sessionStorage.getItem('firstName'),
     lastName: sessionStorage.getItem('lastName')
   })[0];
+
+  const [transactions, setTransactions] = React.useState([]);
+
+  React.useEffect(() => {
+    const userId = sessionStorage.getItem('userId');
+    axios.get(`http://localhost:5000/api/transactions/user/${userId}`, {
+      params: {
+        limit: 10,
+        offset: 0,
+        sort: 'createdAt',
+        order: 'DESC'
+      }
+    })
+      .then(response => {
+        setTransactions(response.data.transactions);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []);
+
+  const accountsScrollContainerRef = useRef(null);
+  const transactionsScrollContainerRef = useRef(null);
+
+  const scrollAccounts = (scrollOffset) => {
+    accountsScrollContainerRef.current.scrollLeft += scrollOffset;
+  };
+
+  const scrollTransactions = (scrollOffset) => {
+    transactionsScrollContainerRef.current.scrollLeft += scrollOffset;
+  };
 
   return (
     <div className={classes.root}>
@@ -276,7 +324,7 @@ function Dashboard () {
           </Toolbar>
         </AppBar>
       </Hidden>
-      <Container className={classes.dashboardContainer}>
+      <Container className={classes.dashboardContainer} style={{ maxWidth: '1060px' }}>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={4}>
             <Typography variant='h4' component='h1' gutterBottom style={{ marginLeft: '20px' }}>
@@ -339,26 +387,36 @@ function Dashboard () {
                 <Typography variant='h6' component='h2' gutterBottom className={classes.accountsTitle}>
                   Accounts
                 </Typography>
-                {accountsData
-                  ? (
-                      accountsData.map((account, index) => (
-                        <Card key={index} variant='outlined' className={classes.accountCard} onClick={() => setSelectedAccount(account)}>
-                          <CardContent>
-                            <Typography variant='h5' component='h2' className={classes.accountName}>
-                              {account.name}
-                            </Typography>
-                            <Typography color='textSecondary'>
-                              Balance: {account.balance}
-                            </Typography>
-                          </CardContent>
-                        </Card>
-                      ))
-                    )
-                  : (
-                    <Typography color='textSecondary'>
-                      Loading accounts...
-                    </Typography>
-                    )}
+                <div ref={accountsScrollContainerRef} style={{ overflowX: 'auto', overflowY: 'hidden', display: 'flex', height: '200px' }}>
+                  {accountsData
+                    ? (
+                        accountsData.map((account, index) => (
+                          <div style={{ flex: '0 0 auto', width: '100%' }} key={index}>
+                            <Card variant='outlined' className={classes.accountCard} onClick={() => setSelectedAccount(account)}>
+                              <CardContent>
+                                <Typography variant='h5' component='h2' className={classes.accountName}>
+                                  {account.name}
+                                </Typography>
+                                <Typography color='textSecondary'>
+                                  Balance: {account.balance}
+                                </Typography>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        ))
+                      )
+                    : (
+                      <Typography color='textSecondary'>
+                        Loading accounts...
+                      </Typography>
+                      )}
+                </div>
+                <Button onClick={() => scrollAccounts(-300)}>
+                  <ArrowBackIosIcon />
+                </Button>
+                <Button onClick={() => scrollAccounts(300)}>
+                  <ArrowForwardIosIcon />
+                </Button>
               </CardContent>
             </Card>
           </Grid>
@@ -405,10 +463,51 @@ function Dashboard () {
                 <Typography variant='h6' component='h2' gutterBottom>
                   Transactions
                 </Typography>
-                {/* Transactions list goes here */}
-                <Typography color='textSecondary'>
-                  A list of transactions will be displayed here.
-                </Typography>
+                <IconButton onClick={() => scrollTransactions(-300)} style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)', margin: '0 8px', padding: '10px' }}>
+                  <ArrowLeftIcon style={{ fontSize: '1rem', color: '#3f51b5' }} />
+                </IconButton>
+                <div ref={transactionsScrollContainerRef} style={{ overflowX: 'auto', display: 'flex' }}>
+                  {transactions.length > 0
+                    ? (
+                        transactions.map((transaction, index) => (
+                          <Paper elevation={3} className={classes.transactionCard} key={index} style={{ flex: '0 0 auto' }}>
+                            <CardContent>
+                              <Chip
+                                icon={
+                    transaction.type === 'deposit'
+                      ? <DepositIcon />
+                      : transaction.type === 'withdrawal'
+                        ? <WithdrawIcon />
+                        : <TransferIcon />
+                  }
+                                label={`Type: ${transaction.type}`}
+                                color={transaction.type === 'deposit' ? 'primary' : transaction.type === 'withdrawal' ? 'secondary' : 'default'}
+                              />
+                              <Typography color='textSecondary'>
+                                Amount: {transaction.amount}
+                              </Typography>
+                              <Typography color='textSecondary'>
+                                Source Account: {transaction.sourceAccount}
+                              </Typography>
+                              <Typography color='textSecondary'>
+                                Destination Account: {transaction.destinationAccount}
+                              </Typography>
+                              <Typography color='textSecondary'>
+                                Description: {transaction.description}
+                              </Typography>
+                            </CardContent>
+                          </Paper>
+                        ))
+                      )
+                    : (
+                      <Typography color='textSecondary'>
+                        No transactions found.
+                      </Typography>
+                      )}
+                </div>
+                <IconButton onClick={() => scrollTransactions(300)} style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)', margin: '0 8px', padding: '10px' }}>
+                  <ArrowRightIcon style={{ fontSize: '1rem', color: '#3f51b5' }} />
+                </IconButton>
               </CardContent>
             </Card>
           </Grid>
