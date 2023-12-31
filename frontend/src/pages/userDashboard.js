@@ -22,7 +22,9 @@ import {
   Badge,
   MenuItem,
   Popover,
-  Avatar
+  Avatar,
+  Dialog,
+  DialogContent
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
@@ -38,8 +40,12 @@ import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+// import TransferIcon from '@material-ui/icons/TransferWithinAStation';
 import Chip from '@material-ui/core/Chip';
 import Paper from '@material-ui/core/Paper';
+import TransferForm from '../components/TransferForm';
+import WithdrawalForm from '../components/WithdrawalForm';
+import DepositForm from '../components/DepositForm';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -241,6 +247,36 @@ function Dashboard () {
     transactionsScrollContainerRef.current.scrollLeft += scrollOffset;
   };
 
+  const [showTransferForm, setShowTransferForm] = React.useState(false);
+
+  const handleTransferClick = () => {
+    setShowTransferForm(true);
+  };
+
+  const handleClose = () => {
+    setShowTransferForm(false);
+  };
+
+  const [showWithdrawalForm, setShowWithdrawalForm] = React.useState(false);
+
+  const handleWithdrawalClick = () => {
+    setShowWithdrawalForm(true);
+  };
+
+  const handleCloseWithdrawal = () => {
+    setShowWithdrawalForm(false);
+  };
+
+  const [showDepositForm, setShowDepositForm] = React.useState(false);
+
+  const handleDepositClick = () => {
+    setShowDepositForm(true);
+  };
+
+  const handleCloseDeposit = () => {
+    setShowDepositForm(false);
+  };
+
   return (
     <div className={classes.root}>
       <Hidden smUp implementation='css'>
@@ -394,10 +430,10 @@ function Dashboard () {
                           <div style={{ flex: '0 0 auto', width: '100%' }} key={index}>
                             <Card variant='outlined' className={classes.accountCard} onClick={() => setSelectedAccount(account)}>
                               <CardContent>
-                                <Typography variant='h5' component='h2' className={classes.accountName}>
+                                <Typography variant='h5' component='h2' className={classes.accountName} style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1976D2' }}>
                                   {account.name}
                                 </Typography>
-                                <Typography color='textSecondary'>
+                                <Typography color='textSecondary' style={{ marginTop: '10px', color: '#3f51b5' }}>
                                   Balance: {account.balance}
                                 </Typography>
                               </CardContent>
@@ -411,10 +447,10 @@ function Dashboard () {
                       </Typography>
                       )}
                 </div>
-                <Button onClick={() => scrollAccounts(-300)}>
+                <Button onClick={() => scrollAccounts(-430)}>
                   <ArrowBackIosIcon />
                 </Button>
-                <Button onClick={() => scrollAccounts(300)}>
+                <Button onClick={() => scrollAccounts(430)}>
                   <ArrowForwardIosIcon />
                 </Button>
               </CardContent>
@@ -423,28 +459,28 @@ function Dashboard () {
           <Grid item xs={12} md={6}>
             <Card className={`${classes.dashboardCard} ${classes.summaryCard}`}>
               <CardContent className={classes.dashboardCardContent}>
-                <Typography variant='h6' component='h2' gutterBottom className={classes.summaryTitle}>
+                <Typography variant='h6' component='h2' gutterBottom className={classes.summaryTitle} style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1976D2' }}>
                   Account Summary
                 </Typography>
                 {selectedAccount
                   ? (
                     <>
-                      <Typography className={classes.summaryDetail}>
+                      <Typography className={classes.summaryDetail} style={{ marginTop: '10px', color: '#3f51b5' }}>
                         <strong>Account Number:</strong> {selectedAccount.accountNumber}
                       </Typography>
-                      <Typography className={classes.summaryDetail}>
+                      <Typography className={classes.summaryDetail} style={{ marginTop: '10px', color: '#3f51b5' }}>
                         <strong>Name:</strong> {selectedAccount.name}
                       </Typography>
-                      <Typography className={classes.summaryDetail} style={{ color: selectedAccount.balance < 0 ? 'red' : 'green' }}>
+                      <Typography className={classes.summaryDetail} style={{ marginTop: '10px', backgroundColor: selectedAccount.balance < 0 ? '#FFCDD2' : '#C8E6C9', color: selectedAccount.balance < 0 ? 'red' : 'green' }}>
                         <strong>Balance:</strong> {selectedAccount.balance}
                       </Typography>
-                      <Typography className={classes.summaryDetail}>
+                      <Typography className={classes.summaryDetail} style={{ marginTop: '10px', color: '#3f51b5' }}>
                         <strong>Account Type:</strong> {selectedAccount.accountType}
                       </Typography>
-                      <Typography className={classes.summaryDetail}>
+                      <Typography className={classes.summaryDetail} style={{ marginTop: '10px', color: '#3f51b5' }}>
                         <strong>Currency:</strong> {selectedAccount.currency}
                       </Typography>
-                      <Typography className={classes.summaryDetail} style={{ color: selectedAccount.status === 'active' ? 'green' : 'red' }}>
+                      <Typography className={classes.summaryDetail} style={{ marginTop: '10px', backgroundColor: selectedAccount.status === 'active' ? '#C8E6C9' : '#FFCDD2', color: selectedAccount.status === 'active' ? 'green' : 'red' }}>
                         <strong>Status:</strong> {selectedAccount.status}
                       </Typography>
                     </>
@@ -463,36 +499,37 @@ function Dashboard () {
                 <Typography variant='h6' component='h2' gutterBottom>
                   Transactions
                 </Typography>
-                <IconButton onClick={() => scrollTransactions(-300)} style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)', margin: '0 8px', padding: '10px' }}>
+                <IconButton onClick={() => scrollTransactions(-430)} style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)', margin: '0 8px', padding: '10px' }}>
                   <ArrowLeftIcon style={{ fontSize: '1rem', color: '#3f51b5' }} />
                 </IconButton>
                 <div ref={transactionsScrollContainerRef} style={{ overflowX: 'auto', display: 'flex' }}>
                   {transactions.length > 0
                     ? (
                         transactions.map((transaction, index) => (
-                          <Paper elevation={3} className={classes.transactionCard} key={index} style={{ flex: '0 0 auto' }}>
+                          <Paper elevation={3} className={classes.transactionCard} key={index} style={{ flex: '0 0 auto', padding: '10px', margin: '10px' }}>
                             <CardContent>
                               <Chip
                                 icon={
-                    transaction.type === 'deposit'
-                      ? <DepositIcon />
-                      : transaction.type === 'withdrawal'
-                        ? <WithdrawIcon />
-                        : <TransferIcon />
-                  }
+                                  transaction.type === 'deposit'
+                                    ? <DepositIcon />
+                                    : transaction.type === 'withdrawal'
+                                      ? <WithdrawIcon />
+                                      : <TransferIcon />
+                                }
                                 label={`Type: ${transaction.type}`}
                                 color={transaction.type === 'deposit' ? 'primary' : transaction.type === 'withdrawal' ? 'secondary' : 'default'}
+                                style={{ margin: '10px 0' }}
                               />
-                              <Typography color='textSecondary'>
+                              <Typography color='textSecondary' style={{ color: '#3f51b5' }}>
                                 Amount: {transaction.amount}
                               </Typography>
-                              <Typography color='textSecondary'>
+                              <Typography color='textSecondary' style={{ color: '#3f51b5' }}>
                                 Source Account: {transaction.sourceAccount}
                               </Typography>
-                              <Typography color='textSecondary'>
+                              <Typography color='textSecondary' style={{ color: '#3f51b5' }}>
                                 Destination Account: {transaction.destinationAccount}
                               </Typography>
-                              <Typography color='textSecondary'>
+                              <Typography color='textSecondary' style={{ color: '#3f51b5' }}>
                                 Description: {transaction.description}
                               </Typography>
                             </CardContent>
@@ -505,7 +542,7 @@ function Dashboard () {
                       </Typography>
                       )}
                 </div>
-                <IconButton onClick={() => scrollTransactions(300)} style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)', margin: '0 8px', padding: '10px' }}>
+                <IconButton onClick={() => scrollTransactions(430)} style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)', margin: '0 8px', padding: '10px' }}>
                   <ArrowRightIcon style={{ fontSize: '1rem', color: '#3f51b5' }} />
                 </IconButton>
               </CardContent>
@@ -525,30 +562,49 @@ function Dashboard () {
                       color='primary'
                       startIcon={<DepositIcon />}
                       className={`${classes.dashboardButton} ${classes.depositButton}`}
+                      onClick={handleDepositClick}
                     >
                       Make a Deposit
                     </Button>
                   </Grid>
+
+                  <Dialog open={showDepositForm} onClose={handleCloseDeposit}>
+                    <DialogContent>
+                      <DepositForm handleClose={handleCloseDeposit} />
+                    </DialogContent>
+                  </Dialog>
                   <Grid item xs={12}>
                     <Button
                       variant='contained'
                       color='secondary'
                       startIcon={<TransferIcon />}
                       className={`${classes.dashboardButton} ${classes.transferButton}`}
+                      onClick={handleTransferClick}
                     >
                       Initiate a Transfer
                     </Button>
                   </Grid>
+                  <Dialog open={showTransferForm} onClose={handleClose}>
+                    <DialogContent>
+                      <TransferForm handleClose={handleClose} />
+                    </DialogContent>
+                  </Dialog>
                   <Grid item xs={12}>
                     <Button
                       variant='contained'
                       color='default'
                       startIcon={<WithdrawIcon />}
                       className={`${classes.dashboardButton} ${classes.withdrawButton}`}
+                      onClick={handleWithdrawalClick}
                     >
                       Make a Withdrawal
                     </Button>
                   </Grid>
+                  <Dialog open={showWithdrawalForm} onClose={handleCloseWithdrawal}>
+                    <DialogContent>
+                      <WithdrawalForm handleClose={handleCloseWithdrawal} />
+                    </DialogContent>
+                  </Dialog>
                   <Grid item xs={12}>
                     <Button
                       variant='contained'

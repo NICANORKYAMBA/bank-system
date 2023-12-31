@@ -102,6 +102,9 @@ function LoginForm () {
       console.log(response.data);
       setErrors({ email: '', password: '' });
 
+      sessionStorage.setItem('userId', response.data.userId);
+      sessionStorage.setItem('firstName', response.data.firstName);
+      sessionStorage.setItem('lastName', response.data.lastName);
       history.push('/dashboard');
     } catch (error) {
       console.error(error);
