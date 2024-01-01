@@ -203,7 +203,11 @@ export const loginUser = [
       );
 
       res.status(200).json({
-        message: 'Authentication successful', token
+        message: 'Authentication successful',
+        token,
+        userId: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName
       });
     } catch (err) {
       if (err instanceof Sequelize.DatabaseError) {
