@@ -17,7 +17,15 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 
-const Navigation = ({ classes, handleDrawerOpen, handleDrawerClose, handleMenuOpen, handleMenuClose, anchorEl, open }) => {
+const Navigation = ({
+    classes,
+    handleDrawerOpen,
+    handleDrawerClose,
+    handleMenuOpen,
+    handleMenuClose,
+    anchorEl,
+    open
+}) => {
   return (
     <>
       <Hidden smUp implementation='css'>

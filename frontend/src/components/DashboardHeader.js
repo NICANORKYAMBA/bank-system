@@ -3,7 +3,14 @@ import { Grid, Typography, Box, TextField, Button, IconButton, Badge, Avatar, Po
 import SearchIcon from '@material-ui/icons/Search';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 
-const DashboardHeader = ({ classes, userData, handleProfilePopoverOpen, profileOpen, profileAnchorEl, handleProfilePopoverClose }) => {
+const DashboardHeader = ({
+  classes,
+  userData,
+  handleProfilePopoverOpen,
+  profileOpen,
+  profileAnchorEl,
+  handleProfilePopoverClose
+}) => {
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={6} md={4}>
