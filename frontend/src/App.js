@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import HomePage from './components/HomePage';
-// import LoginForm from './components/LoginForm';
-import Dashboard from './pages/userDashboard';
+// import Dashboard from './pages/userDashboard';
+import Dashboard from './pages/Dashboard';
 import AccountDetails from './pages/accountDetails';
 import Transactions from './pages/transactionDetails';
 
