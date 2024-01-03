@@ -39,8 +39,8 @@ function buildTransactionMessage (type, amount, currency, sourceAccount, destina
 export const createTransaction = [
   body('type').isIn(['deposit', 'withdrawal', 'transfer']).withMessage('Must be one of: deposit, withdrawal, transfer'),
   body('amount').isNumeric().withMessage('Must be a number'),
-  body('sourceAccountId').isUUID().withMessage('Must be a valid UUID'),
-  body('destinationAccountId').optional().isUUID().withMessage('Must be a valid UUID'),
+  body('sourceAccountNumber').isString().withMessage('Must be a valid account number'),
+  body('destinationAccountNumber').optional().isString().withMessage('Must be a valid account number'),
   body('userId').isUUID().withMessage('Must be a valid UUID'),
   body('description').optional().isString().withMessage('Must be a string'),
   async (req, res, next) => {
@@ -49,7 +49,7 @@ export const createTransaction = [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { type, amount, sourceAccountId, destinationAccountId, userId, description } = req.body;
+    const { type, amount, sourceAccountNumber, destinationAccountNumber, userId, description } = req.body;
 
     if ((type === 'deposit' && amount < 10) || (type !== 'deposit' && amount < 100)) {
       return handleValidationError(
@@ -58,9 +58,9 @@ export const createTransaction = [
 
     const transaction = await sequelize.transaction();
     try {
-      let sourceAccount = await Account.findByPk(sourceAccountId);
+      let sourceAccount = await Account.findOne({ where: { accountNumber: sourceAccountNumber } });
       if (!sourceAccount) {
-        throw new Error(`Source account with ID ${sourceAccountId} not found`);
+        throw new Error(`Source account with number ${sourceAccountNumber} not found`);
       }
 
       if (sourceAccount.userId !== userId) {
@@ -72,7 +72,7 @@ export const createTransaction = [
       }
 
       if (type === 'transfer') {
-        if (sourceAccountId === destinationAccountId) {
+        if (sourceAccountNumber === destinationAccountNumber) {
           throw new Error('Transfer transaction cannot happen on the same account');
         }
 
@@ -80,26 +80,33 @@ export const createTransaction = [
           throw new Error('Insufficient balance');
         }
 
-        sourceAccount = await updateAccountBalance(sourceAccountId, -amount, transaction);
+        sourceAccount = await updateAccountBalance(sourceAccount.id, -amount, transaction);
+      }
+
+      if (type === 'withdrawal') {
+        if (Number(sourceAccount.balance) < amount) {
+          throw new Error('Insufficient balance');
+        }
+
+        sourceAccount = await updateAccountBalance(sourceAccount.id, -amount, transaction);
       }
 
       if (type === 'deposit') {
-        sourceAccount = await updateAccountBalance(sourceAccountId, amount, transaction);
+        sourceAccount = await updateAccountBalance(sourceAccount.id, amount, transaction);
       }
 
       let destinationAccount;
       if (type === 'transfer') {
-        destinationAccount = await Account.findByPk(destinationAccountId);
+        destinationAccount = await Account.findOne({ where: { accountNumber: destinationAccountNumber } });
         if (!destinationAccount) {
-          throw new Error(`Destination account with ID ${destinationAccountId} not found`);
+          throw new Error(`Destination account with number ${destinationAccountNumber} not found`);
         }
 
         if (destinationAccount.status !== 'active') {
           throw new Error('Destination account is not active');
         }
 
-        destinationAccount = await updateAccountBalance(
-          destinationAccountId, amount, transaction);
+        destinationAccount = await updateAccountBalance(destinationAccount.id, amount, transaction);
       }
 
       const transactionData = {
@@ -111,9 +118,9 @@ export const createTransaction = [
         sourceAccount: sourceAccount.accountNumber,
         destinationAccount: destinationAccount ? destinationAccount.accountNumber : sourceAccount.accountNumber,
         userId,
-        accountId: sourceAccountId,
-        sourceAccountId,
-        destinationAccountId: destinationAccountId || sourceAccountId,
+        accountId: sourceAccount.id,
+        sourceAccountId: sourceAccount.id,
+        destinationAccountId: destinationAccount ? destinationAccount.id : sourceAccount.id,
         description
       };
 
@@ -123,10 +130,10 @@ export const createTransaction = [
 
       const message = buildTransactionMessage(type, amount, sourceAccount.currency, sourceAccount, destinationAccount, sourceAccount.balance);
 
-      const sourceAccountAfter = await Account.findByPk(sourceAccountId);
+      const sourceAccountAfter = await Account.findByPk(sourceAccount.id);
       let destinationAccountAfter;
       if (type === 'transfer') {
-        destinationAccountAfter = await Account.findByPk(destinationAccountId);
+        destinationAccountAfter = await Account.findByPk(destinationAccount.id);
       }
 
       res.status(201).json({
