@@ -119,6 +119,21 @@ function Dashboard () {
 
   const profileOpen = Boolean(profileAnchorEl);
 
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    // Perform the search using the searchTerm
+    console.log(`Searching transactions for: ${searchTerm}`);
+  // This could involve calling an API and updating your state with the results
+  };
+
+  const notificationsCount = 4;
+
   return (
     <div className={classes.root}>
       {loading && (
@@ -151,6 +166,9 @@ function Dashboard () {
                 profileOpen={profileOpen}
                 profileAnchorEl={profileAnchorEl}
                 handleProfilePopoverClose={handleProfilePopoverClose}
+                handleSearchChange={handleSearchChange}
+                handleSearchSubmit={handleSearchSubmit}
+                notificationsCount={notificationsCount}
               />
               <Grid item xs={12} md={6}>
                 <AccountsList
