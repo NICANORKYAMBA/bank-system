@@ -1,8 +1,10 @@
 import { makeStyles } from '@material-ui/core';
+import { alpha } from '@material-ui/core/styles';
 
 export const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex'
+    flexGrow: 1,
+    marginBottom: theme.spacing(2)
   },
   appBar: {
     marginBottom: theme.spacing(3),
@@ -10,9 +12,8 @@ export const useStyles = makeStyles((theme) => ({
     width: '100%',
     backgroundColor: theme.palette.primary.main
   },
-  title: {
-    fontWeight: 600,
-    fontSize: '1.5rem'
+  menuButton: {
+    marginRight: theme.spacing(2)
   },
   drawer: {
     width: 240,
@@ -20,12 +21,59 @@ export const useStyles = makeStyles((theme) => ({
   },
   drawerPaper: {
     width: 240,
-    backgroundColor: theme.palette.grey[200]
+    backgroundColor: '#3f51b5'
   },
   toolbar: {
     display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    ...theme.mixins.toolbar
+  },
+  search: {
+    position: 'relative',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: alpha(theme.palette.common.white, 0.15),
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.common.white, 0.25)
+    },
+    marginLeft: 0,
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+      marginLeft: theme.spacing(1),
+      width: 'auto'
+    }
+  },
+  searchIcon: {
+    padding: theme.spacing(0, 2),
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  inputRoot: {
+    color: 'inherit'
+  },
+  inputInput: {
+    padding: theme.spacing(3, 1, 4, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: '20ch'
+    }
+  },
+  notificationsIcon: {
+    color: theme.palette.secondary.main
+  },
+  grow: {
+    flexGrow: 1
+  },
+  greeting: {
+    fontSize: '2rem',
+    fontWeight: 'bold'
   },
   card: {
     minHeight: 200,
@@ -43,10 +91,13 @@ export const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.secondary.main,
     '&:hover': {
       backgroundColor: theme.palette.secondary.dark
-    }
+    },
+    color: '#fff',
+    fontWeight: 'bold'
   },
   dashboardContainer: {
-    marginTop: theme.spacing(3)
+    marginTop: theme.spacing(-6),
+    marginLeft: theme.spacing(28)
   },
   dashboardButton: {
     margin: theme.spacing(1),
