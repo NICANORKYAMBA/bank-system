@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
-import { Button, TextField, Grid, makeStyles, Typography } from '@material-ui/core';
+import {
+  Button,
+  TextField,
+  Grid,
+  makeStyles,
+  Typography
+} from '@material-ui/core';
 import * as ReactSpring from 'react-spring';
+import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -54,8 +61,8 @@ const TransferForm = ({ handleClose }) => {
   const [formData, setFormData] = useState({
     type: 'transfer',
     amount: '',
-    sourceAccountId: '',
-    destinationAccountId: '',
+    sourceAccountNumber: '',
+    destinationAccountNumber: '',
     description: ''
   });
 
@@ -68,9 +75,19 @@ const TransferForm = ({ handleClose }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // Here you can call the createTransaction function from your controller
-    // You will need to pass the formData to the function
-    handleClose();
+
+    const data = {
+      ...formData,
+      userId: sessionStorage.getItem('userId')
+    };
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/transactions', data);
+      console.log(response.data);
+      handleClose();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const props = ReactSpring.useSpring({ opacity: 1, from: { opacity: 0 } });
@@ -95,10 +112,10 @@ const TransferForm = ({ handleClose }) => {
           <Grid item xs={12}>
             <TextField
               className={classes.formControl}
-              label='Source Account ID'
+              label='Source Account Number'
               type='text'
-              name='sourceAccountId'
-              value={formData.sourceAccountId}
+              name='sourceAccountNumber'
+              value={formData.sourceAccountNumber}
               onChange={handleChange}
               required
             />
@@ -106,10 +123,10 @@ const TransferForm = ({ handleClose }) => {
           <Grid item xs={12}>
             <TextField
               className={classes.formControl}
-              label='Destination Account ID'
+              label='Destination Account Number'
               type='text'
-              name='destinationAccountId'
-              value={formData.destinationAccountId}
+              name='destinationAccountNumber'
+              value={formData.destinationAccountNumber}
               onChange={handleChange}
               required
             />

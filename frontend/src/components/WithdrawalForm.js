@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
-import { Button, TextField, Grid, makeStyles, Typography } from '@material-ui/core';
+import {
+  Button,
+  TextField,
+  Grid,
+  makeStyles,
+  Typography
+} from '@material-ui/core';
 import * as ReactSpring from 'react-spring';
+import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -54,7 +61,7 @@ const WithdrawalForm = ({ handleClose }) => {
   const [formData, setFormData] = useState({
     type: 'withdrawal',
     amount: '',
-    sourceAccountId: '',
+    sourceAccountNumber: '',
     description: ''
   });
 
@@ -67,15 +74,25 @@ const WithdrawalForm = ({ handleClose }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // Here you can call the createTransaction function from your controller
-    // You will need to pass the formData to the function
-    handleClose();
+
+    const data = {
+      ...formData,
+      userId: sessionStorage.getItem('userId')
+    };
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/transactions', data);
+      console.log(response.data);
+      handleClose();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const props = ReactSpring.useSpring({ opacity: 1, from: { opacity: 0 } });
 
   return (
-    // eslint-disable-next-line react/jsx-pascal-case
+  // eslint-disable-next-line react/jsx-pascal-case
     <ReactSpring.animated.div style={props}>
       <form className={classes.form} onSubmit={handleSubmit}>
         <Typography className={classes.title}>Withdrawal Form</Typography>
@@ -94,10 +111,10 @@ const WithdrawalForm = ({ handleClose }) => {
           <Grid item xs={12}>
             <TextField
               className={classes.formControl}
-              label='Source Account ID'
+              label='Source Account Number'
               type='text'
-              name='sourceAccountId'
-              value={formData.sourceAccountId}
+              name='sourceAccountNumber'
+              value={formData.sourceAccountNumber}
               onChange={handleChange}
               required
             />
