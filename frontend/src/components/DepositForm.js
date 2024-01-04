@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   TextField,
   Grid,
   makeStyles,
-  Typography
+  Typography,
+  Select,
+  MenuItem
 } from '@material-ui/core';
 import * as ReactSpring from 'react-spring';
 import axios from 'axios';
@@ -65,6 +67,18 @@ const DepositForm = ({ handleClose }) => {
     description: ''
   });
 
+  const [accounts, setAccounts] = useState([]);
+
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      const userId = sessionStorage.getItem('userId');
+      const response = await axios.get(`http://localhost:5000/api/accounts/user/${userId}`);
+      setAccounts(response.data.accounts);
+    };
+
+    fetchAccounts();
+  }, []);
+
   const handleChange = (event) => {
     setFormData({
       ...formData,
@@ -109,15 +123,20 @@ const DepositForm = ({ handleClose }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <TextField
+            <Select
               className={classes.formControl}
-              label='Source Account Number'
-              type='text'
-              name='sourceAccountNumber'
               value={formData.sourceAccountNumber}
               onChange={handleChange}
-              required
-            />
+              inputProps={{
+                name: 'sourceAccountNumber'
+              }}
+            >
+              {accounts.map((account) => (
+                <MenuItem key={account.id} value={account.accountNumber}>
+                  {account.accountNumber}
+                </MenuItem>
+              ))}
+            </Select>
           </Grid>
           <Grid item xs={12}>
             <TextField
