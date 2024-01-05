@@ -123,20 +123,26 @@ const DepositForm = ({ handleClose }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <Select
-              className={classes.formControl}
-              value={formData.sourceAccountNumber}
-              onChange={handleChange}
-              inputProps={{
-                name: 'sourceAccountNumber'
-              }}
-            >
-              {accounts.map((account) => (
-                <MenuItem key={account.id} value={account.accountNumber}>
-                  {account.accountNumber}
-                </MenuItem>
-              ))}
-            </Select>
+            {accounts.length > 0
+              ? (
+                <Select
+                  className={classes.formControl}
+                  value={formData.sourceAccountNumber}
+                  onChange={handleChange}
+                  inputProps={{
+                    name: 'sourceAccountNumber'
+                  }}
+                >
+                  {accounts.map((account) => (
+                    <MenuItem key={account.id} value={account.accountNumber}>
+                    {account.accountNumber}
+                  </MenuItem>
+                  ))}
+                </Select>
+                )
+              : (
+                <Typography color='textSecondary'>No accounts to select.</Typography>
+                )}
           </Grid>
           <Grid item xs={12}>
             <TextField
@@ -154,6 +160,7 @@ const DepositForm = ({ handleClose }) => {
               variant='contained'
               color='primary'
               type='submit'
+              disabled={accounts.length === 0}
             >
               Make a Deposit
             </Button>
