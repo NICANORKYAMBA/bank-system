@@ -66,8 +66,39 @@ export const getAllAccounts = [
   }
 ];
 
+export const getAccountById = [
+  param('id').isUUID().withMessage('ID must be a valid UUID'),
+  async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { id } = req.params;
+    try {
+      const account = await Account.findByPk(id);
+      if (account) {
+        res.status(200).json(account);
+      } else {
+        res.status(404).json({
+          message: `Account with ID ${id} not found`
+        });
+      }
+    } catch (err) {
+      if (err instanceof Sequelize.DatabaseError) {
+        return handleDatabaseError(res, err);
+      }
+      if (err instanceof Sequelize.ValidationError) {
+        return handleValidationError(res, err.message);
+      }
+      logger.error(`Server error while trying to get account by ID: ${err}`);
+      next(err);
+    }
+  }
+];
+
 export const getAccountByNumber = [
-  param('accountNumber').isString().withMessage('Account number must be a string'),
+  param('accountNumber').matches(/^\d{15}$/).withMessage('Account number must be a 15-digit string'),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

@@ -8,6 +8,7 @@ import {
   Select,
   MenuItem
 } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 import * as ReactSpring from 'react-spring';
 import axios from 'axios';
 
@@ -68,12 +69,17 @@ const WithdrawalForm = ({ handleClose }) => {
   });
 
   const [accounts, setAccounts] = useState([]);
+  const [noAccounts, setNoAccounts] = useState(false);
 
   useEffect(() => {
     const fetchAccounts = async () => {
       const userId = sessionStorage.getItem('userId');
       const response = await axios.get(`http://localhost:5000/api/accounts/user/${userId}`);
-      setAccounts(response.data.accounts);
+      if (response.data.accounts.length === 0) {
+        setNoAccounts(true);
+      } else {
+        setAccounts(response.data.accounts);
+      }
     };
 
     fetchAccounts();
@@ -108,58 +114,64 @@ const WithdrawalForm = ({ handleClose }) => {
   return (
   // eslint-disable-next-line react/jsx-pascal-case
     <ReactSpring.animated.div style={props}>
-      <form className={classes.form} onSubmit={handleSubmit}>
-        <Typography className={classes.title}>Withdrawal Form</Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TextField
-              className={classes.formControl}
-              label='Amount'
-              type='number'
-              name='amount'
-              value={formData.amount}
-              onChange={handleChange}
-              required
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Select
-              className={classes.formControl}
-              value={formData.sourceAccountNumber}
-              onChange={handleChange}
-              inputProps={{
-                name: 'sourceAccountNumber'
-              }}
-            >
-              {accounts.map((account) => (
-                <MenuItem key={account.id} value={account.accountNumber}>
-                  {account.accountNumber}
-                </MenuItem>
-              ))}
-            </Select>
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              className={classes.formControl}
-              label='Description'
-              type='text'
-              name='description'
-              value={formData.description}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Button
-              className={classes.formButton}
-              variant='contained'
-              color='primary'
-              type='submit'
-            >
-              Make a Withdrawal
-            </Button>
-          </Grid>
-        </Grid>
-      </form>
+      {noAccounts
+        ? (
+          <Alert severity='warning'>No accounts available for withdrawal.</Alert>
+          )
+        : (
+          <form className={classes.form} onSubmit={handleSubmit}>
+            <Typography className={classes.title}>Withdrawal Form</Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  className={classes.formControl}
+                  label='Amount'
+                  type='number'
+                  name='amount'
+                  value={formData.amount}
+                  onChange={handleChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Select
+                  className={classes.formControl}
+                  value={formData.sourceAccountNumber}
+                  onChange={handleChange}
+                  inputProps={{
+                    name: 'sourceAccountNumber'
+                  }}
+                >
+                  {accounts.map((account) => (
+                    <MenuItem key={account.id} value={account.accountNumber}>
+                      {account.accountNumber}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  className={classes.formControl}
+                  label='Description'
+                  type='text'
+                  name='description'
+                  value={formData.description}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Button
+                  className={classes.formButton}
+                  variant='contained'
+                  color='primary'
+                  type='submit'
+                >
+                  Make a Withdrawal
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
+          )}
     </ReactSpring.animated.div>
   );
 };

@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   getAllAccounts,
+  getAccountById,
   getAccountByNumber,
   getAccountByName,
   getAccountByType,
@@ -16,6 +17,7 @@ const router = express.Router();
 
 router.post('/', createAccount);
 router.get('/', getAllAccounts);
+router.get('/id/:id', getAccountById);
 router.get('/:accountNumber', getAccountByNumber);
 router.put('/:accountNumber', updateAccount);
 router.put('/:accountNumber/activate', activateAccount);

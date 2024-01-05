@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 import { useStyles } from '../styles/dashboardStyles';
-import { fetchAccounts, fetchTransactions } from '../api/api';
+import { fetchAccount, fetchAccounts, fetchTransactions } from '../api/api';
 import { useDashboard } from '../api/useDashboard';
 
 import Navigation from '../components/Navigation';
@@ -45,6 +45,7 @@ function Dashboard () {
   };
 
   const [selectedAccount, setSelectedAccount] = useState(null);
+  const [selectedAccountData, setSelectedAccountData] = useState(null);
   const [accountsData, setAccountsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -55,12 +56,24 @@ function Dashboard () {
   })[0];
 
   const [transactions, setTransactions] = useState([]);
+  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const userId = sessionStorage.getItem('userId');
-        const accountsData = await fetchAccounts(userId);
+
+        let accountsData = [];
+        try {
+          accountsData = await fetchAccounts(userId);
+        } catch (error) {
+          if (error.response && error.response.status === 404) {
+            console.log('No accounts found for this user.');
+            accountsData = [];
+          } else {
+            throw error;
+          }
+        }
         const transactionsData = await fetchTransactions(userId);
 
         setAccountsData(accountsData);
@@ -71,10 +84,14 @@ function Dashboard () {
         setError('Error fetching data');
         setLoading(false);
       }
+      if (selectedAccount) {
+        const selectedAccountData = await fetchAccount(selectedAccount.id);
+        setSelectedAccountData(selectedAccountData);
+      }
     };
 
     fetchData();
-  }, []);
+  }, [reload, selectedAccount]);
 
   const accountsScrollContainerRef = useRef(null);
   const transactionsScrollContainerRef = useRef(null);
@@ -95,6 +112,7 @@ function Dashboard () {
 
   const handleClose = () => {
     setShowTransferForm(false);
+    setReload(!reload);
   };
 
   const [showWithdrawalForm, setShowWithdrawalForm] = useState(false);
@@ -105,6 +123,7 @@ function Dashboard () {
 
   const handleCloseWithdrawal = () => {
     setShowWithdrawalForm(false);
+    setReload(!reload);
   };
 
   const [showDepositForm, setShowDepositForm] = useState(false);
@@ -115,6 +134,7 @@ function Dashboard () {
 
   const handleCloseDeposit = () => {
     setShowDepositForm(false);
+    setReload(!reload);
   };
 
   const profileOpen = Boolean(profileAnchorEl);
@@ -180,7 +200,7 @@ function Dashboard () {
                 />
               </Grid>
               <Grid item xs={12} md={6}>
-                <AccountSummary classes={classes} selectedAccount={selectedAccount} />
+                <AccountSummary classes={classes} selectedAccount={selectedAccountData} />
               </Grid>
               <Grid item xs={12} md={6}>
                 <TransactionsList
@@ -193,6 +213,7 @@ function Dashboard () {
               <Grid item xs={12} md={6}>
                 <QuickActions
                   classes={classes}
+                  accountsData={accountsData}
                   handleDepositClick={handleDepositClick}
                   handleTransferClick={handleTransferClick}
                   handleWithdrawalClick={handleWithdrawalClick}

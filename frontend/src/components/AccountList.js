@@ -17,22 +17,24 @@ const AccountsList = ({
           Accounts
         </Typography>
         <div ref={accountsScrollContainerRef} style={{ overflowX: 'auto', overflowY: 'hidden', display: 'flex', height: '200px' }}>
-          {accountsData
+          {accountsData !== null
             ? (
-                accountsData.map((account, index) => (
-                  <div style={{ flex: '0 0 auto', width: '100%' }} key={index}>
-                    <Card variant='outlined' className={classes.accountCard} onClick={() => setSelectedAccount(account)}>
-                      <CardContent>
-                        <Typography variant='h5' component='h2' className={classes.accountName} style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1976D2' }}>
-                          {account.name}
-                        </Typography>
-                        <Typography color='textSecondary' style={{ marginTop: '10px', color: '#3f51b5' }}>
-                          Balance: {account.balance}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </div>
-                ))
+                accountsData.length > 0
+                  ? accountsData.map((account, index) => (
+                    <div style={{ flex: '0 0 auto', width: '100%' }} key={index}>
+                      <Card variant='outlined' className={classes.accountCard} onClick={() => setSelectedAccount(account)}>
+                        <CardContent>
+                          <Typography variant='h5' component='h2' className={classes.accountName} style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1976D2' }}>
+                            {account.name}
+                          </Typography>
+                          <Typography color='textSecondary' style={{ marginTop: '10px', color: '#3f51b5' }}>
+                            Balance: {account.balance}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  ))
+                  : <Typography color='textSecondary'>You currently have no accounts. Please create an account to perform transactions.</Typography>
               )
             : (
               <Typography color='textSecondary'>

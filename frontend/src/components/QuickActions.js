@@ -18,6 +18,7 @@ import WithdrawalForm from './WithdrawalForm';
 
 const QuickActions = ({
   classes,
+  accountsData,
   handleDepositClick,
   handleTransferClick,
   handleWithdrawalClick,
@@ -42,8 +43,9 @@ const QuickActions = ({
               startIcon={<DepositIcon />}
               className={`${classes.dashboardButton} ${classes.depositButton}`}
               onClick={handleDepositClick}
+              disabled={!accountsData || accountsData.length === 0}
             >
-              Make a Deposit
+              Deposit
             </Button>
             <Dialog open={showDepositForm} onClose={handleCloseDeposit}>
               <DialogContent>
@@ -58,8 +60,9 @@ const QuickActions = ({
               startIcon={<TransferIcon />}
               className={`${classes.dashboardButton} ${classes.transferButton}`}
               onClick={handleTransferClick}
+              disabled={!accountsData || accountsData.length === 0}
             >
-              Initiate a Transfer
+              Transfer
             </Button>
             <Dialog open={showTransferForm} onClose={handleClose}>
               <DialogContent>
@@ -74,8 +77,9 @@ const QuickActions = ({
               startIcon={<WithdrawIcon />}
               className={`${classes.dashboardButton} ${classes.withdrawButton}`}
               onClick={handleWithdrawalClick}
+              disabled={!accountsData || accountsData.length === 0}
             >
-              Make a Withdrawal
+              Withdrawal
             </Button>
             <Dialog open={showWithdrawalForm} onClose={handleCloseWithdrawal}>
               <DialogContent>
@@ -89,6 +93,7 @@ const QuickActions = ({
               color='inherit'
               startIcon={<BillIcon />}
               className={`${classes.dashboardButton} ${classes.billButton}`}
+              disabled={!accountsData || accountsData.length === 0}
             >
               Pay a Bill
             </Button>
