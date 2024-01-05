@@ -150,6 +150,13 @@ const RegisterForm = () => {
       setErrorMessage('');
       setFormErrors({});
 
+      const user = response.data.user;
+
+      sessionStorage.setItem('userId', user.userId);
+      sessionStorage.setItem('firstName', user.firstName);
+      sessionStorage.setItem('lastName', user.lastName);
+      sessionStorage.setItem('email', user.email);
+
       history.push('/dashboard');
     } catch (error) {
       console.error(error);

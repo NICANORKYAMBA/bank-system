@@ -153,7 +153,13 @@ export const createUser = [
       }
 
       res.status(201).json({
-        message: 'User created', user
+        message: 'User created',
+        user: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          userId: user.id,
+          email: user.email
+        }
       });
     } catch (err) {
       if (err instanceof Sequelize.DatabaseError) {
