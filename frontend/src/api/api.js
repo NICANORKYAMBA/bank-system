@@ -23,3 +23,8 @@ export const fetchTransactions = async (userId) => {
   });
   return response.data.transactions;
 };
+
+export const fetchAccount = async (accountId) => {
+  const response = await axios.get(`http://localhost:5000/api/accounts/id/${accountId}`);
+  return response.data;
+};
