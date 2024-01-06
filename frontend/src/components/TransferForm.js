@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   TextField,
   Grid,
   makeStyles,
-  Typography
+  Typography,
+  Select,
+  MenuItem,
+  InputLabel
 } from '@material-ui/core';
 import * as ReactSpring from 'react-spring';
 import axios from 'axios';
@@ -58,6 +61,33 @@ const useStyles = makeStyles((theme) => ({
 const TransferForm = ({ handleClose }) => {
   const classes = useStyles();
 
+  const [accounts, setAccounts] = useState([]);
+  const [noAccounts, setNoAccounts] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const userId = sessionStorage.getItem('userId');
+        const response = await axios.get(`http://localhost:5000/api/accounts/user/${userId}`);
+        if (response.data && response.data.accounts.length === 0) {
+          setNoAccounts(true);
+        } else {
+          setAccounts(response.data.accounts);
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAccounts();
+  }, []);
+
   const [formData, setFormData] = useState({
     type: 'transfer',
     amount: '',
@@ -87,6 +117,7 @@ const TransferForm = ({ handleClose }) => {
       handleClose();
     } catch (error) {
       console.error(error);
+      setError(error.message);
     }
   };
 
@@ -95,6 +126,8 @@ const TransferForm = ({ handleClose }) => {
   return (
   // eslint-disable-next-line react/jsx-pascal-case
     <ReactSpring.animated.div style={props}>
+      {loading && <Typography>Loading accounts...</Typography>}
+      {error && <Typography color='error'>{error}</Typography>}
       <form className={classes.form} onSubmit={handleSubmit}>
         <Typography className={classes.title}>Transfer Form</Typography>
         <Grid container spacing={2}>
@@ -110,15 +143,39 @@ const TransferForm = ({ handleClose }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <TextField
-              className={classes.formControl}
-              label='Source Account Number'
-              type='text'
-              name='sourceAccountNumber'
-              value={formData.sourceAccountNumber}
-              onChange={handleChange}
-              required
-            />
+            {noAccounts
+              ? (
+                <Typography color='textSecondary'>No accounts to select.</Typography>
+                )
+              : (
+                <>
+                  <InputLabel
+                    htmlFor='source-account-number'
+                    style={{ marginLeft: '15px' }}
+                  >Source Account Number *
+                  </InputLabel>
+                  <Select
+                    className={classes.formControl}
+                    value={formData.sourceAccountNumber}
+                    onChange={handleChange}
+                    inputProps={{
+                      name: 'sourceAccountNumber',
+                      id: 'source-account-number'
+                    }}
+                    required
+                  >
+                    {accounts.map((account) => (
+                      <MenuItem
+                        key={account.id}
+                        value={account.accountNumber}
+                        disabled={account.status === 'inactive'}
+                      >
+                        {account.accountNumber} ({account.status})
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </>
+                )}
           </Grid>
           <Grid item xs={12}>
             <TextField
