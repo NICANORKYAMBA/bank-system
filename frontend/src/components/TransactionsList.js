@@ -1,57 +1,112 @@
 import React from 'react';
-import { Card, CardContent, Typography, IconButton, Paper, Chip } from '@material-ui/core';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import { Card, CardContent, Typography, IconButton, Paper, Chip, Avatar, useMediaQuery } from '@material-ui/core';
+import { useTheme, makeStyles } from '@material-ui/core/styles';
+import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import DepositIcon from '@material-ui/icons/AccountBalanceWallet';
 import TransferIcon from '@material-ui/icons/SwapHoriz';
 import WithdrawIcon from '@material-ui/icons/MoneyOff';
 
+const useStyles = makeStyles((theme) => ({
+  dashboardCard: {
+    borderRadius: theme.shape.borderRadius,
+    boxShadow: theme.shadows[5],
+    overflow: 'hidden',
+    transition: 'transform 0.3s ease-in-out',
+    '&:hover': {
+      transform: 'scale(1.02)'
+    }
+  },
+  dashboardCardContent: {
+    padding: theme.spacing(3)
+  },
+  transactionCard: {
+    flex: '0 0 auto',
+    margin: theme.spacing(1),
+    padding: theme.spacing(2),
+    borderRadius: theme.shape.borderRadius,
+    boxShadow: theme.shadows[3],
+    transition: 'box-shadow 0.3s ease-in-out',
+    '&:hover': {
+      boxShadow: theme.shadows[10]
+    }
+  },
+  transactionChip: {
+    margin: theme.spacing(1, 0),
+    '& .MuiChip-avatar': {
+      color: theme.palette.getContrastText(theme.palette.primary.main),
+      backgroundColor: theme.palette.primary.main
+    }
+  },
+  transactionDetails: {
+    color: theme.palette.text.primary,
+    fontSize: '0.875rem'
+  },
+  scrollButton: {
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    margin: theme.spacing(1),
+    padding: theme.spacing(1),
+    '&:hover': {
+      backgroundColor: 'rgba(0, 0, 0, 0.2)'
+    }
+  }
+}));
+
 const TransactionsList = ({
-  classes,
   transactions,
   scrollTransactions,
   transactionsScrollContainerRef
 }) => {
+  const classes = useStyles();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const getTransactionIcon = (type) => {
+    switch (type) {
+      case 'deposit':
+        return <DepositIcon />;
+      case 'withdrawal':
+        return <WithdrawIcon />;
+      default:
+        return <TransferIcon />;
+    }
+  };
+
   return (
     <Card className={classes.dashboardCard}>
       <CardContent className={classes.dashboardCardContent}>
-        <Typography variant='h6' component='h2' gutterBottom>
+        <Typography variant='h6' component='h2' gutterBottom style={{ fontFamily: 'Roboto, sans-serif', color: theme.palette.primary.dark }}>
           Transactions
         </Typography>
-        <IconButton onClick={() => scrollTransactions(-430)} style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)', margin: '0 8px', padding: '10px' }}>
-          <ArrowBackIosIcon style={{ fontSize: '1rem', color: '#3f51b5' }} />
-        </IconButton>
+        {!isMobile && (
+          <IconButton onClick={() => scrollTransactions(-430)} className={classes.scrollButton}>
+            <KeyboardArrowLeftIcon fontSize='large' color='primary' />
+          </IconButton>
+        )}
         <div ref={transactionsScrollContainerRef} style={{ overflowX: 'auto', display: 'flex' }}>
           {transactions.length > 0
             ? (
                 transactions.map((transaction, index) => (
-                  <Paper elevation={3} className={classes.transactionCard} key={index} style={{ flex: '0 0 auto', padding: '10px', margin: '10px' }}>
+                  <Paper elevation={3} className={classes.transactionCard} key={index}>
                     <CardContent>
                       <Chip
-                        icon={
-                          transaction.type === 'deposit'
-                            ? <DepositIcon />
-                            : transaction.type === 'withdrawal'
-                              ? <WithdrawIcon />
-                              : <TransferIcon />
-                        }
-                        label={`Type: ${transaction.type}`}
-                        color={transaction.type === 'deposit' ? 'primary' : transaction.type === 'withdrawal' ? 'secondary' : 'default'}
-                        style={{ margin: '10px 0' }}
+                        avatar={<Avatar>{getTransactionIcon(transaction.type)}</Avatar>}
+                        label={transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
+                        className={classes.transactionChip}
                       />
-                      <Typography color='textSecondary' style={{ color: '#3f51b5' }}>
+                      <Typography className={classes.transactionDetails}>
                         Amount: {transaction.amount}
                       </Typography>
-                      <Typography color='textSecondary' style={{ color: '#3f51b5' }}>
+                      <Typography className={classes.transactionDetails}>
                         Source Account: {transaction.sourceAccount}
                       </Typography>
-                      <Typography color='textSecondary' style={{ color: '#3f51b5' }}>
+                      <Typography className={classes.transactionDetails}>
                         Destination Account: {transaction.destinationAccount}
                       </Typography>
-                      <Typography color='textSecondary' style={{ color: '#3f51b5' }}>
+                      <Typography className={classes.transactionDetails}>
                         Description: {transaction.description}
                       </Typography>
-                      <Typography color='textSecondary' style={{ color: '#3f51b5' }}>
+                      <Typography className={classes.transactionDetails}>
                         Date: {new Date(transaction.transactionDate).toLocaleString()}
                       </Typography>
                     </CardContent>
@@ -64,9 +119,11 @@ const TransactionsList = ({
               </Typography>
               )}
         </div>
-        <IconButton onClick={() => scrollTransactions(430)} style={{ backgroundColor: 'rgba(0, 0, 0, 0.1)', margin: '0 8px', padding: '10px' }}>
-          <ArrowForwardIosIcon style={{ fontSize: '1rem', color: '#3f51b5' }} />
-        </IconButton>
+        {!isMobile && (
+          <IconButton onClick={() => scrollTransactions(430)} className={classes.scrollButton}>
+            <KeyboardArrowRightIcon fontSize='large' color='primary' />
+          </IconButton>
+        )}
       </CardContent>
     </Card>
   );
