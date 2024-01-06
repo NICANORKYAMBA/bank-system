@@ -1,53 +1,123 @@
-import React from 'react';
-import { Card, CardContent, Typography, Button } from '@material-ui/core';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import React, { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Box,
+  Button,
+  useTheme
+} from '@material-ui/core';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import AddIcon from '@material-ui/icons/Add';
 
 const AccountsList = ({
   classes,
   accountsData,
-  setSelectedAccount,
-  scrollAccounts,
-  accountsScrollContainerRef
+  setSelectedAccount
 }) => {
+  const theme = useTheme();
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 2;
+
+  const handleNextPage = () => {
+    setCurrentPage(prevPage => prevPage + 1);
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage(prevPage => prevPage - 1);
+  };
+
+  const isLastPage = currentPage >= Math.ceil(accountsData.length / itemsPerPage) - 1;
+  const displayedAccounts = (accountsData || []).slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+  if (isLastPage && displayedAccounts.length < 2) {
+    displayedAccounts.push(null);
+  }
+
   return (
-    <Card className={`${classes.dashboardCard} ${classes.accountsCard}`}>
-      <CardContent className={classes.dashboardCardContent}>
-        <Typography variant='h6' component='h2' gutterBottom className={classes.accountsTitle}>
-          Accounts
+    <Card className={classes.dashboardCard} elevation={2}>
+      <CardContent>
+        <Typography variant='h5' component='h2' gutterBottom style={{ display: 'flex', alignItems: 'center', color: theme.palette.primary.main }}>
+          <AccountCircleIcon style={{ marginRight: theme.spacing(1) }} /> Accounts
         </Typography>
-        <div ref={accountsScrollContainerRef} style={{ overflowX: 'auto', overflowY: 'hidden', display: 'flex', height: '200px' }}>
-          {accountsData !== null
-            ? (
-                accountsData.length > 0
-                  ? accountsData.map((account, index) => (
-                    <div style={{ flex: '0 0 auto', width: '100%' }} key={index}>
-                      <Card variant='outlined' className={classes.accountCard} onClick={() => setSelectedAccount(account)}>
-                        <CardContent>
-                          <Typography variant='h5' component='h2' className={classes.accountName} style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1976D2' }}>
-                            {account.name}
-                          </Typography>
-                          <Typography color='textSecondary' style={{ marginTop: '10px', color: '#3f51b5' }}>
-                            Balance: {account.balance}
-                          </Typography>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  ))
-                  : <Typography color='textSecondary'>You currently have no accounts. Please create an account to perform transactions.</Typography>
-              )
-            : (
-              <Typography color='textSecondary'>
-                Loading accounts...
+        {!accountsData || accountsData.length === 0
+          ? (
+            <Box textAlign='center' color={theme.palette.text.secondary}>
+              <Typography variant='body1' gutterBottom>
+                You currently have no accounts. Click the button below to create a new one.
               </Typography>
-              )}
-        </div>
-        <Button onClick={() => scrollAccounts(-430)}>
-          <ArrowBackIosIcon />
-        </Button>
-        <Button onClick={() => scrollAccounts(430)}>
-          <ArrowForwardIosIcon />
-        </Button>
+              <Button
+                variant='contained'
+                color='primary'
+                startIcon={<AddIcon />}
+                className={classes.createButton}
+              >
+                Create New Account
+              </Button>
+            </Box>
+            )
+          : (
+            <>
+              <TableContainer component={Paper} style={{ marginTop: theme.spacing(2) }}>
+                <Table aria-label='simple table'>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Account Name</TableCell>
+                      <TableCell align='right'>Balance</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {displayedAccounts.map((account, index) => (
+                      account
+                        ? (
+                          <TableRow
+                            key={account.id || index}
+                            hover
+                            onClick={() => setSelectedAccount(account)}
+                            style={{ cursor: 'pointer' }}
+                            className={classes.tableRow}
+                          >
+                            <TableCell component='th' scope='row'>
+                              {account.name}
+                            </TableCell>
+                            <TableCell align='right'>{account.balance}</TableCell>
+                          </TableRow>
+                          )
+                        : (
+                          <TableRow key={`empty-${index}`}>
+                            <TableCell colSpan={2} style={{ backgroundColor: theme.palette.background.default }}>
+                              <Box display='flex' justifyContent='center' alignItems='center' height='100%'>
+                                Empty Slot
+                              </Box>
+                            </TableCell>
+                          </TableRow>
+                          )
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <Box display='flex' justifyContent='center' alignItems='center' marginTop={theme.spacing(1)}>
+                <IconButton onClick={handlePrevPage} disabled={currentPage === 0} size='small'>
+                  <ChevronLeftIcon />
+                </IconButton>
+                <Typography variant='body2' style={{ margin: `0 ${theme.spacing(1)}px` }}>
+                  Page {currentPage + 1} of {Math.ceil(accountsData.length / itemsPerPage)}
+                </Typography>
+                <IconButton onClick={handleNextPage} disabled={isLastPage} size='small'>
+                  <ChevronRightIcon />
+                </IconButton>
+              </Box>
+            </>
+            )}
       </CardContent>
     </Card>
   );
