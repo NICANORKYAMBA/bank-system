@@ -6,7 +6,8 @@ import {
   makeStyles,
   Typography,
   Select,
-  MenuItem
+  MenuItem,
+  InputLabel
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import * as ReactSpring from 'react-spring';
@@ -112,7 +113,7 @@ const WithdrawalForm = ({ handleClose }) => {
   const props = ReactSpring.useSpring({ opacity: 1, from: { opacity: 0 } });
 
   return (
-  // eslint-disable-next-line react/jsx-pascal-case
+    // eslint-disable-next-line react/jsx-pascal-case
     <ReactSpring.animated.div style={props}>
       {noAccounts
         ? (
@@ -134,17 +135,29 @@ const WithdrawalForm = ({ handleClose }) => {
                 />
               </Grid>
               <Grid item xs={12}>
+                <InputLabel
+                  htmlFor='source-account-number'
+                  style={{ marginLeft: '15px' }}
+                >
+                  Source Account Number *
+                </InputLabel>
                 <Select
                   className={classes.formControl}
                   value={formData.sourceAccountNumber}
                   onChange={handleChange}
                   inputProps={{
-                    name: 'sourceAccountNumber'
+                    name: 'sourceAccountNumber',
+                    id: 'source-account-number'
                   }}
+                  required
                 >
                   {accounts.map((account) => (
-                    <MenuItem key={account.id} value={account.accountNumber}>
-                      {account.accountNumber}
+                    <MenuItem
+                      key={account.id}
+                      value={account.accountNumber}
+                      disabled={account.status === 'inactive'}
+                    >
+                      {account.accountNumber} ({account.status})
                     </MenuItem>
                   ))}
                 </Select>

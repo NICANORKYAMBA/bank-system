@@ -51,6 +51,9 @@ const TransactionsList = ({
                       <Typography color='textSecondary' style={{ color: '#3f51b5' }}>
                         Description: {transaction.description}
                       </Typography>
+                      <Typography color='textSecondary' style={{ color: '#3f51b5' }}>
+                        Date: {new Date(transaction.transactionDate).toLocaleString()}
+                      </Typography>
                     </CardContent>
                   </Paper>
                 ))

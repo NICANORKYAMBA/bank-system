@@ -6,7 +6,8 @@ import {
   makeStyles,
   Typography,
   Select,
-  MenuItem
+  MenuItem,
+  InputLabel
 } from '@material-ui/core';
 import * as ReactSpring from 'react-spring';
 import axios from 'axios';
@@ -106,7 +107,7 @@ const DepositForm = ({ handleClose }) => {
   const props = ReactSpring.useSpring({ opacity: 1, from: { opacity: 0 } });
 
   return (
-  // eslint-disable-next-line react/jsx-pascal-case
+    // eslint-disable-next-line react/jsx-pascal-case
     <ReactSpring.animated.div style={props}>
       <form className={classes.form} onSubmit={handleSubmit}>
         <Typography className={classes.title}>Deposit Form</Typography>
@@ -123,26 +124,32 @@ const DepositForm = ({ handleClose }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            {accounts.length > 0
-              ? (
-                <Select
-                  className={classes.formControl}
-                  value={formData.sourceAccountNumber}
-                  onChange={handleChange}
-                  inputProps={{
-                    name: 'sourceAccountNumber'
-                  }}
+            <InputLabel
+              htmlFor='source-account-number'
+              style={{ marginLeft: '15px' }}
+            >
+              Source Account Number *
+            </InputLabel>
+            <Select
+              className={classes.formControl}
+              value={formData.sourceAccountNumber}
+              onChange={handleChange}
+              inputProps={{
+                name: 'sourceAccountNumber',
+                id: 'source-account-number'
+              }}
+              required
+            >
+              {accounts.map((account) => (
+                <MenuItem
+                  key={account.id}
+                  value={account.accountNumber}
+                  disabled={account.status === 'inactive'}
                 >
-                  {accounts.map((account) => (
-                    <MenuItem key={account.id} value={account.accountNumber}>
-                    {account.accountNumber}
-                  </MenuItem>
-                  ))}
-                </Select>
-                )
-              : (
-                <Typography color='textSecondary'>No accounts to select.</Typography>
-                )}
+                  {account.accountNumber} ({account.status})
+                </MenuItem>
+              ))}
+            </Select>
           </Grid>
           <Grid item xs={12}>
             <TextField
