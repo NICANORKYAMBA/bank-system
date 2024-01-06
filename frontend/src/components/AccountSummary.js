@@ -1,5 +1,14 @@
 import React from 'react';
-import { CardContent, Typography, useTheme, Paper, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import {
+  CardContent,
+  Typography,
+  useTheme,
+  Paper,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText
+} from '@material-ui/core';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import PersonIcon from '@material-ui/icons/Person';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
