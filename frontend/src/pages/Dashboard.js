@@ -46,7 +46,7 @@ function Dashboard () {
 
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [selectedAccountData, setSelectedAccountData] = useState(null);
-  const [accountsData, setAccountsData] = useState(null);
+  const [accountsData, setAccountsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -70,6 +70,7 @@ function Dashboard () {
           if (error.response && error.response.status === 404) {
             console.log('No accounts found for this user.');
             accountsData = [];
+            console.log(accountsData);
           } else {
             throw error;
           }
@@ -97,7 +98,9 @@ function Dashboard () {
   const transactionsScrollContainerRef = useRef(null);
 
   const scrollAccounts = (scrollOffset) => {
-    accountsScrollContainerRef.current.scrollLeft += scrollOffset;
+    if (accountsScrollContainerRef.current) {
+      accountsScrollContainerRef.current.scrollLeft += scrollOffset;
+    }
   };
 
   const scrollTransactions = (scrollOffset) => {

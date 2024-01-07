@@ -13,20 +13,25 @@ import {
   IconButton,
   Box,
   Button,
-  useTheme
+  useTheme,
+  Dialog,
+  DialogContent
 } from '@material-ui/core';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import AddIcon from '@material-ui/icons/Add';
+import CreateAccountForm from './CreateAccountForm';
 
 const AccountsList = ({
   classes,
   accountsData,
-  setSelectedAccount
+  setSelectedAccount,
+  refreshAccounts
 }) => {
   const theme = useTheme();
   const [currentPage, setCurrentPage] = useState(0);
+  const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const itemsPerPage = 2;
 
   const handleNextPage = () => {
@@ -35,6 +40,14 @@ const AccountsList = ({
 
   const handlePrevPage = () => {
     setCurrentPage(prevPage => prevPage - 1);
+  };
+
+  const handleOpenCreateDialog = () => {
+    setOpenCreateDialog(true);
+  };
+
+  const handleCloseCreateDialog = () => {
+    setOpenCreateDialog(false);
   };
 
   const isLastPage = currentPage >= Math.ceil(accountsData.length / itemsPerPage) - 1;
@@ -60,6 +73,7 @@ const AccountsList = ({
                 color='primary'
                 startIcon={<AddIcon />}
                 className={classes.createButton}
+                onClick={handleOpenCreateDialog}
               >
                 Create New Account
               </Button>
@@ -119,6 +133,11 @@ const AccountsList = ({
             </>
             )}
       </CardContent>
+      <Dialog open={openCreateDialog} onClose={handleCloseCreateDialog}>
+        <DialogContent>
+          <CreateAccountForm onAccountCreated={refreshAccounts} />
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };

@@ -157,5 +157,15 @@ export const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
     height: '50vh'
+  },
+  tableRow: {
+    '&:hover': {
+      backgroundColor: 'rgba(0, 0, 0, 0.04)'
+    }
+  },
+  createButton: {
+    marginTop: theme.spacing(2),
+    borderRadius: theme.shape.borderRadius,
+    boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.1)'
   }
 }));
