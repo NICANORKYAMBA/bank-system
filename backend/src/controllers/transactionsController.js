@@ -404,18 +404,18 @@ export const getTransactionsByUserId = [
         ],
         limit,
         offset,
-        order: [[sort, order]]
+        order: sort && order ? [[sort, order]] : undefined
       });
 
       if (transactions.length > 0) {
-        const message = transactions.length === 1 ? 'transaction' : 'transactions';
         res.status(200).json({
-          message: `${transactions.length} ${message} found`,
+          message: `${transactions.length} transactions found`,
           transactions
         });
       } else {
-        res.status(404).json({
-          message: 'No transactions found'
+        res.status(200).json({
+          message: 'No transactions found for this user',
+          transactions: []
         });
       }
     } catch (err) {
