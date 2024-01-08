@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import {
   Button,
-  TextField,
   Grid,
   makeStyles,
   Typography,
   Select,
   MenuItem,
-  InputLabel
+  InputLabel,
+  Snackbar,
+  Paper,
+  CircularProgress,
+  FormControl,
+  OutlinedInput,
+  InputAdornment
 } from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
+import MuiAlert from '@material-ui/lab/Alert';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import MonetizationOn from '@material-ui/icons/MonetizationOn';
+import Description from '@material-ui/icons/Description';
 import * as ReactSpring from 'react-spring';
 import axios from 'axios';
 
@@ -19,14 +27,15 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     padding: theme.spacing(2),
-    backgroundColor: '#fafafa',
+    backgroundColor: '#ffffff',
     borderRadius: '5px',
     boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
     transition: 'all 0.3s'
   },
   formControl: {
     margin: theme.spacing(2),
-    minWidth: 500,
+    minWidth: 400,
+    maxWidth: 490,
     '& label.Mui-focused': {
       color: '#1976D2',
       fontSize: '1rem'
@@ -56,6 +65,13 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
     color: '#1976D2',
     fontSize: '2rem'
+  },
+  paper: {
+    padding: theme.spacing(2),
+    backgroundColor: '#fafafa',
+    marginLeft: theme.spacing(0),
+    borderRadius: '5px',
+    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
   }
 }));
 
@@ -70,16 +86,29 @@ const WithdrawalForm = ({ handleClose }) => {
   });
 
   const [accounts, setAccounts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [noAccounts, setNoAccounts] = useState(false);
 
   useEffect(() => {
     const fetchAccounts = async () => {
+      setLoading(true);
       const userId = sessionStorage.getItem('userId');
-      const response = await axios.get(`http://localhost:5000/api/accounts/user/${userId}`);
-      if (response.data.accounts.length === 0) {
-        setNoAccounts(true);
-      } else {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/accounts/user/${userId}`);
         setAccounts(response.data.accounts);
+        if (response.data.accounts.length === 0) {
+          setNoAccounts(true);
+        }
+      } catch (error) {
+        console.error('Error fetching accounts: ', error);
+        setSnackbarMessage('Failed to fetch accounts');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -110,81 +139,110 @@ const WithdrawalForm = ({ handleClose }) => {
     }
   };
 
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
   const props = ReactSpring.useSpring({ opacity: 1, from: { opacity: 0 } });
 
   return (
     // eslint-disable-next-line react/jsx-pascal-case
     <ReactSpring.animated.div style={props}>
-      {noAccounts
-        ? (
-          <Alert severity='warning'>No accounts available for withdrawal.</Alert>
-          )
-        : (
-          <form className={classes.form} onSubmit={handleSubmit}>
-            <Typography className={classes.title}>Withdrawal Form</Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  className={classes.formControl}
-                  label='Amount'
-                  type='number'
-                  name='amount'
-                  value={formData.amount}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputLabel
-                  htmlFor='source-account-number'
-                  style={{ marginLeft: '15px' }}
-                >
-                  Source Account Number *
-                </InputLabel>
-                <Select
-                  className={classes.formControl}
-                  value={formData.sourceAccountNumber}
-                  onChange={handleChange}
-                  inputProps={{
-                    name: 'sourceAccountNumber',
-                    id: 'source-account-number'
-                  }}
-                  required
-                >
-                  {accounts.map((account) => (
-                    <MenuItem
-                      key={account.id}
-                      value={account.accountNumber}
-                      disabled={account.status === 'inactive'}
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <MuiAlert elevation={6} variant='filled' onClose={handleSnackbarClose} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </MuiAlert>
+      </Snackbar>
+      <Paper className={classes.paper} elevation={3}>
+        <Typography className={classes.title} variant='h4'>
+          Withdraw Funds
+        </Typography>
+        {loading && (
+          <CircularProgress size={24} className={classes.buttonProgress} />
+        )}
+        {noAccounts
+          ? (
+            <Typography className={classes.noAccounts}>
+              No accounts available for withdrawal.
+            </Typography>
+            )
+          : (
+            <form className={classes.form} noValidate autoComplete='off' onSubmit={handleSubmit}>
+              <Grid container spacing={2} justifyContent='center' alignItems='center'>
+                <Grid item xs={12}>
+                  <FormControl variant='outlined' fullWidth className={classes.formControl}>
+                    <OutlinedInput
+                      id='amount'
+                      name='amount'
+                      type='number'
+                      value={formData.amount}
+                      onChange={handleChange}
+                      startAdornment={<InputAdornment position='start'><MonetizationOn /></InputAdornment>}
+                      labelWidth={0}
+                      placeholder='Amount'
+                      required
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl variant='outlined' fullWidth className={classes.formControl}>
+                    <InputLabel htmlFor='source-account-number'>Source Account Number *</InputLabel>
+                    <Select
+                      value={formData.sourceAccountNumber}
+                      onChange={handleChange}
+                      label='Source Account Number *'
+                      inputProps={{
+                        name: 'sourceAccountNumber',
+                        id: 'source-account-number'
+                      }}
+                      startAdornment={<InputAdornment position='start'><AccountCircle /></InputAdornment>}
+                      required
                     >
-                      {account.accountNumber} ({account.status})
-                    </MenuItem>
-                  ))}
-                </Select>
+                      {accounts.map((account) => (
+                        <MenuItem
+                          key={account.id}
+                          value={account.accountNumber}
+                          disabled={account.status === 'inactive'}
+                        >
+                          {account.accountNumber} ({account.status})
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl variant='outlined' fullWidth className={classes.formControl}>
+                    <OutlinedInput
+                      id='description'
+                      name='description'
+                      type='text'
+                      value={formData.description}
+                      onChange={handleChange}
+                      startAdornment={<InputAdornment position='start'><Description /></InputAdornment>}
+                      labelWidth={0}
+                      placeholder='Description'
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <Button
+                    className={classes.formButton}
+                    variant='contained'
+                    color='primary'
+                    type='submit'
+                    disabled={accounts.length === 0 || loading}
+                    fullWidth
+                  >
+                    Withdraw
+                  </Button>
+                </Grid>
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  className={classes.formControl}
-                  label='Description'
-                  type='text'
-                  name='description'
-                  value={formData.description}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <Button
-                  className={classes.formButton}
-                  variant='contained'
-                  color='primary'
-                  type='submit'
-                >
-                  Make a Withdrawal
-                </Button>
-              </Grid>
-            </Grid>
-          </form>
-          )}
+            </form>
+            )}
+      </Paper>
     </ReactSpring.animated.div>
   );
 };

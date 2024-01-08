@@ -35,7 +35,8 @@ const useStyles = makeStyles((theme) => ({
   },
   formControl: {
     margin: theme.spacing(2),
-    minWidth: 300,
+    minWidth: 400,
+    maxWidth: 490,
     '& label.Mui-focused': {
       color: '#1976D2',
       fontSize: '1rem'
@@ -50,7 +51,11 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   paper: {
-    padding: theme.spacing(3)
+    padding: theme.spacing(2),
+    backgroundColor: '#fafafa',
+    marginLeft: theme.spacing(0),
+    borderRadius: '5px',
+    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
   },
   formButton: {
     marginTop: theme.spacing(2),
