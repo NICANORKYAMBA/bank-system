@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   Button,
-  TextField,
   Grid,
   makeStyles,
   Typography,
@@ -11,7 +10,6 @@ import {
   Snackbar,
   Paper,
   FormControl,
-  FormHelperText,
   OutlinedInput,
   CircularProgress,
   InputAdornment
@@ -75,41 +73,6 @@ const useStyles = makeStyles((theme) => ({
 const TransferForm = ({ handleClose }) => {
   const classes = useStyles();
 
-  const [accounts, setAccounts] = useState([]);
-  const [noAccounts, setNoAccounts] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchAccounts = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const userId = sessionStorage.getItem('userId');
-        const response = await axios.get(`http://localhost:5000/api/accounts/user/${userId}`);
-        if (response.data && response.data.accounts.length === 0) {
-          setNoAccounts(true);
-        } else {
-          setAccounts(response.data.accounts);
-        }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAccounts();
-  }, []);
-
-  const Alert = (props) => {
-    return <MuiAlert elevation={6} variant='filled' {...props} />;
-  };
-
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-
   const [formData, setFormData] = useState({
     type: 'transfer',
     amount: '',
@@ -117,6 +80,37 @@ const TransferForm = ({ handleClose }) => {
     destinationAccountNumber: '',
     description: ''
   });
+
+  const [accounts, setAccounts] = useState([]);
+  const [noAccounts, setNoAccounts] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      setLoading(true);
+      const userId = sessionStorage.getItem('userId');
+      try {
+        const response = await axios.get(`http://localhost:5000/api/accounts/user/${userId}`);
+        if (response.data && response.data.accounts.length === 0) {
+          setNoAccounts(true);
+        } else {
+          setAccounts(response.data.accounts);
+        }
+      } catch (err) {
+        console.error('Error fetching accounts: ', err);
+        setSnackbarMessage('Failed to fetch accounts.');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAccounts();
+  }, []);
 
   const handleChange = (event) => {
     setFormData({
@@ -135,15 +129,14 @@ const TransferForm = ({ handleClose }) => {
 
     try {
       const response = await axios.post('http://localhost:5000/api/transactions', data);
-      console.log(response.data);
+      console.log('Transfer initiated successfully: ', response);
       setSnackbarMessage('Transfer initiated successfully!');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
       handleClose();
     } catch (error) {
-      console.error(error);
-      setError(error.message);
-      setSnackbarMessage(error.message);
+      console.error('Error initiating transfer: ', error);
+      setSnackbarMessage('Failed to initiate transfer.');
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
     }
@@ -152,128 +145,114 @@ const TransferForm = ({ handleClose }) => {
   const props = ReactSpring.useSpring({ opacity: 1, from: { opacity: 0 } });
 
   return (
-  // eslint-disable-next-line react/jsx-pascal-case
+    // eslint-disable-next-line react/jsx-pascal-case
     <ReactSpring.animated.div style={props}>
-      {loading
-        ? (
-          <div className={classes.progress}>
-            <CircularProgress />
-          </div>
-          )
-        : (
-          <Paper className={classes.paper}>
-            <Typography className={classes.title}>Transfer Form</Typography>
-            {error && <Typography color='error'>{error}</Typography>}
-            <form className={classes.form} onSubmit={handleSubmit}>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <FormControl variant='outlined' className={classes.formControl} required>
-                    <OutlinedInput
-                      id='amount'
-                      name='amount'
-                      type='number'
-                      value={formData.amount}
-                      onChange={handleChange}
-                      startAdornment={
-                        <InputAdornment position='start'>
-                          <MoneyIcon className={classes.inputIcon} />
-                        </InputAdornment>
-                    }
-                      labelWidth={0}
-                    />
-                    <FormHelperText>Amount</FormHelperText>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-                  {noAccounts
-                    ? (
-                      <Typography color='textSecondary'>No accounts to select.</Typography>
-                      )
-                    : (
-                      <>
-                        <InputLabel htmlFor='source-account-number' style={{ marginLeft: '15px' }}>
-                          Source Account Number *
-                        </InputLabel>
-                        <Select
-                          className={classes.formControl}
-                          value={formData.sourceAccountNumber}
-                          onChange={handleChange}
-                          inputProps={{
-                            name: 'sourceAccountNumber',
-                            id: 'source-account-number'
-                          }}
-                          required
-                          startAdornment={
-                            <InputAdornment position='start'>
-                              <AccountCircle className={classes.inputIcon} />
-                            </InputAdornment>
-                      }
-                        >
-                          {accounts.map((account) => (
-                            <MenuItem
-                              key={account.id}
-                              value={account.accountNumber}
-                              disabled={account.status === 'inactive'}
-                            >
-                              {account.accountNumber} ({account.status})
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </>
-                      )}
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    className={classes.formControl}
-                    label='Destination Account Number'
-                    type='text'
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
+        <MuiAlert elevation={6} variant='filled' onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </MuiAlert>
+      </Snackbar>
+      <Paper className={classes.paper} elevation={3}>
+        <Typography className={classes.title} variant='h4'>
+          Transfer Funds
+        </Typography>
+        {loading && (
+          <CircularProgress size={24} className={classes.buttonProgress} />
+        )}
+        {!noAccounts && (
+          <form className={classes.form} noValidate autoComplete='off' onSubmit={handleSubmit}>
+            <Grid container spacing={2} justifyContent='center' alignItems='center'>
+              <Grid item xs={12}>
+                <FormControl variant='outlined' fullWidth className={classes.formControl}>
+                  <OutlinedInput
+                    id='amount'
+                    name='amount'
+                    type='number'
+                    value={formData.amount}
+                    onChange={handleChange}
+                    startAdornment={<InputAdornment position='start'><MoneyIcon /></InputAdornment>}
+                    labelWidth={0}
+                    placeholder='Amount'
+                    required
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl variant='outlined' fullWidth className={classes.formControl}>
+                  <InputLabel htmlFor='source-account-number'>Source Account Number *</InputLabel>
+                  <Select
+                    value={formData.sourceAccountNumber}
+                    onChange={handleChange}
+                    label='Source Account Number *'
+                    inputProps={{
+                      name: 'sourceAccountNumber',
+                      id: 'source-account-number'
+                    }}
+                    startAdornment={<InputAdornment position='start'><AccountCircle /></InputAdornment>}
+                    required
+                  >
+                    {accounts.map((account) => (
+                      <MenuItem
+                        key={account.id}
+                        value={account.accountNumber}
+                        disabled={account.status === 'inactive'}
+                      >
+                        {account.accountNumber} ({account.status})
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl variant='outlined' fullWidth className={classes.formControl}>
+                  <OutlinedInput
+                    id='destination-account-number'
                     name='destinationAccountNumber'
+                    type='text'
                     value={formData.destinationAccountNumber}
                     onChange={handleChange}
+                    startAdornment={<InputAdornment position='start'><AccountCircle /></InputAdornment>}
+                    labelWidth={0}
+                    placeholder='Destination Account Number'
                     required
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position='start'>
-                          <AccountCircle className={classes.inputIcon} />
-                        </InputAdornment>
-                      )
-                    }}
                   />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    className={classes.formControl}
-                    label='Description'
-                    type='text'
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl variant='outlined' fullWidth className={classes.formControl}>
+                  <OutlinedInput
+                    id='description'
                     name='description'
+                    type='text'
                     value={formData.description}
                     onChange={handleChange}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position='start'>
-                          <DescriptionIcon className={classes.inputIcon} />
-                        </InputAdornment>
-                      )
-                    }}
+                    startAdornment={<InputAdornment position='start'><DescriptionIcon /></InputAdornment>}
+                    labelWidth={0}
+                    placeholder='Description'
                   />
-                </Grid>
+                </FormControl>
               </Grid>
-              <Button
-                className={classes.formButton}
-                variant='contained'
-                color='primary'
-                type='submit'
-              >
-                Initiate Transfer
-              </Button>
-            </form>
-          </Paper>
-          )}
-      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
-        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+              <Grid item xs={12}>
+                <Button
+                  className={classes.formButton}
+                  variant='contained'
+                  color='primary'
+                  type='submit'
+                  disabled={loading}
+                  fullWidth
+                >
+                  Transfer
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
+        )}
+        {noAccounts && (
+          <Typography className={classes.noAccounts}>
+            No accounts available for transfer.
+          </Typography>
+        )}
+      </Paper>
     </ReactSpring.animated.div>
   );
 };
