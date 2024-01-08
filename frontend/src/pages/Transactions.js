@@ -19,7 +19,10 @@ import CallReceivedIcon from '@material-ui/icons/CallReceived';
 const useStyles = makeStyles((theme) => ({
   container: {
     paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4)
+    paddingBottom: theme.spacing(4),
+    marginLeft: theme.spacing(10),
+    marginRight: theme.spacing(10),
+    maxWidth: '90%'
   },
   card: {
     margin: theme.spacing(2)
@@ -54,7 +57,6 @@ const Transactions = () => {
 
   useEffect(() => {
     const userId = sessionStorage.getItem('userId');
-    // Update the limit to 500 in the fetchTransactions call
     fetchTransactions(userId, 500, 0, 'createdAt', 'DESC')
       .then(data => {
         setTransactions(data);
