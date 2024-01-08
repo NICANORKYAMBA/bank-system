@@ -8,9 +8,7 @@ import {
 import MuiAlert from '@material-ui/lab/Alert';
 import { useStyles } from '../styles/dashboardStyles';
 import { fetchAccount, fetchAccounts, fetchTransactions } from '../api/api';
-import { useDashboard } from '../api/useDashboard';
 
-import Navigation from '../components/Navigation';
 import DashboardHeader from '../components/DashboardHeader';
 import AccountsList from '../components/AccountList';
 import AccountSummary from '../components/AccountSummary';
@@ -24,15 +22,6 @@ function Alert (props) {
 
 function Dashboard () {
   const classes = useStyles();
-
-  const {
-    anchorEl,
-    handleMenuOpen,
-    handleMenuClose,
-    handleDrawerOpen,
-    handleDrawerClose,
-    open
-  } = useDashboard();
 
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
 
@@ -171,15 +160,6 @@ function Dashboard () {
       )}
       {!loading && !error && (
         <>
-          <Navigation
-            classes={classes}
-            handleDrawerOpen={handleDrawerOpen}
-            handleDrawerClose={handleDrawerClose}
-            handleMenuOpen={handleMenuOpen}
-            handleMenuClose={handleMenuClose}
-            anchorEl={anchorEl}
-            open={open}
-          />
           <Container className={classes.dashboardContainer} style={{ maxWidth: '1060px' }}>
             <Grid container spacing={3}>
               <DashboardHeader
