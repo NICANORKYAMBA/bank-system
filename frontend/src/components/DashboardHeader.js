@@ -22,7 +22,8 @@ import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 
 const useStyles = makeStyles((theme) => ({
   headerContainer: {
-    padding: theme.spacing(0),
+    padding: theme.spacing(1),
+    marginTop: theme.spacing(5),
     backgroundColor: theme.palette.background.paper,
     borderRadius: theme.shape.borderRadius
   },
