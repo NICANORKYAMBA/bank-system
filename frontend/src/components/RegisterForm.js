@@ -193,6 +193,8 @@ const RegisterForm = () => {
 
   const history = useHistory();
 
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -217,9 +219,12 @@ const RegisterForm = () => {
         sessionStorage.setItem('lastName', user.lastName);
         sessionStorage.setItem('email', user.email);
 
-        history.push('/dashboard');
-
+        setSnackbarMessage('Registration successful! Redirecting...');
         setOpenSnackbar(true);
+
+        setTimeout(() => {
+          history.push('/dashboard');
+        }, 6000);
       } else {
         throw new Error('Server responded with a status other than 2xx');
       }
@@ -229,8 +234,10 @@ const RegisterForm = () => {
       if (error.response && error.response.status === 400) {
         if (error.response.data.message.includes('already exists')) {
           setFormErrors({ email: 'Email already exists' });
+          setSnackbarMessage('Email already exists');
         } else {
           setErrorMessage(error.response.data.message);
+          setSnackbarMessage(error.response.data.message);
         }
       }
     } finally {
@@ -436,9 +443,9 @@ const RegisterForm = () => {
                 Log in
               </Button>
             </Typography>
-            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+            <Snackbar open={openSnackbar} autoHideDuration={15000} onClose={handleCloseSnackbar}>
               <MuiAlert onClose={handleCloseSnackbar} severity='success' elevation={6} variant='filled'>
-                Registration successful!
+                {snackbarMessage}
               </MuiAlert>
             </Snackbar>
           </form>
