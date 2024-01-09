@@ -133,9 +133,17 @@ const WithdrawalForm = ({ handleClose }) => {
     try {
       const response = await axios.post('http://localhost:5000/api/transactions', data);
       console.log(response.data);
-      handleClose();
+      setSnackbarMessage('Withdrawal successful!');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
+      setTimeout(() => {
+        handleClose();
+      }, 6000);
     } catch (error) {
       console.error(error);
+      setSnackbarMessage('Failed to process withdrawal.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     }
   };
 
@@ -236,7 +244,7 @@ const WithdrawalForm = ({ handleClose }) => {
                     disabled={accounts.length === 0 || loading}
                     fullWidth
                   >
-                    Withdraw
+                    {loading ? <CircularProgress size={24} color='inherit' /> : 'Withdraw'}
                   </Button>
                 </Grid>
               </Grid>
