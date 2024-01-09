@@ -132,7 +132,9 @@ const DepositForm = ({ handleClose }) => {
       setSnackbarMessage('Deposit successful!');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
-      handleClose();
+      setTimeout(() => {
+        handleClose();
+      }, 6000);
     } catch (error) {
       console.error('Error making deposit:', error);
       setSnackbarMessage('Failed to make a deposit.');
@@ -153,10 +155,19 @@ const DepositForm = ({ handleClose }) => {
   const props = ReactSpring.useSpring({ opacity: 1, from: { opacity: 0 } });
 
   return (
-    // eslint-disable-next-line react/jsx-pascal-case
+  // eslint-disable-next-line react/jsx-pascal-case
     <ReactSpring.animated.div style={props}>
-      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-        <MuiAlert elevation={6} variant='filled' onClose={handleSnackbarClose} severity={snackbarSeverity}>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <MuiAlert
+          elevation={6}
+          variant='filled'
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+        >
           {snackbarMessage}
         </MuiAlert>
       </Snackbar>
@@ -164,81 +175,112 @@ const DepositForm = ({ handleClose }) => {
         <Typography className={classes.title} variant='h4'>
           Deposit Funds
         </Typography>
-        {loading
-          ? (
-            <CircularProgress size={24} className={classes.buttonProgress} />
-            )
-          : (
-            <form className={classes.form} noValidate autoComplete='off' onSubmit={handleSubmit}>
-              <Grid container spacing={2} justifyContent='center' alignItems='center'>
-                <Grid item xs={12}>
-                  <FormControl variant='outlined' fullWidth className={classes.formControl}>
-                    <OutlinedInput
-                      id='amount'
-                      name='amount'
-                      type='number'
-                      value={formData.amount}
-                      onChange={handleChange}
-                      startAdornment={<InputAdornment position='start'><MonetizationOn /></InputAdornment>}
-                      labelWidth={0}
-                      placeholder='Amount'
-                    />
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControl variant='outlined' fullWidth className={classes.formControl}>
-                    <InputLabel htmlFor='source-account-number'>Source Account Number *</InputLabel>
-                    <Select
-                      value={formData.sourceAccountNumber}
-                      onChange={handleChange}
-                      label='Source Account Number *'
-                      inputProps={{
-                        name: 'sourceAccountNumber',
-                        id: 'source-account-number'
-                      }}
-                      startAdornment={<InputAdornment position='start'><AccountCircle /></InputAdornment>}
+        <form
+          className={classes.form}
+          noValidate autoComplete='off'
+          onSubmit={handleSubmit}
+        >
+          <Grid
+            container spacing={2}
+            justifyContent='center'
+            alignItems='center'
+          >
+            <Grid item xs={12}>
+              <FormControl
+                variant='outlined'
+                fullWidth className={classes.formControl}
+              >
+                <OutlinedInput
+                  id='amount'
+                  name='amount'
+                  type='number'
+                  value={formData.amount}
+                  onChange={handleChange}
+                  startAdornment={<InputAdornment
+                    position='start'
+                                  ><MonetizationOn />
+                  </InputAdornment>}
+                  labelWidth={0}
+                  placeholder='Amount'
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl
+                variant='outlined'
+                fullWidth className={classes.formControl}
+              >
+                <InputLabel
+                  htmlFor='source-account-number'
+                >
+                  Source Account Number *
+                </InputLabel>
+                <Select
+                  value={formData.sourceAccountNumber}
+                  onChange={handleChange}
+                  label='Source Account Number *'
+                  inputProps={{
+                    name: 'sourceAccountNumber',
+                    id: 'source-account-number'
+                  }}
+                  startAdornment={
+                    <InputAdornment
+                      position='start'
                     >
-                      {accounts.map((account) => (
-                        <MenuItem
-                          key={account.id}
-                          value={account.accountNumber}
-                          disabled={account.status === 'inactive'}
-                        >
-                          {account.accountNumber} ({account.status})
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControl variant='outlined' fullWidth className={classes.formControl}>
-                    <OutlinedInput
-                      id='description'
-                      name='description'
-                      type='text'
-                      value={formData.description}
-                      onChange={handleChange}
-                      startAdornment={<InputAdornment position='start'><Description /></InputAdornment>}
-                      labelWidth={0}
-                      placeholder='Description'
-                    />
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-                  <Button
-                    className={classes.formButton}
-                    variant='contained'
-                    color='primary'
-                    type='submit'
-                    disabled={accounts.length === 0 || loading}
-                    fullWidth
-                  >
-                    Deposit
-                  </Button>
-                </Grid>
-              </Grid>
-            </form>
-            )}
+                      <AccountCircle />
+                    </InputAdornment>
+}
+                >
+                  {accounts.map((account) => (
+                    <MenuItem
+                      key={account.id}
+                      value={account.accountNumber}
+                      disabled={account.status === 'inactive'}
+                    >
+                      {account.accountNumber} ({account.status})
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl
+                variant='outlined'
+                fullWidth className={classes.formControl}
+              >
+                <OutlinedInput
+                  id='description'
+                  name='description'
+                  type='text'
+                  value={formData.description}
+                  onChange={handleChange}
+                  startAdornment={
+                    <InputAdornment
+                      position='start'
+                    >
+                      <Description />
+                    </InputAdornment>
+}
+                  labelWidth={0}
+                  placeholder='Description'
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                className={classes.formButton}
+                variant='contained'
+                color='primary'
+                type='submit'
+                disabled={accounts.length === 0 || loading}
+                fullWidth
+                startIcon={loading ? <CircularProgress size={20} color='inherit' /> : null}
+              >
+                {loading ? 'Processing...' : 'Deposit'}
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
       </Paper>
     </ReactSpring.animated.div>
   );
