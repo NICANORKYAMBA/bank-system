@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import {
   Button,
   TextField,
@@ -8,26 +8,35 @@ import {
   Typography,
   InputAdornment,
   IconButton,
-  makeStyles
+  makeStyles,
+  Checkbox,
+  FormControlLabel
 } from '@material-ui/core';
 import EmailIcon from '@material-ui/icons/Email';
 import LockIcon from '@material-ui/icons/Lock';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
+import PasswordStrengthIndicator from './PasswordStrengthIndicator';
+import { calculatePasswordStrength } from './PasswordStrengthCalculator';
 
 const useStyles = makeStyles((theme) => ({
   registerForm: {
-    padding: theme.spacing(3),
-    margin: 'auto',
-    maxWidth: 400,
-    height: 'auto',
-    backgroundColor: '#f5f5f5',
-    boxShadow: '0px 14px 28px rgba(0,0,0,0.25), 0px 10px 10px rgba(0,0,0,0.22)',
-    borderRadius: '15px'
+    padding: theme.spacing(4),
+    margin: theme.spacing(2, 'auto'),
+    maxWidth: 500,
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: theme.shadows[5],
+    borderRadius: theme.shape.borderRadius,
+    [theme.breakpoints.down('xs')]: {
+      margin: theme.spacing(2)
+    }
   },
   registerInput: {
-    margin: theme.spacing(2, 0),
+    margin: theme.spacing(1, 0),
     width: '100%',
     '& label.Mui-focused': {
       color: '#1976D2'
@@ -39,16 +48,16 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   registerButton: {
-    margin: theme.spacing(2, 0),
-    backgroundColor: '#1976D2',
-    color: '#fff',
+    margin: theme.spacing(3, 0, 2),
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.getContrastText(theme.palette.primary.main),
     '&:hover': {
-      backgroundColor: '#135895'
+      backgroundColor: theme.palette.primary.dark
     }
   },
   title: {
     margin: theme.spacing(2, 0),
-    color: '#1976D2'
+    color: theme.palette.primary.main
   }
 }));
 
@@ -70,6 +79,12 @@ const RegisterForm = () => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordStrength, setPasswordStrength] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [formErrors, setFormErrors] = useState({
     email: '',
@@ -106,6 +121,37 @@ const RegisterForm = () => {
     }));
   };
 
+  const handleConfirmPasswordChange = (e) => {
+    const newConfirmPassword = e.target.value;
+    setConfirmPassword(newConfirmPassword);
+
+    setFormErrors(prevErrors => ({
+      ...prevErrors,
+      confirmPassword: formData.password !== newConfirmPassword ? 'Passwords do not match' : ''
+    }));
+  };
+
+  const handleClickShowConfirmPassword = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
+  const handlePasswordChange = (e) => {
+    handleChange(e);
+    const strength = calculatePasswordStrength(e.target.value);
+    setPasswordStrength(strength);
+  };
+
+  const handleTermsChange = (event) => {
+    setTermsAccepted(event.target.checked);
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
+
   const validateForm = () => {
     let isValid = true;
     const errors = {};
@@ -130,12 +176,24 @@ const RegisterForm = () => {
       errors.lastName = 'Last name is required';
     }
 
+    if (!termsAccepted) {
+      isValid = false;
+      errors.termsAccepted = 'You must accept the terms and conditions';
+    }
+
+    if (formData.password !== confirmPassword) {
+      isValid = false;
+      errors.confirmPassword = 'Passwords do not match';
+    }
+
     setFormErrors(errors);
 
     return isValid;
   };
 
   const history = useHistory();
+
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -144,29 +202,46 @@ const RegisterForm = () => {
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
       const response = await axios.post('http://localhost:5000/api/users', formData);
-      console.log(response.data);
-      setErrorMessage('');
-      setFormErrors({});
 
-      const user = response.data.user;
+      if (response.status >= 200 && response.status <= 299) {
+        console.log(response.data);
+        setErrorMessage('');
+        setFormErrors({});
 
-      sessionStorage.setItem('userId', user.userId);
-      sessionStorage.setItem('firstName', user.firstName);
-      sessionStorage.setItem('lastName', user.lastName);
-      sessionStorage.setItem('email', user.email);
+        const user = response.data.user;
 
-      history.push('/dashboard');
+        sessionStorage.setItem('userId', user.userId);
+        sessionStorage.setItem('firstName', user.firstName);
+        sessionStorage.setItem('lastName', user.lastName);
+        sessionStorage.setItem('email', user.email);
+
+        setSnackbarMessage('Registration successful! Redirecting...');
+        setOpenSnackbar(true);
+
+        setTimeout(() => {
+          history.push('/dashboard');
+        }, 6000);
+      } else {
+        throw new Error('Server responded with a status other than 2xx');
+      }
     } catch (error) {
       console.error(error);
+
       if (error.response && error.response.status === 400) {
         if (error.response.data.message.includes('already exists')) {
           setFormErrors({ email: 'Email already exists' });
+          setSnackbarMessage('Email already exists');
         } else {
           setErrorMessage(error.response.data.message);
+          setSnackbarMessage(error.response.data.message);
         }
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -174,7 +249,7 @@ const RegisterForm = () => {
     <Grid container justifyContent='center'>
       <Paper>
         <div className={classes.registerForm}>
-          <Typography variant='h4' align='center'>
+          <Typography variant='h4' align='center' className={classes.title}>
             Register
           </Typography>
           {errorMessage && <Typography color='error'>{errorMessage}</Typography>}
@@ -202,7 +277,7 @@ const RegisterForm = () => {
               required
               fullWidth
               margin='normal'
-              onChange={handleChange}
+              onChange={handlePasswordChange}
               className={classes.registerInput}
               variant='outlined'
               InputProps={{
@@ -215,11 +290,42 @@ const RegisterForm = () => {
                     >
                       {showPassword ? <Visibility /> : <VisibilityOff />}
                     </IconButton>
+                    {passwordStrength && (
+                      <div style={{ marginLeft: '10px' }}>
+                        <PasswordStrengthIndicator strength={passwordStrength} />
+                      </div>
+                    )}
                   </InputAdornment>
                 )
               }}
               error={!!formErrors.password}
               helperText={formErrors.password}
+            />
+            <TextField
+              label='Confirm Password'
+              type={showConfirmPassword ? 'text' : 'password'}
+              name='confirmPassword'
+              required
+              fullWidth
+              margin='normal'
+              onChange={handleConfirmPasswordChange}
+              className={classes.registerInput}
+              variant='outlined'
+              InputProps={{
+                startAdornment: <LockIcon />,
+                endAdornment: (
+                  <InputAdornment position='end'>
+                    <IconButton
+                      aria-label='toggle confirm password visibility'
+                      onClick={handleClickShowConfirmPassword}
+                    >
+                      {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+              error={!!formErrors.confirmPassword}
+              helperText={formErrors.confirmPassword}
             />
             <TextField
               label='First Name'
@@ -307,15 +413,41 @@ const RegisterForm = () => {
               error={!!formErrors.zipCode}
               helperText={formErrors.zipCode}
             />
+            {formErrors.termsAccepted && (
+              <Typography color='error'>{formErrors.termsAccepted}</Typography>
+            )}
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={termsAccepted}
+                  onChange={handleTermsChange}
+                  name='termsAccepted'
+                  color='primary'
+                />
+              }
+              label='I agree to the Terms and Conditions'
+            />
             <Button
               variant='contained'
               color='primary'
               type='submit'
               fullWidth
               className={classes.registerButton}
+              disabled={!termsAccepted || isSubmitting}
             >
-              Register
+              {isSubmitting ? <CircularProgress size={24} /> : 'Register'}
             </Button>
+            <Typography variant='body2' style={{ marginTop: '1rem', textAlign: 'center' }}>
+              Already have an account?
+              <Button variant='text' color='primary' component={Link} to='/login'>
+                Log in
+              </Button>
+            </Typography>
+            <Snackbar open={openSnackbar} autoHideDuration={15000} onClose={handleCloseSnackbar}>
+              <MuiAlert onClose={handleCloseSnackbar} severity='success' elevation={6} variant='filled'>
+                {snackbarMessage}
+              </MuiAlert>
+            </Snackbar>
           </form>
         </div>
       </Paper>
