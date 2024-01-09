@@ -7,9 +7,11 @@ import {
   Backdrop,
   Card,
   CardContent,
-  Chip
+  Chip,
+  Box
 } from '@material-ui/core';
 import { fetchTransactions } from '../api/api';
+import QuickActions from '../components/QuickActions';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
@@ -54,6 +56,9 @@ const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showDepositForm, setShowDepositForm] = useState(false);
+  const [showTransferForm, setShowTransferForm] = useState(false);
+  const [showWithdrawalForm, setShowWithdrawalForm] = useState(false);
 
   useEffect(() => {
     const userId = sessionStorage.getItem('userId');
@@ -81,6 +86,17 @@ const Transactions = () => {
     }
   };
 
+  const handleDepositClick = () => setShowDepositForm(true);
+  const handleTransferClick = () => setShowTransferForm(true);
+  const handleWithdrawalClick = () => setShowWithdrawalForm(true);
+  const handleClose = () => {
+    setShowDepositForm(false);
+    setShowTransferForm(false);
+    setShowWithdrawalForm(false);
+  };
+
+  const userFirstName = sessionStorage.getItem('firstName') || 'User';
+
   return (
     <Container maxWidth='lg' className={classes.container}>
       <Typography variant='h4' gutterBottom>
@@ -94,7 +110,29 @@ const Transactions = () => {
           {error}
         </Typography>
       )}
-      {!loading && !error && transactions.map((transaction) => (
+      {!loading && !error && transactions.length === 0 && (
+        <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center' minHeight='50vh'>
+          <Typography variant='h5' gutterBottom>
+            Welcome, {userFirstName}!
+          </Typography>
+          <Typography variant='subtitle1' align='center'>
+            It looks like you haven't made any transactions yet. <br />
+            Get started with one of the actions below!
+          </Typography>
+          <QuickActions
+            handleDepositClick={handleDepositClick}
+            handleTransferClick={handleTransferClick}
+            handleWithdrawalClick={handleWithdrawalClick}
+            showDepositForm={showDepositForm}
+            showTransferForm={showTransferForm}
+            showWithdrawalForm={showWithdrawalForm}
+            handleCloseDeposit={handleClose}
+            handleClose={handleClose}
+            handleCloseWithdrawal={handleClose}
+          />
+        </Box>
+      )}
+      {!loading && !error && transactions.length > 0 && transactions.map((transaction) => (
         <Card key={transaction.id} className={classes.card}>
           <CardContent className={classes.cardContent}>
             <div>
