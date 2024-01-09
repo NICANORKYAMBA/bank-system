@@ -229,7 +229,7 @@ const DepositForm = ({ handleClose }) => {
                     >
                       <AccountCircle />
                     </InputAdornment>
-}
+                  }
                 >
                   {accounts.map((account) => (
                     <MenuItem
@@ -260,7 +260,7 @@ const DepositForm = ({ handleClose }) => {
                     >
                       <Description />
                     </InputAdornment>
-}
+                  }
                   labelWidth={0}
                   placeholder='Description'
                 />
