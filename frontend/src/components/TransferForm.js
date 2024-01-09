@@ -133,7 +133,9 @@ const TransferForm = ({ handleClose }) => {
       setSnackbarMessage('Transfer initiated successfully!');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
-      handleClose();
+      setTimeout(() => {
+        handleClose();
+      }, 6000);
     } catch (error) {
       console.error('Error initiating transfer: ', error);
       setSnackbarMessage('Failed to initiate transfer.');
