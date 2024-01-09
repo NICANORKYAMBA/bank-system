@@ -57,7 +57,8 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(3),
     marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(3)
+    marginBottom: theme.spacing(3),
+    maxHeight: '70vh'
   },
   inputIcon: {
     marginRight: theme.spacing(1)
@@ -121,6 +122,7 @@ const TransferForm = ({ handleClose }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
 
     const data = {
       ...formData,
@@ -141,6 +143,8 @@ const TransferForm = ({ handleClose }) => {
       setSnackbarMessage('Failed to initiate transfer.');
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -158,9 +162,6 @@ const TransferForm = ({ handleClose }) => {
         <Typography className={classes.title} variant='h4'>
           Transfer Funds
         </Typography>
-        {loading && (
-          <CircularProgress size={24} className={classes.buttonProgress} />
-        )}
         {!noAccounts && (
           <form className={classes.form} noValidate autoComplete='off' onSubmit={handleSubmit}>
             <Grid container spacing={2} justifyContent='center' alignItems='center'>
@@ -243,7 +244,7 @@ const TransferForm = ({ handleClose }) => {
                   disabled={loading}
                   fullWidth
                 >
-                  Transfer
+                  {loading ? <CircularProgress size={24} color='inherit' /> : 'Transfer'}
                 </Button>
               </Grid>
             </Grid>
