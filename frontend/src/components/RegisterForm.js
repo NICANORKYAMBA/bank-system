@@ -242,7 +242,7 @@ const RegisterForm = () => {
     <Grid container justifyContent='center'>
       <Paper>
         <div className={classes.registerForm}>
-          <Typography variant='h4' align='center'>
+          <Typography variant='h4' align='center' className={classes.title}>
             Register
           </Typography>
           {errorMessage && <Typography color='error'>{errorMessage}</Typography>}
