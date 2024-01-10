@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import {
   Button,
+  makeStyles,
   Dialog,
-  makeStyles
+  Fade,
+  CircularProgress
 } from '@material-ui/core';
 import DescriptionIcon from '@material-ui/icons/Description';
 import RegisterForm from './RegisterForm';
@@ -12,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'transparent',
     color: theme.palette.primary.main,
     border: `2px solid ${theme.palette.primary.main}`,
-    padding: theme.spacing(1, 2),
+    padding: theme.spacing(1, 1.5),
     borderRadius: theme.spacing(1),
     fontSize: '1em',
     marginTop: theme.spacing(6),
@@ -28,7 +30,9 @@ const useStyles = makeStyles((theme) => ({
 
 function RegisterButton ({ className }) {
   const classes = useStyles();
+
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -38,10 +42,18 @@ function RegisterButton ({ className }) {
     setOpen(false);
   };
 
+  const handleSubmit = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      handleClose();
+    }, 2000);
+  };
+
   return (
-    <div>
+    <>
       <Button
-        variant='outlined'
+        variant='contained'
         size='large'
         startIcon={<DescriptionIcon />}
         onClick={handleClickOpen}
@@ -50,10 +62,20 @@ function RegisterButton ({ className }) {
       >
         Register
       </Button>
-      <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
-        <RegisterForm handleClose={handleClose} />
+      <Dialog open={open} onClose={handleClose}>
+        <Fade in={open}>
+          <div>
+            {loading
+              ? (
+                <CircularProgress />
+                )
+              : (
+                <RegisterForm handleClose={handleClose} handleSubmit={handleSubmit} />
+                )}
+          </div>
+        </Fade>
       </Dialog>
-    </div>
+    </>
   );
 }
 
