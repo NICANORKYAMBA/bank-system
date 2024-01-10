@@ -55,9 +55,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '60vh',
     [theme.breakpoints.up('md')]: {
       flexDirection: 'row',
-      alignItems: 'flex-start'
+      justifyContent: 'space-between'
     }
   },
   section: {
@@ -184,7 +186,7 @@ function HomePage () {
           <HomeIcon />
           <WelcomeMessage />
         </div>
-        <Grid container spacing={4} justify='center'>
+        <Grid container spacing={4} justifyContent='center'>
           <Grid item xs={12} className={classes.section}>
             <FeaturesSection />
           </Grid>
