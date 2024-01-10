@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import {
   Button,
   Dialog,
-  makeStyles
+  makeStyles,
+  CircularProgress,
+  Fade
 } from '@material-ui/core';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import LoginForm from './LoginForm';
@@ -28,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
 function LoginButton ({ className }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -35,6 +38,14 @@ function LoginButton ({ className }) {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleSubmit = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      handleClose();
+    }, 2000);
   };
 
   return (
@@ -49,8 +60,23 @@ function LoginButton ({ className }) {
       >
         Login
       </Button>
-      <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title'>
-        <LoginForm handleClose={handleClose} />
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby='form-dialog-title'
+        closeAfterTransition
+      >
+        <Fade in={open}>
+          <div>
+            {loading
+              ? (
+                <CircularProgress />
+                )
+              : (
+                <LoginForm handleClose={handleClose} handleSubmit={handleSubmit} />
+                )}
+          </div>
+        </Fade>
       </Dialog>
     </div>
   );
