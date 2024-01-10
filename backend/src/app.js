@@ -24,6 +24,15 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use((req, res, next) => {
+  if (req.originalUrl.startsWith('/api')) {
+    res.on('finish', () => {
+      console.log(`Request: ${req.method} ${req.originalUrl} Status Code: ${res.statusCode}`);
+    });
+  }
+  next();
+});
+
 app.use('/api/accounts', accountsRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/transactions', transactionsRoutes);
@@ -39,20 +48,21 @@ const sequelize = new Sequelize(
   process.env.DB_USER_D,
   process.env.DB_PASSWORD_D, {
     host: process.env.DB_HOST_D,
-    dialect: 'postgres'
+    dialect: 'postgres',
+    logging: false
   });
 
 sequelize.authenticate()
-  .then(() => console.log('Database connected...'))
+  .then(() => console.log('Connected To Database Successfully!'))
   .catch(err => console.log('Error: ' + err));
 
 cron.schedule('0 */12 * * *', () => {
-  console.log('Applying interest to all savings accounts...');
+  console.log('Applying interest to all Savings Accounts');
   applyInterestToAllAccounts();
 });
 
 cron.schedule('0 */12 * * *', () => {
-  console.log('Deactivating inactive accounts...');
+  console.log('Deactivating inactive accounts!');
   deactivateInactiveAccounts();
 });
 

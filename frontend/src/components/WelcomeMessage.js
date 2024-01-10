@@ -1,34 +1,39 @@
-import {
-  Grid,
-  Container,
-  Typography,
-  makeStyles
-} from '@material-ui/core';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Button, Grid, Container, Typography, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   welcomeContainer: {
-    backgroundColor: '#040303',
-    padding: theme.spacing(4),
-    borderRadius: theme.spacing(2),
-    color: '#ffffff',
-    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)'
+    marginTop: theme.spacing(0),
+    marginBottom: theme.spacing(2),
+    textAlign: 'center'
   },
   welcomeTitle: {
-    fontWeight: 600,
-    fontSize: '1.5rem',
+    color: theme.palette.primary.main,
+    fontWeight: 700,
     marginBottom: theme.spacing(2),
-    color: '#4E937A',
-    textShadow: `1px 1px 2px ${theme.palette.primary.dark}`,
-    textAlign: 'center',
-    fontFamily: 'Roboto, sans-serif'
+    fontSize: '2.5rem'
+  },
+  welcomeSubtitle: {
+    color: theme.palette.secondary.main,
+    fontWeight: 500,
+    marginBottom: theme.spacing(2),
+    fontSize: '1.5rem'
   },
   welcomeText: {
-    fontSize: '1.0rem',
-    color: '#ffffff',
-    lineHeight: 1.8,
-    textShadow: '1px 1px 1px rgba(0, 0, 0, 0.2)',
-    textAlign: 'center',
-    fontFamily: 'Roboto, sans-serif'
+    color: theme.palette.text.primary,
+    marginBottom: theme.spacing(4),
+    fontSize: '1rem'
+  },
+  welcomeButton: {
+    marginTop: theme.spacing(2),
+    padding: theme.spacing(2, 4),
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white,
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark
+    }
   }
 }));
 
@@ -36,22 +41,29 @@ function WelcomeMessage () {
   const classes = useStyles();
 
   return (
-    <Grid container justify='center'>
-      <Grid item xs={12} sm={8} md={9} lg={10} className={classes.welcomeContainer}>
-        <Container>
-          <Typography variant='h4' component='h1' className={classes.welcomeTitle} gutterBottom>
-            Welcome to FinTrust Bank
+    <Container className={classes.welcomeContainer}>
+      <Grid container spacing={3} justifyContent='center' alignItems='center'>
+        <Grid item xs={12}>
+          <Typography variant='h2' className={classes.welcomeTitle}>
+            Welcome to FinTrust
           </Typography>
-          <Typography variant='body1' className={classes.welcomeText} paragraph>
-            At FinTrust Bank, we believe in the power of financial freedom. We are committed to providing secure, efficient, and personalized banking services that put you first. Our team of dedicated professionals is always ready to assist you, ensuring that your financial well-being is our top priority.
-            <br /><br />
-            We offer a wide range of solutions tailored to meet your unique needs. Whether you're looking to open a savings account, invest in the future, or simply manage your daily transactions, we've got you covered.
-            <br /><br />
-            Join us today and experience banking like never before. Welcome to a world of endless possibilities. Welcome to FinTrust Bank.
+          <Typography variant='h6' className={classes.welcomeSubtitle}>
+            Your trusted partner in financial success
           </Typography>
-        </Container>
+          <Typography variant='body1' className={classes.welcomeText}>
+            Explore our services and find out how we can help you achieve your financial goals.
+          </Typography>
+          <Button
+            variant='contained'
+            className={classes.welcomeButton}
+            component={Link}
+            to='/registration'
+          >
+            Get Started
+          </Button>
+        </Grid>
       </Grid>
-    </Grid>
+    </Container>
   );
 }
 

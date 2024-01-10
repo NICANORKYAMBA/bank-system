@@ -9,7 +9,8 @@ import {
   FormHelperText,
   Snackbar,
   makeStyles,
-  Grid
+  Grid,
+  CircularProgress
 } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
@@ -47,6 +48,7 @@ const CreateAccountForm = ({ onAccountCreated }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -71,11 +73,13 @@ const CreateAccountForm = ({ onAccountCreated }) => {
     if (!validateForm()) {
       return;
     }
-    const userId = sessionStorage.getItem('userId'); // Get userId from session storage
+    setLoading(true);
+    const userId = sessionStorage.getItem('userId');
     if (!userId) {
       setSnackbarMessage('User ID is missing. Please log in again.');
       setSnackbarSeverity('error');
       setOpenSnackbar(true);
+      setLoading(false);
       return;
     }
     try {
@@ -91,12 +95,16 @@ const CreateAccountForm = ({ onAccountCreated }) => {
         currency: '',
         status: ''
       });
+      setTimeout(() => {
+        setLoading(false);
+        onAccountCreated();
+      }, 6000);
     } catch (error) {
       setSnackbarMessage(error.response?.data?.message || 'An error occurred');
       setSnackbarSeverity('error');
       setOpenSnackbar(true);
+      setLoading(false);
     }
-    onAccountCreated();
   };
 
   const handleCloseSnackbar = () => {
@@ -142,7 +150,7 @@ const CreateAccountForm = ({ onAccountCreated }) => {
             required
             fullWidth
             id='balance'
-            label='Balance'
+            label='Amount'
             name='balance'
             type='number'
             autoComplete='balance'
@@ -184,6 +192,7 @@ const CreateAccountForm = ({ onAccountCreated }) => {
               <MenuItem value='USD'>USD</MenuItem>
               <MenuItem value='EUR'>EUR</MenuItem>
               <MenuItem value='GBP'>GBP</MenuItem>
+              <MenuItem value='KSH'>KSH</MenuItem>
             </Select>
             <FormHelperText>{errors.currency}</FormHelperText>
           </FormControl>
@@ -212,8 +221,9 @@ const CreateAccountForm = ({ onAccountCreated }) => {
             variant='contained'
             color='primary'
             className={classes.submit}
+            disabled={loading}
           >
-            Create Account
+            {loading ? <CircularProgress size={24} /> : 'Create Account'}
           </Button>
         </Grid>
       </Grid>

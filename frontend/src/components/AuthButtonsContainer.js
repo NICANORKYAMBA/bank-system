@@ -1,16 +1,19 @@
+import React from 'react';
 import LoginButton from './LoginButton';
 import RegisterButton from './RegisterButton';
-import { Box, makeStyles } from '@material-ui/core';
+import { Container, makeStyles, Paper } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   buttonContainer: {
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'flex-start',
-    minHeight: '10vh',
-    '& > *': {
-      margin: theme.spacing(1)
-    }
+    alignItems: 'center',
+    margin: theme.spacing(4, 0),
+    padding: theme.spacing(1),
+    backgroundColor: '#f5f5f5'
+  },
+  button: {
+    margin: theme.spacing(1)
   }
 }));
 
@@ -18,10 +21,12 @@ function AuthButtonsContainer () {
   const classes = useStyles();
 
   return (
-    <Box className={classes.buttonContainer}>
-      <LoginButton />
-      <RegisterButton />
-    </Box>
+    <Container maxWidth='sm'>
+      <Paper className={classes.buttonContainer} elevation={0}>
+        <LoginButton className={classes.button} />
+        <RegisterButton className={classes.button} />
+      </Paper>
+    </Container>
   );
 }
 
