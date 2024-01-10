@@ -1,42 +1,54 @@
-import {
-  Grid,
-  Tooltip,
-  Box,
-  makeStyles
-} from '@material-ui/core';
+import React from 'react';
+import { Box, Tooltip, makeStyles, Typography } from '@material-ui/core';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 
 const useStyles = makeStyles((theme) => ({
   iconContainer: {
-    textAlign: 'center',
-    marginTop: theme.spacing(0),
-    backgroundColor: '#093A3E',
-    height: '20vh'
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 150,
+    width: 150,
+    backgroundColor: theme.palette.primary.main,
+    borderRadius: '50%',
+    boxShadow: '0 6px 12px 0 rgba(0,0,0,0.2)',
+    transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+    '&:hover': {
+      transform: 'scale(1.15)',
+      boxShadow: '0 8px 16px 0 rgba(0,0,0,0.3)'
+    },
+    margin: theme.spacing(2)
   },
   icon: {
-    fontSize: '5em',
-    color: '#040303',
-    padding: theme.spacing(3),
-    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)'
+    color: theme.palette.common.white,
+    fontSize: 70
   },
   tooltip: {
-    fontSize: theme.typography.body1.fontSize,
-    fontWeight: 'bold'
+    fontSize: 14
+  },
+  iconLabel: {
+    textAlign: 'center',
+    marginTop: theme.spacing(1),
+    fontWeight: 'bold',
+    color: theme.palette.text.primary
   }
 }));
 
-function HomeIcon () {
+const HomeIcon = () => {
   const classes = useStyles();
 
   return (
-    <Grid item xs={12} className={classes.iconContainer}>
-      <Tooltip title='FinTrust Bank' classes={{ tooltip: classes.tooltip }}>
-        <Box className={classes.icon}>
-          <AccountBalanceIcon fontSize='inherit' />
+    <Box display='flex' flexDirection='column' alignItems='center'>
+      <Tooltip title='Go to Home Page' classes={{ tooltip: classes.tooltip }}>
+        <Box className={classes.iconContainer}>
+          <AccountBalanceIcon className={classes.icon} />
         </Box>
       </Tooltip>
-    </Grid>
+      <Typography variant='subtitle1' className={classes.iconLabel}>
+        Home
+      </Typography>
+    </Box>
   );
-}
+};
 
 export default HomeIcon;
