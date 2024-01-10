@@ -26,7 +26,9 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   if (req.originalUrl.startsWith('/api')) {
-    console.log(`Request: ${req.method} ${req.originalUrl}`);
+    res.on('finish', () => {
+      console.log(`Request: ${req.method} ${req.originalUrl} Status Code: ${res.statusCode}`);
+    });
   }
   next();
 });
