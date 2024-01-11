@@ -20,10 +20,16 @@ function Alert (props) {
   return <MuiAlert elevation={6} variant='filled' {...props} />;
 }
 
-function Dashboard () {
+function Dashboard ({ reload, onTransactionCreated }) {
   const classes = useStyles();
 
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
+  const [selectedAccount, setSelectedAccount] = useState(null);
+  const [selectedAccountData, setSelectedAccountData] = useState(null);
+  const [accountsData, setAccountsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [transactions, setTransactions] = useState([]);
 
   const handleProfilePopoverOpen = (event) => {
     setProfileAnchorEl(event.currentTarget);
@@ -33,19 +39,10 @@ function Dashboard () {
     setProfileAnchorEl(null);
   };
 
-  const [selectedAccount, setSelectedAccount] = useState(null);
-  const [selectedAccountData, setSelectedAccountData] = useState(null);
-  const [accountsData, setAccountsData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
   const userData = useState({
     firstName: sessionStorage.getItem('firstName'),
     lastName: sessionStorage.getItem('lastName')
   })[0];
-
-  const [transactions, setTransactions] = useState([]);
-  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -104,7 +101,7 @@ function Dashboard () {
 
   const handleClose = () => {
     setShowTransferForm(false);
-    setReload(!reload);
+    onTransactionCreated();
   };
 
   const [showWithdrawalForm, setShowWithdrawalForm] = useState(false);
@@ -115,7 +112,7 @@ function Dashboard () {
 
   const handleCloseWithdrawal = () => {
     setShowWithdrawalForm(false);
-    setReload(!reload);
+    onTransactionCreated();
   };
 
   const [showDepositForm, setShowDepositForm] = useState(false);
@@ -126,7 +123,11 @@ function Dashboard () {
 
   const handleCloseDeposit = () => {
     setShowDepositForm(false);
-    setReload(!reload);
+    onTransactionCreated();
+  };
+
+  const handleTransactionCreated = () => {
+    onTransactionCreated();
   };
 
   const profileOpen = Boolean(profileAnchorEl);
@@ -206,6 +207,7 @@ function Dashboard () {
                   handleCloseDeposit={handleCloseDeposit}
                   handleClose={handleClose}
                   handleCloseWithdrawal={handleCloseWithdrawal}
+                  onTransactionCreated={handleTransactionCreated}
                 />
               </Grid>
               <Grid item xs={12}>
