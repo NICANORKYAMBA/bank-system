@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   IconButton,
@@ -8,13 +8,16 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
-  Box,
   Badge,
   makeStyles,
   Popover,
-  Button
+  Button,
+  InputBase,
+  Dialog
 } from '@material-ui/core';
+import { alpha, styled } from '@material-ui/core/styles';
 import { useDashboard } from '../api/useDashboard';
+import CreateAccountForm from './CreateAccountForm';
 import MenuIcon from '@material-ui/icons/Menu';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ListIcon from '@material-ui/icons/List';
@@ -26,6 +29,8 @@ import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import PaymentIcon from '@material-ui/icons/Payment';
 import SettingsIcon from '@material-ui/icons/Settings';
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import HomeIcon from '@material-ui/icons/Home';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -82,7 +87,45 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Navigation = () => {
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25)
+  },
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(1),
+    width: 'auto'
+  }
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center'
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: '20ch'
+    }
+  }
+}));
+
+const Navigation = ({ onTransactionCreated }) => {
   const classes = useStyles();
   const {
     anchorEl,
@@ -92,6 +135,23 @@ const Navigation = () => {
     handleDrawerClose,
     open: drawerOpen
   } = useDashboard();
+
+  const [createAccountOpen, setCreateAccountOpen] = useState(false);
+
+  const handleCreateAccountOpen = () => {
+    setCreateAccountOpen(true);
+  };
+
+  const handleCreateAccountClose = () => {
+    setCreateAccountOpen(false);
+  };
+
+  const handleTransactionCreated = () => {
+    handleCreateAccountClose();
+    if (onTransactionCreated) {
+      onTransactionCreated();
+    }
+  };
 
   const handleClick = (event) => {
     handleMenuOpen(event.currentTarget);
@@ -138,6 +198,10 @@ const Navigation = () => {
         </div>
         <Divider />
         <List>
+          <ListItem button key='Home' component={Link} to='/'>
+            <ListItemIcon><HomeIcon /></ListItemIcon>
+            <ListItemText primary='Home' />
+          </ListItem>
           <ListItem button key='Dashboard' component={Link} to='/dashboard'>
             <ListItemIcon><DashboardIcon /></ListItemIcon>
             <ListItemText primary='Dashboard' />
@@ -149,6 +213,10 @@ const Navigation = () => {
           <ListItem button key='Transactions' component={Link} to='/transactions'>
             <ListItemIcon><ListIcon /></ListItemIcon>
             <ListItemText primary='Transactions' />
+          </ListItem>
+          <ListItem button key='Create Account' onClick={handleCreateAccountOpen}>
+            <ListItemIcon><AddCircleOutlineIcon /></ListItemIcon>
+            <ListItemText primary='Create Account' />
           </ListItem>
           <ListItem button key='Transfer Funds'>
             <ListItemIcon><SwapHorizIcon /></ListItemIcon>
@@ -188,25 +256,28 @@ const Navigation = () => {
           </ListItem>
         </List>
         <Divider />
-        <Box className={classes.search}>
-          <Box className={classes.searchIcon}>
+        <Search>
+          <SearchIconWrapper>
             <SearchIcon />
-          </Box>
-          <input
+          </SearchIconWrapper>
+          <StyledInputBase
             placeholder='Search…'
-            classes={{
-              root: classes.inputRoot,
-              input: classes.inputInput
-            }}
             inputProps={{ 'aria-label': 'search' }}
           />
-        </Box>
+        </Search>
         <IconButton color='inherit'>
           <Badge badgeContent={4} color='secondary'>
             <NotificationsIcon />
           </Badge>
         </IconButton>
       </Drawer>
+      <Dialog
+        open={createAccountOpen}
+        onClose={handleCreateAccountClose}
+        aria-labelledby='form-dialog-title'
+      >
+        <CreateAccountForm onAccountCreated={handleTransactionCreated} />
+      </Dialog>
     </div>
   );
 };
