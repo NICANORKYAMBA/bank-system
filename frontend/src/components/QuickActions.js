@@ -7,7 +7,8 @@ import {
   Button,
   Dialog,
   DialogContent,
-  makeStyles
+  makeStyles,
+  Tooltip
 } from '@material-ui/core';
 import DepositIcon from '@material-ui/icons/AccountBalanceWallet';
 import TransferIcon from '@material-ui/icons/SwapHoriz';
@@ -93,25 +94,33 @@ const QuickActions = ({
     <Card className={classes.dashboardCard}>
       <CardContent className={classes.dashboardCardContent}>
         <Typography
-          variant='h5'
+          variant='h6'
           component='h2'
-          gutterBottom style={{ fontWeight: 400 }}
+          gutterBottom style={{ fontFamily: 'Poppins, sans-serif' }}
         >
           Quick Actions
         </Typography>
         <Grid container spacing={2}>
           {/* Deposit Button */}
           <Grid item xs={12} sm={6} md={3}>
-            <Button
-              variant='contained'
-              color='primary'
-              startIcon={<DepositIcon />}
-              className={clsx(classes.dashboardButton, classes.depositButton)}
-              onClick={handleDepositClick}
-              disabled={!accountsData || accountsData.length === 0}
+            <Tooltip
+              title={!accountsData || accountsData.length === 0
+                ? 'You need to have at least one account to perform this action.'
+                : ''}
             >
-              Deposit
-            </Button>
+              <span>
+                <Button
+                  variant='contained'
+                  color='primary'
+                  startIcon={<DepositIcon />}
+                  className={clsx(classes.dashboardButton, classes.depositButton)}
+                  onClick={handleDepositClick}
+                  disabled={!accountsData || accountsData.length === 0}
+                >
+                  Deposit
+                </Button>
+              </span>
+            </Tooltip>
             <Dialog open={showDepositForm} onClose={handleCloseDeposit}>
               <DialogContent className={classes.dialogContent}>
                 <DepositForm handleClose={handleCloseDeposit} />
@@ -120,16 +129,24 @@ const QuickActions = ({
           </Grid>
           {/* Transfer Button */}
           <Grid item xs={12} sm={6} md={3}>
-            <Button
-              variant='contained'
-              color='secondary'
-              startIcon={<TransferIcon />}
-              className={clsx(classes.dashboardButton, classes.transferButton)}
-              onClick={handleTransferClick}
-              disabled={!accountsData || accountsData.length === 0}
+            <Tooltip
+              title={!accountsData || accountsData.length === 0
+                ? 'You need to have at least one account to perform this action.'
+                : ''}
             >
-              Transfer
-            </Button>
+              <span>
+                <Button
+                  variant='contained'
+                  color='secondary'
+                  startIcon={<TransferIcon />}
+                  className={clsx(classes.dashboardButton, classes.transferButton)}
+                  onClick={handleTransferClick}
+                  disabled={!accountsData || accountsData.length === 0}
+                >
+                  Transfer
+                </Button>
+              </span>
+            </Tooltip>
             <Dialog open={showTransferForm} onClose={handleClose}>
               <DialogContent className={classes.dialogContent}>
                 <TransferForm handleClose={handleClose} />
@@ -138,15 +155,23 @@ const QuickActions = ({
           </Grid>
           {/* Withdrawal Button */}
           <Grid item xs={12} sm={6} md={3}>
-            <Button
-              variant='contained'
-              startIcon={<WithdrawIcon />}
-              className={clsx(classes.dashboardButton, classes.withdrawButton)}
-              onClick={handleWithdrawalClick}
-              disabled={!accountsData || accountsData.length === 0}
+            <Tooltip
+              title={!accountsData || accountsData.length === 0
+                ? 'You need to have at least one account to perform this action.'
+                : ''}
             >
-              Withdrawal
-            </Button>
+              <span>
+                <Button
+                  variant='contained'
+                  startIcon={<WithdrawIcon />}
+                  className={clsx(classes.dashboardButton, classes.withdrawButton)}
+                  onClick={handleWithdrawalClick}
+                  disabled={!accountsData || accountsData.length === 0}
+                >
+                  Withdrawal
+                </Button>
+              </span>
+            </Tooltip>
             <Dialog open={showWithdrawalForm} onClose={handleCloseWithdrawal}>
               <DialogContent className={classes.dialogContent}>
                 <WithdrawalForm handleClose={handleCloseWithdrawal} />
@@ -155,14 +180,22 @@ const QuickActions = ({
           </Grid>
           {/* Pay a Bill Button */}
           <Grid item xs={12} sm={6} md={3}>
-            <Button
-              variant='contained'
-              startIcon={<BillIcon />}
-              className={clsx(classes.dashboardButton, classes.billButton)}
-              disabled={!accountsData || accountsData.length === 0}
+            <Tooltip
+              title={!accountsData || accountsData.length === 0
+                ? 'You need to have at least one account to perform this action.'
+                : ''}
             >
-              Pay a Bill
-            </Button>
+              <span>
+                <Button
+                  variant='contained'
+                  startIcon={<BillIcon />}
+                  className={clsx(classes.dashboardButton, classes.billButton)}
+                  disabled={!accountsData || accountsData.length === 0}
+                >
+                  Pay a Bill
+                </Button>
+              </span>
+            </Tooltip>
           </Grid>
         </Grid>
       </CardContent>
