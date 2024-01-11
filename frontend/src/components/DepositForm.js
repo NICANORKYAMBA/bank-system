@@ -76,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const DepositForm = ({ handleClose }) => {
+const DepositForm = ({ handleClose, onTransactionCreated }) => {
   const classes = useStyles();
   const [formData, setFormData] = useState({
     type: 'deposit',
@@ -144,6 +144,7 @@ const DepositForm = ({ handleClose }) => {
       setSnackbarMessage('Deposit successful!');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
+      onTransactionCreated();
       setTimeout(() => {
         handleClose();
       }, 6000);
