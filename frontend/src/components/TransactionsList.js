@@ -1,8 +1,8 @@
-import React from 'react';
-import { Card, CardContent, Typography, IconButton, Paper, Chip, Avatar, useMediaQuery } from '@material-ui/core';
+import React, { useState } from 'react';
+import { Card, CardContent, Typography, IconButton, Paper, Chip, Avatar, useMediaQuery, Box } from '@material-ui/core';
 import { useTheme, makeStyles } from '@material-ui/core/styles';
-import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import DepositIcon from '@material-ui/icons/AccountBalanceWallet';
 import TransferIcon from '@material-ui/icons/SwapHoriz';
 import WithdrawIcon from '@material-ui/icons/MoneyOff';
@@ -22,8 +22,10 @@ const useStyles = makeStyles((theme) => ({
   },
   transactionCard: {
     flex: '0 0 auto',
-    margin: theme.spacing(1),
-    padding: theme.spacing(2),
+    margin: theme.spacing(2),
+    padding: theme.spacing(3),
+    width: '100%',
+    maxWidth: theme.spacing(45),
     borderRadius: theme.shape.borderRadius,
     boxShadow: theme.shadows[3],
     transition: 'box-shadow 0.3s ease-in-out',
@@ -54,12 +56,24 @@ const useStyles = makeStyles((theme) => ({
 
 const TransactionsList = ({
   transactions,
-  scrollTransactions,
   transactionsScrollContainerRef
 }) => {
   const classes = useStyles();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 1;
+
+  const handleNextPage = () => {
+    setCurrentPage(prevPage => prevPage + 1);
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage(prevPage => prevPage - 1);
+  };
+
+  const isLastPage = currentPage >= Math.ceil(transactions.length / itemsPerPage) - 1;
+  const displayedTransactions = (transactions || []).slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 
   const getTransactionIcon = (type) => {
     switch (type) {
@@ -73,20 +87,22 @@ const TransactionsList = ({
   };
 
   return (
-    <Card className={classes.dashboardCard}>
+    <Card className={isMobile ? classes.mobileDashboardCard : classes.dashboardCard}>
       <CardContent className={classes.dashboardCardContent}>
-        <Typography variant='h6' component='h2' gutterBottom style={{ fontFamily: 'Roboto, sans-serif', color: theme.palette.primary.dark }}>
+        <Typography
+          variant='h6'
+          component='h2'
+          gutterBottom style={{ fontFamily: 'Poppins, sans-serif', color: theme.palette.primary.dark }}
+        >
           Transactions
         </Typography>
-        {!isMobile && (
-          <IconButton onClick={() => scrollTransactions(-430)} className={classes.scrollButton}>
-            <KeyboardArrowLeftIcon fontSize='large' color='primary' />
-          </IconButton>
-        )}
-        <div ref={transactionsScrollContainerRef} style={{ overflowX: 'auto', display: 'flex' }}>
-          {transactions.length > 0
+        <div
+          ref={transactionsScrollContainerRef}
+          style={{ overflowX: 'auto', display: 'flex' }}
+        >
+          {displayedTransactions.length > 0
             ? (
-                transactions.map((transaction, index) => (
+                displayedTransactions.map((transaction, index) => (
                   <Paper elevation={3} className={classes.transactionCard} key={index}>
                     <CardContent>
                       <Chip
@@ -115,14 +131,22 @@ const TransactionsList = ({
               )
             : (
               <Typography color='textSecondary'>
-                No transactions found.
+                Welcome! Your transactions will appear here when you make one.
               </Typography>
               )}
         </div>
-        {!isMobile && (
-          <IconButton onClick={() => scrollTransactions(430)} className={classes.scrollButton}>
-            <KeyboardArrowRightIcon fontSize='large' color='primary' />
-          </IconButton>
+        {displayedTransactions.length > 0 && (
+          <Box display='flex' justifyContent='center' alignItems='center' marginTop={theme.spacing(1)}>
+            <IconButton onClick={handlePrevPage} disabled={currentPage === 0} size='small'>
+              <ChevronLeftIcon />
+            </IconButton>
+            <Typography variant='body2' style={{ margin: `0 ${theme.spacing(1)}px` }}>
+              Page {currentPage + 1} of {Math.ceil(transactions.length / itemsPerPage)}
+            </Typography>
+            <IconButton onClick={handleNextPage} disabled={isLastPage} size='small'>
+              <ChevronRightIcon />
+            </IconButton>
+          </Box>
         )}
       </CardContent>
     </Card>
