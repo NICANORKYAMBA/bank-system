@@ -85,7 +85,6 @@ const DashboardHeader = ({
 
   return (
     <Grid container spacing={3} className={classes.headerContainer}>
-      {/* Adjusted Grid item sizes for a more compact layout */}
       <Grid item xs={12} sm={5} md={4}>
         <Typography variant='h5' component='h1' className={classes.greeting}>
           Hello, {userData ? `${userData.firstName} ${userData.lastName}` : <CircularProgress size={24} />}

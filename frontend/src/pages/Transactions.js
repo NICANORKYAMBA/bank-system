@@ -10,7 +10,7 @@ import {
   Chip,
   Box
 } from '@material-ui/core';
-import { fetchTransactions } from '../api/api';
+import { fetchTransactions, fetchAccounts } from '../api/api';
 import QuickActions from '../components/QuickActions';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
@@ -54,11 +54,13 @@ const formatDate = (dateString) => {
 const Transactions = () => {
   const classes = useStyles();
   const [transactions, setTransactions] = useState([]);
+  const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showDepositForm, setShowDepositForm] = useState(false);
   const [showTransferForm, setShowTransferForm] = useState(false);
   const [showWithdrawalForm, setShowWithdrawalForm] = useState(false);
+  const [transactionCount, setTransactionCount] = useState(0);
 
   useEffect(() => {
     const userId = sessionStorage.getItem('userId');
@@ -71,7 +73,15 @@ const Transactions = () => {
         setError(err.message);
         setLoading(false);
       });
-  }, []);
+
+    fetchAccounts(userId)
+      .then(accountsData => {
+        setAccounts(accountsData);
+      })
+      .catch(err => {
+        console.log('Failed to fetch accounts:', err);
+      });
+  }, [transactionCount]);
 
   const getTransactionIcon = (type) => {
     switch (type) {
@@ -97,6 +107,10 @@ const Transactions = () => {
 
   const userFirstName = sessionStorage.getItem('firstName') || 'User';
 
+  const handleTransactionCreated = () => {
+    setTransactionCount(count => count + 1);
+  };
+
   return (
     <Container maxWidth='lg' className={classes.container}>
       <Typography variant='h4' gutterBottom>
@@ -120,6 +134,7 @@ const Transactions = () => {
             Get started with one of the actions below!
           </Typography>
           <QuickActions
+            accountsData={accounts}
             handleDepositClick={handleDepositClick}
             handleTransferClick={handleTransferClick}
             handleWithdrawalClick={handleWithdrawalClick}
@@ -129,6 +144,8 @@ const Transactions = () => {
             handleCloseDeposit={handleClose}
             handleClose={handleClose}
             handleCloseWithdrawal={handleClose}
+            setTransactionCount={setTransactionCount}
+            onTransactionCreated={handleTransactionCreated}
           />
         </Box>
       )}

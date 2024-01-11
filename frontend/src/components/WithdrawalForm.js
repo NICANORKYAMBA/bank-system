@@ -76,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const WithdrawalForm = ({ handleClose }) => {
+const WithdrawalForm = ({ handleClose, onTransactionCreated }) => {
   const classes = useStyles();
 
   const [formData, setFormData] = useState({
@@ -146,6 +146,7 @@ const WithdrawalForm = ({ handleClose }) => {
       setSnackbarMessage('Withdrawal successful!');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
+      onTransactionCreated();
       setTimeout(() => {
         handleClose();
       }, 6000);

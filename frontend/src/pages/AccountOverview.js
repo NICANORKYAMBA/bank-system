@@ -14,11 +14,17 @@ import {
   ListItemAvatar,
   Avatar,
   Box,
-  Snackbar
+  Snackbar,
+  Button,
+  Grid,
+  Dialog,
+  DialogContent
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import Skeleton from '@material-ui/lab/Skeleton';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import AddIcon from '@material-ui/icons/Add';
+import CreateAccountForm from '../components/CreateAccountForm';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -72,6 +78,33 @@ const useStyles = makeStyles((theme) => ({
   secondaryText: {
     color: theme.palette.text.secondary,
     fontSize: '1.1em'
+  },
+  noAccountsContainer: {
+    textAlign: 'center',
+    padding: theme.spacing(4)
+  },
+  noAccountsFullContainer: {
+    height: '80vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  noAccountsHeader: {
+    marginBottom: theme.spacing(2),
+    color: theme.palette.primary.main
+  },
+  noAccountsMessage: {
+    marginBottom: theme.spacing(3)
+  },
+  createAccountButton: {
+    marginTop: theme.spacing(2),
+    padding: theme.spacing(1),
+    fontSize: '1rem',
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white,
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark
+    }
   }
 }));
 
@@ -96,13 +129,24 @@ const AccountOverview = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
+  const [openCreateAccountDialog, setOpenCreateAccountDialog] = useState(false);
+  const [hasFetched, setHasFetched] = useState(false);
+
+  const handleOpenCreateAccountDialog = () => {
+    setOpenCreateAccountDialog(true);
+  };
+
+  const handleCloseCreateAccountDialog = () => {
+    setOpenCreateAccountDialog(false);
+  };
 
   const userId = useMemo(() => sessionStorage.getItem('userId'), []);
 
   useEffect(() => {
     fetchAccounts(userId)
-      .then(data => {
-        setAccounts(data);
+      .then(response => {
+        setAccounts(response);
+        setHasFetched(true);
         setLoading(false);
       })
       .catch(err => {
@@ -129,6 +173,62 @@ const AccountOverview = () => {
             Error: {error}
           </Typography>
         </Box>
+      </Container>
+    );
+  }
+
+  const fetchAndUpdateAccounts = () => {
+    fetchAccounts(userId)
+      .then(response => {
+        setAccounts(response);
+      })
+      .catch(err => {
+        const errorMessage = handleError(err);
+        setError(errorMessage);
+        setOpen(true);
+      });
+  };
+
+  if (hasFetched && accounts.length === 0) {
+    return (
+      <Container className={classes.container}>
+        <Grid
+          container
+          direction='column'
+          justifyContent='center'
+          alignItems='center'
+          className={classes.noAccountsFullContainer}
+        >
+          <Grid item>
+            <Paper className={classes.paper}>
+              <Box className={classes.noAccountsContainer}>
+                <Typography variant='h4' gutterBottom className={classes.noAccountsHeader}>
+                  Welcome to FinTrust!
+                </Typography>
+                <Typography variant='h6' className={classes.noAccountsMessage}>
+                  You currently have no accounts.
+                </Typography>
+                <Button
+                  variant='contained'
+                  startIcon={<AddIcon />}
+                  onClick={handleOpenCreateAccountDialog}
+                  className={classes.createAccountButton}
+                >
+                  Create Your First Account
+                </Button>
+              </Box>
+            </Paper>
+          </Grid>
+        </Grid>
+        <Dialog open={openCreateAccountDialog} onClose={handleCloseCreateAccountDialog}>
+          <DialogContent>
+            <CreateAccountForm onAccountCreated={() => {
+              handleCloseCreateAccountDialog();
+              fetchAndUpdateAccounts();
+            }}
+            />
+          </DialogContent>
+        </Dialog>
       </Container>
     );
   }
