@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const TransferForm = ({ handleClose }) => {
+const TransferForm = ({ handleClose, onTransactionCreated }) => {
   const classes = useStyles();
 
   const [formData, setFormData] = useState({
@@ -147,6 +147,7 @@ const TransferForm = ({ handleClose }) => {
       setSnackbarMessage('Transfer initiated successfully!');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
+      onTransactionCreated();
       setTimeout(() => {
         handleClose();
       }, 6000);
