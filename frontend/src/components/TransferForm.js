@@ -83,7 +83,6 @@ const TransferForm = ({ handleClose }) => {
   });
 
   const [accounts, setAccounts] = useState([]);
-  const [noAccounts, setNoAccounts] = useState(false);
   const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -95,11 +94,7 @@ const TransferForm = ({ handleClose }) => {
       const userId = sessionStorage.getItem('userId');
       try {
         const response = await axios.get(`http://localhost:5000/api/accounts/user/${userId}`);
-        if (response.data && response.data.accounts.length === 0) {
-          setNoAccounts(true);
-        } else {
-          setAccounts(response.data.accounts);
-        }
+        setAccounts(response.data.accounts);
       } catch (err) {
         console.error('Error fetching accounts: ', err);
         setSnackbarMessage('Failed to fetch accounts.');
@@ -122,8 +117,25 @@ const TransferForm = ({ handleClose }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setLoading(true);
 
+    if (!formData.amount) {
+      setSnackbarMessage('Please fill in the Amount Field.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    } else if (!formData.sourceAccountNumber) {
+      setSnackbarMessage('Please fill in a Source Account Number.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    } else if (!formData.destinationAccountNumber) {
+      setSnackbarMessage('Please fill in a Destination Account Number.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    }
+
+    setLoading(true);
     const data = {
       ...formData,
       userId: sessionStorage.getItem('userId')
@@ -162,99 +174,93 @@ const TransferForm = ({ handleClose }) => {
         <Typography className={classes.title} variant='h4'>
           Transfer Funds
         </Typography>
-        {!noAccounts && (
-          <form className={classes.form} noValidate autoComplete='off' onSubmit={handleSubmit}>
-            <Grid container spacing={2} justifyContent='center' alignItems='center'>
-              <Grid item xs={12}>
-                <FormControl variant='outlined' fullWidth className={classes.formControl}>
-                  <OutlinedInput
-                    id='amount'
-                    name='amount'
-                    type='number'
-                    value={formData.amount}
-                    onChange={handleChange}
-                    startAdornment={<InputAdornment position='start'><MoneyIcon /></InputAdornment>}
-                    labelWidth={0}
-                    placeholder='Amount'
-                    required
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl variant='outlined' fullWidth className={classes.formControl}>
-                  <InputLabel htmlFor='source-account-number'>Source Account Number *</InputLabel>
-                  <Select
-                    value={formData.sourceAccountNumber}
-                    onChange={handleChange}
-                    label='Source Account Number *'
-                    inputProps={{
-                      name: 'sourceAccountNumber',
-                      id: 'source-account-number'
-                    }}
-                    startAdornment={<InputAdornment position='start'><AccountCircle /></InputAdornment>}
-                    required
-                  >
-                    {accounts.map((account) => (
-                      <MenuItem
-                        key={account.id}
-                        value={account.accountNumber}
-                        disabled={account.status === 'inactive'}
-                      >
-                        {account.accountNumber} ({account.status})
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl variant='outlined' fullWidth className={classes.formControl}>
-                  <OutlinedInput
-                    id='destination-account-number'
-                    name='destinationAccountNumber'
-                    type='text'
-                    value={formData.destinationAccountNumber}
-                    onChange={handleChange}
-                    startAdornment={<InputAdornment position='start'><AccountCircle /></InputAdornment>}
-                    labelWidth={0}
-                    placeholder='Destination Account Number'
-                    required
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl variant='outlined' fullWidth className={classes.formControl}>
-                  <OutlinedInput
-                    id='description'
-                    name='description'
-                    type='text'
-                    value={formData.description}
-                    onChange={handleChange}
-                    startAdornment={<InputAdornment position='start'><DescriptionIcon /></InputAdornment>}
-                    labelWidth={0}
-                    placeholder='Description'
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <Button
-                  className={classes.formButton}
-                  variant='contained'
-                  color='primary'
-                  type='submit'
-                  disabled={loading}
-                  fullWidth
-                >
-                  {loading ? <CircularProgress size={24} color='inherit' /> : 'Transfer'}
-                </Button>
-              </Grid>
+        <form className={classes.form} noValidate autoComplete='off' onSubmit={handleSubmit}>
+          <Grid container spacing={2} justifyContent='center' alignItems='center'>
+            <Grid item xs={12}>
+              <FormControl variant='outlined' fullWidth className={classes.formControl}>
+                <OutlinedInput
+                  id='amount'
+                  name='amount'
+                  type='number'
+                  value={formData.amount}
+                  onChange={handleChange}
+                  startAdornment={<InputAdornment position='start'><MoneyIcon /></InputAdornment>}
+                  labelWidth={0}
+                  placeholder='Amount'
+                  required
+                />
+              </FormControl>
             </Grid>
-          </form>
-        )}
-        {noAccounts && (
-          <Typography className={classes.noAccounts}>
-            No accounts available for transfer.
-          </Typography>
-        )}
+            <Grid item xs={12}>
+              <FormControl variant='outlined' fullWidth className={classes.formControl}>
+                <InputLabel htmlFor='source-account-number'>Source Account Number *</InputLabel>
+                <Select
+                  value={formData.sourceAccountNumber}
+                  onChange={handleChange}
+                  label='Source Account Number *'
+                  inputProps={{
+                    name: 'sourceAccountNumber',
+                    id: 'source-account-number'
+                  }}
+                  startAdornment={<InputAdornment position='start'><AccountCircle /></InputAdornment>}
+                  required
+                >
+                  {accounts.map((account) => (
+                    <MenuItem
+                      key={account.id}
+                      value={account.accountNumber}
+                      disabled={account.status === 'inactive'}
+                    >
+                      {account.accountNumber} ({account.status})
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl variant='outlined' fullWidth className={classes.formControl}>
+                <OutlinedInput
+                  id='destination-account-number'
+                  name='destinationAccountNumber'
+                  type='text'
+                  value={formData.destinationAccountNumber}
+                  onChange={handleChange}
+                  startAdornment={<InputAdornment position='start'><AccountCircle /></InputAdornment>}
+                  labelWidth={0}
+                  placeholder='Destination Account Number'
+                  required
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl variant='outlined' fullWidth className={classes.formControl}>
+                <OutlinedInput
+                  id='description'
+                  name='description'
+                  type='text'
+                  value={formData.description}
+                  onChange={handleChange}
+                  startAdornment={<InputAdornment position='start'><DescriptionIcon /></InputAdornment>}
+                  labelWidth={0}
+                  placeholder='Description'
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                className={classes.formButton}
+                variant='contained'
+                color='primary'
+                type='submit'
+                disabled={loading}
+                fullWidth
+                startIcon={loading ? <CircularProgress size={20} color='inherit' /> : null}
+              >
+                {loading ? 'Processing' : 'Transfer'}
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
       </Paper>
     </ReactSpring.animated.div>
   );

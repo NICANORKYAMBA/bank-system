@@ -119,8 +119,20 @@ const DepositForm = ({ handleClose }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setLoading(true);
 
+    if (!formData.amount) {
+      setSnackbarMessage('Please fill in the Amount Field.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    } else if (!formData.sourceAccountNumber) {
+      setSnackbarMessage('Please fill in a Source Account Number.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    }
+
+    setLoading(true);
     const data = {
       ...formData,
       userId: sessionStorage.getItem('userId')
@@ -196,10 +208,13 @@ const DepositForm = ({ handleClose }) => {
                   type='number'
                   value={formData.amount}
                   onChange={handleChange}
-                  startAdornment={<InputAdornment
-                    position='start'
-                                  ><MonetizationOn />
-                  </InputAdornment>}
+                  startAdornment={
+                    <InputAdornment
+                      position='start'
+                    >
+                      <MonetizationOn />
+                    </InputAdornment>
+                  }
                   labelWidth={0}
                   placeholder='Amount'
                 />
