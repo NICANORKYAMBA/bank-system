@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    justifyContent: 'flex-start',
     padding: theme.spacing(2),
     backgroundColor: '#ffffff',
     borderRadius: '5px',
@@ -90,7 +91,6 @@ const WithdrawalForm = ({ handleClose }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-  const [noAccounts, setNoAccounts] = useState(false);
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -99,9 +99,6 @@ const WithdrawalForm = ({ handleClose }) => {
       try {
         const response = await axios.get(`http://localhost:5000/api/accounts/user/${userId}`);
         setAccounts(response.data.accounts);
-        if (response.data.accounts.length === 0) {
-          setNoAccounts(true);
-        }
       } catch (error) {
         console.error('Error fetching accounts: ', error);
         setSnackbarMessage('Failed to fetch accounts');
@@ -125,6 +122,19 @@ const WithdrawalForm = ({ handleClose }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (!formData.amount) {
+      setSnackbarMessage('Please fill in the Amount Field.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    } else if (!formData.sourceAccountNumber) {
+      setSnackbarMessage('Please fill in a Source Account Number.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    }
+
+    setLoading(true);
     const data = {
       ...formData,
       userId: sessionStorage.getItem('userId')
@@ -168,88 +178,78 @@ const WithdrawalForm = ({ handleClose }) => {
         <Typography className={classes.title} variant='h4'>
           Withdraw Funds
         </Typography>
-        {loading && (
-          <CircularProgress size={24} className={classes.buttonProgress} />
-        )}
-        {noAccounts
-          ? (
-            <Typography className={classes.noAccounts}>
-              No accounts available for withdrawal.
-            </Typography>
-            )
-          : (
-            <form className={classes.form} noValidate autoComplete='off' onSubmit={handleSubmit}>
-              <Grid container spacing={2} justifyContent='center' alignItems='center'>
-                <Grid item xs={12}>
-                  <FormControl variant='outlined' fullWidth className={classes.formControl}>
-                    <OutlinedInput
-                      id='amount'
-                      name='amount'
-                      type='number'
-                      value={formData.amount}
-                      onChange={handleChange}
-                      startAdornment={<InputAdornment position='start'><MonetizationOn /></InputAdornment>}
-                      labelWidth={0}
-                      placeholder='Amount'
-                      required
-                    />
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControl variant='outlined' fullWidth className={classes.formControl}>
-                    <InputLabel htmlFor='source-account-number'>Source Account Number *</InputLabel>
-                    <Select
-                      value={formData.sourceAccountNumber}
-                      onChange={handleChange}
-                      label='Source Account Number *'
-                      inputProps={{
-                        name: 'sourceAccountNumber',
-                        id: 'source-account-number'
-                      }}
-                      startAdornment={<InputAdornment position='start'><AccountCircle /></InputAdornment>}
-                      required
+        <form className={classes.form} noValidate autoComplete='off' onSubmit={handleSubmit}>
+          <Grid container spacing={2} justifyContent='center' alignItems='center'>
+            <Grid item xs={12}>
+              <FormControl variant='outlined' fullWidth className={classes.formControl}>
+                <OutlinedInput
+                  id='amount'
+                  name='amount'
+                  type='number'
+                  value={formData.amount}
+                  onChange={handleChange}
+                  startAdornment={<InputAdornment position='start'><MonetizationOn /></InputAdornment>}
+                  labelWidth={0}
+                  placeholder='Amount'
+                  required
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl variant='outlined' fullWidth className={classes.formControl}>
+                <InputLabel htmlFor='source-account-number'>Source Account Number *</InputLabel>
+                <Select
+                  value={formData.sourceAccountNumber}
+                  onChange={handleChange}
+                  label='Source Account Number *'
+                  inputProps={{
+                    name: 'sourceAccountNumber',
+                    id: 'source-account-number'
+                  }}
+                  startAdornment={<InputAdornment position='start'><AccountCircle /></InputAdornment>}
+                  required
+                >
+                  {accounts.map((account) => (
+                    <MenuItem
+                      key={account.id}
+                      value={account.accountNumber}
+                      disabled={account.status === 'inactive'}
                     >
-                      {accounts.map((account) => (
-                        <MenuItem
-                          key={account.id}
-                          value={account.accountNumber}
-                          disabled={account.status === 'inactive'}
-                        >
-                          {account.accountNumber} ({account.status})
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControl variant='outlined' fullWidth className={classes.formControl}>
-                    <OutlinedInput
-                      id='description'
-                      name='description'
-                      type='text'
-                      value={formData.description}
-                      onChange={handleChange}
-                      startAdornment={<InputAdornment position='start'><Description /></InputAdornment>}
-                      labelWidth={0}
-                      placeholder='Description'
-                    />
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-                  <Button
-                    className={classes.formButton}
-                    variant='contained'
-                    color='primary'
-                    type='submit'
-                    disabled={accounts.length === 0 || loading}
-                    fullWidth
-                  >
-                    {loading ? <CircularProgress size={24} color='inherit' /> : 'Withdraw'}
-                  </Button>
-                </Grid>
-              </Grid>
-            </form>
-            )}
+                      {account.accountNumber} ({account.status})
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl variant='outlined' fullWidth className={classes.formControl}>
+                <OutlinedInput
+                  id='description'
+                  name='description'
+                  type='text'
+                  value={formData.description}
+                  onChange={handleChange}
+                  startAdornment={<InputAdornment position='start'><Description /></InputAdornment>}
+                  labelWidth={0}
+                  placeholder='Description'
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                className={classes.formButton}
+                variant='contained'
+                color='primary'
+                type='submit'
+                disabled={accounts.length === 0 || loading}
+                fullWidth
+                startIcon={loading ? <CircularProgress size={20} color='inherit' /> : null}
+              >
+                {loading ? 'Processing...' : 'Withdraw'}
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
       </Paper>
     </ReactSpring.animated.div>
   );
