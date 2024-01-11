@@ -86,7 +86,8 @@ const QuickActions = ({
   showWithdrawalForm,
   handleCloseDeposit,
   handleClose,
-  handleCloseWithdrawal
+  handleCloseWithdrawal,
+  onTransactionCreated
 }) => {
   const classes = useStyles();
 
@@ -123,7 +124,7 @@ const QuickActions = ({
             </Tooltip>
             <Dialog open={showDepositForm} onClose={handleCloseDeposit}>
               <DialogContent className={classes.dialogContent}>
-                <DepositForm handleClose={handleCloseDeposit} />
+                <DepositForm handleClose={handleCloseDeposit} onTransactionCreated={onTransactionCreated} />
               </DialogContent>
             </Dialog>
           </Grid>
@@ -149,7 +150,7 @@ const QuickActions = ({
             </Tooltip>
             <Dialog open={showTransferForm} onClose={handleClose}>
               <DialogContent className={classes.dialogContent}>
-                <TransferForm handleClose={handleClose} />
+                <TransferForm handleClose={handleClose} onTransactionCreated={onTransactionCreated} />
               </DialogContent>
             </Dialog>
           </Grid>
@@ -174,7 +175,7 @@ const QuickActions = ({
             </Tooltip>
             <Dialog open={showWithdrawalForm} onClose={handleCloseWithdrawal}>
               <DialogContent className={classes.dialogContent}>
-                <WithdrawalForm handleClose={handleCloseWithdrawal} />
+                <WithdrawalForm handleClose={handleCloseWithdrawal} onTransactionCreated={onTransactionCreated} />
               </DialogContent>
             </Dialog>
           </Grid>
