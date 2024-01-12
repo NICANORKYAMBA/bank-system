@@ -22,9 +22,10 @@ const useStyles = makeStyles((theme) => ({
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
-    marginLeft: theme.spacing(10),
-    marginRight: theme.spacing(10),
-    maxWidth: '90%'
+    marginTop: theme.spacing(-8),
+    marginLeft: theme.spacing(30),
+    marginRight: 'auto',
+    maxWidth: `calc(100% - ${theme.spacing(30)}px)`
   },
   card: {
     margin: theme.spacing(2)
