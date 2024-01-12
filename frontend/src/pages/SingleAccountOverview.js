@@ -36,7 +36,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop: theme.spacing(-8),
+    marginLeft: theme.spacing(20),
+    marginRight: 'auto',
+    maxWidth: `calc(100% - ${theme.spacing(20)}px)`
   },
   paper: {
     padding: theme.spacing(3),
