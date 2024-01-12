@@ -79,14 +79,41 @@ const CreateAccountForm = ({ onAccountCreated }) => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.accountNumber) newErrors.accountNumber = 'Account number is required';
+    const missingFields = [];
+    if (!formData.accountNumber) {
+      newErrors.accountNumber = 'Account number is required';
+      missingFields.push('Account Number');
+    }
     if (formData.accountNumber.length !== 15) newErrors.accountNumber = 'Account number must be a 15-digit number';
-    if (!formData.name) newErrors.name = 'Name is required';
-    if (!formData.balance || isNaN(formData.balance)) newErrors.balance = 'Balance must be a number';
-    if (!['checking', 'savings', 'credit'].includes(formData.accountType)) newErrors.accountType = 'Invalid account type';
-    if (!['USD', 'EUR', 'GBP'].includes(formData.currency)) newErrors.currency = 'Invalid currency';
-    if (!['active', 'inactive'].includes(formData.status)) newErrors.status = 'Invalid status';
+    if (!formData.name) {
+      newErrors.name = 'Name is required';
+      missingFields.push('Name');
+    }
+    if (!formData.balance || isNaN(formData.balance)) {
+      newErrors.balance = 'Balance must be a number';
+      missingFields.push('Balance');
+    }
+    if (!['checking', 'savings', 'credit'].includes(formData.accountType)) {
+      newErrors.accountType = 'Invalid account type';
+      missingFields.push('Account Type');
+    }
+    if (!['USD', 'EUR', 'GBP'].includes(formData.currency)) {
+      newErrors.currency = 'Invalid currency';
+      missingFields.push('Currency');
+    }
+    if (!['active', 'inactive'].includes(formData.status)) {
+      newErrors.status = 'Invalid status';
+      missingFields.push('Status');
+    }
+
     setErrors(newErrors);
+
+    if (missingFields.length > 0) {
+      setSnackbarMessage(`Please fill in the following fields: ${missingFields.join(', ')}`);
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
+    }
+
     return Object.keys(newErrors).length === 0;
   };
 
