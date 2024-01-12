@@ -28,8 +28,11 @@ import CreateAccountForm from '../components/CreateAccountForm';
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    marginTop: theme.spacing(0),
-    marginBottom: theme.spacing(4)
+    marginTop: theme.spacing(-6),
+    marginBottom: theme.spacing(4),
+    marginLeft: theme.spacing(10),
+    marginRight: 'auto',
+    maxWidth: `calc(100% - ${theme.spacing(10)}px)`
   },
   paper: {
     padding: theme.spacing(3),

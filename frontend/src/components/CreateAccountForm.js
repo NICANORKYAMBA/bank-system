@@ -8,17 +8,31 @@ import {
   InputLabel,
   FormHelperText,
   Snackbar,
-  makeStyles,
   Grid,
-  CircularProgress
+  CircularProgress,
+  Switch,
+  FormGroup,
+  FormControlLabel,
+  Typography,
+  makeStyles
 } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
+  formContainer: {
+    minHeight: '100px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: theme.spacing(4)
+  },
   form: {
-    width: '100%',
-    marginTop: theme.spacing(3)
+    marginTop: theme.spacing(3),
+    maxWidth: '90%',
+    marginLeft: 'auto',
+    marginRight: 'auto'
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
@@ -29,8 +43,16 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 120,
     marginTop: theme.spacing(2)
   },
-  selectEmpty: {
-    marginTop: theme.spacing(2)
+  switchControl: {
+    marginTop: theme.spacing(1)
+  },
+  successIcon: {
+    color: theme.palette.success.main,
+    marginRight: theme.spacing(1)
+  },
+  errorIcon: {
+    color: theme.palette.error.main,
+    marginRight: theme.spacing(1)
   }
 }));
 
@@ -57,14 +79,41 @@ const CreateAccountForm = ({ onAccountCreated }) => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.accountNumber) newErrors.accountNumber = 'Account number is required';
+    const missingFields = [];
+    if (!formData.accountNumber) {
+      newErrors.accountNumber = 'Account number is required';
+      missingFields.push('Account Number');
+    }
     if (formData.accountNumber.length !== 15) newErrors.accountNumber = 'Account number must be a 15-digit number';
-    if (!formData.name) newErrors.name = 'Name is required';
-    if (!formData.balance || isNaN(formData.balance)) newErrors.balance = 'Balance must be a number';
-    if (!['checking', 'savings', 'credit'].includes(formData.accountType)) newErrors.accountType = 'Invalid account type';
-    if (!['USD', 'EUR', 'GBP'].includes(formData.currency)) newErrors.currency = 'Invalid currency';
-    if (!['active', 'inactive'].includes(formData.status)) newErrors.status = 'Invalid status';
+    if (!formData.name) {
+      newErrors.name = 'Name is required';
+      missingFields.push('Name');
+    }
+    if (!formData.balance || isNaN(formData.balance)) {
+      newErrors.balance = 'Balance must be a number';
+      missingFields.push('Balance');
+    }
+    if (!['checking', 'savings', 'credit'].includes(formData.accountType)) {
+      newErrors.accountType = 'Invalid account type';
+      missingFields.push('Account Type');
+    }
+    if (!['USD', 'EUR', 'GBP'].includes(formData.currency)) {
+      newErrors.currency = 'Invalid currency';
+      missingFields.push('Currency');
+    }
+    if (!['active', 'inactive'].includes(formData.status)) {
+      newErrors.status = 'Invalid status';
+      missingFields.push('Status');
+    }
+
     setErrors(newErrors);
+
+    if (missingFields.length > 0) {
+      setSnackbarMessage(`Please fill in the following fields: ${missingFields.join(', ')}`);
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
+    }
+
     return Object.keys(newErrors).length === 0;
   };
 
@@ -95,10 +144,8 @@ const CreateAccountForm = ({ onAccountCreated }) => {
         currency: '',
         status: ''
       });
-      setTimeout(() => {
-        setLoading(false);
-        onAccountCreated();
-      }, 6000);
+      setLoading(false);
+      onAccountCreated();
     } catch (error) {
       setSnackbarMessage(error.response?.data?.message || 'An error occurred');
       setSnackbarSeverity('error');
@@ -113,7 +160,7 @@ const CreateAccountForm = ({ onAccountCreated }) => {
 
   return (
     <form className={classes.form} onSubmit={handleSubmit} noValidate>
-      <Grid container spacing={2}>
+      <Grid container spacing={2} className={classes.formContainer}>
         <Grid item xs={12}>
           <TextField
             variant='outlined'
@@ -198,21 +245,20 @@ const CreateAccountForm = ({ onAccountCreated }) => {
           </FormControl>
         </Grid>
         <Grid item xs={12}>
-          <FormControl variant='outlined' fullWidth required error={!!errors.status}>
-            <InputLabel id='status-label'>Status</InputLabel>
-            <Select
-              labelId='status-label'
-              id='status'
-              name='status'
-              value={formData.status}
-              onChange={handleChange}
-              label='Status'
-            >
-              <MenuItem value='active'>Active</MenuItem>
-              <MenuItem value='inactive'>Inactive</MenuItem>
-            </Select>
-            <FormHelperText>{errors.status}</FormHelperText>
-          </FormControl>
+          <FormGroup className={classes.switchControl}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={formData.status === 'active'}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.checked ? 'active' : 'inactive' })}
+                  name='status'
+                  color='primary'
+                />
+              }
+              label='Account Status'
+            />
+            <Typography variant='caption' color='error'>{errors.status}</Typography>
+          </FormGroup>
         </Grid>
         <Grid item xs={12}>
           <Button
@@ -222,13 +268,19 @@ const CreateAccountForm = ({ onAccountCreated }) => {
             color='primary'
             className={classes.submit}
             disabled={loading}
+            startIcon={loading ? <CircularProgress size={24} /> : <CheckCircleOutlineIcon />}
           >
-            {loading ? <CircularProgress size={24} /> : 'Create Account'}
+            Create Account
           </Button>
         </Grid>
       </Grid>
       <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-        <MuiAlert elevation={6} variant='filled' severity={snackbarSeverity}>
+        <MuiAlert
+          elevation={6} variant='filled' severity={snackbarSeverity} iconMapping={{
+            success: <CheckCircleOutlineIcon fontSize='inherit' />,
+            error: <ErrorOutlineIcon fontSize='inherit' />
+          }}
+        >
           {snackbarMessage}
         </MuiAlert>
       </Snackbar>
