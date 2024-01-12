@@ -10,7 +10,6 @@ import {
   Avatar,
   Popover,
   Tooltip,
-  CircularProgress,
   Select,
   MenuItem,
   InputAdornment,
@@ -23,12 +22,13 @@ import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 const useStyles = makeStyles((theme) => ({
   headerContainer: {
     padding: theme.spacing(1),
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(2),
     backgroundColor: theme.palette.background.paper,
-    borderRadius: theme.shape.borderRadius
+    borderRadius: theme.shape.borderRadius,
+    maxWidth: '100%'
   },
   greeting: {
-    fontWeight: 600,
+    fontWeight: 400,
     color: theme.palette.primary.dark
   },
   searchBox: {
@@ -77,23 +77,23 @@ const DashboardHeader = ({
   handleNotificationsClick
 }) => {
   const classes = useStyles();
-  const [searchType, setSearchType] = useState('all');
+  const [searchCategory, setSearchCategory] = useState('all');
 
-  const handleSearchTypeChange = (event) => {
-    setSearchType(event.target.value);
+  const handleSearchCategoryChange = (event) => {
+    setSearchCategory(event.target.value);
   };
 
   return (
     <Grid container spacing={3} className={classes.headerContainer}>
       <Grid item xs={12} sm={5} md={4}>
         <Typography variant='h5' component='h1' className={classes.greeting}>
-          Hello, {userData ? `${userData.firstName} ${userData.lastName}` : <CircularProgress size={24} />}
+          Hello, {userData ? `${userData.firstName} ${userData.lastName}` : 'Loading...'}
         </Typography>
       </Grid>
       <Grid item xs={12} sm={4} md={4}>
         <Box className={classes.searchBox}>
           <form onSubmit={handleSearchSubmit} style={{ display: 'flex', width: '100%' }}>
-            <Select value={searchType} onChange={handleSearchTypeChange} className={classes.searchInput}>
+            <Select value={searchCategory} onChange={handleSearchCategoryChange} className={classes.searchInput}>
               <MenuItem value='all'>All</MenuItem>
               <MenuItem value='deposits'>Deposits</MenuItem>
               <MenuItem value='withdrawals'>Withdrawals</MenuItem>
@@ -122,7 +122,7 @@ const DashboardHeader = ({
       <Grid item xs={12} sm={3} md={4}>
         <Box display='flex' justifyContent='flex-end' alignItems='center'>
           <Tooltip title='Notifications'>
-            <IconButton color='inherit' onClick={handleNotificationsClick}>
+            <IconButton color='inherit' onClick={handleNotificationsClick} aria-label='Notifications'>
               <Badge badgeContent={notificationsCount} color='secondary'>
                 <NotificationsIcon />
               </Badge>
@@ -131,11 +131,11 @@ const DashboardHeader = ({
           <Tooltip title='User Profile'>
             <IconButton
               edge='end'
-              aria-label='user profile'
+              aria-label='User Profile'
               color='inherit'
               onClick={handleProfilePopoverOpen}
             >
-              <Avatar alt='User Profile' src={userData.profilePicture || <PersonOutlineIcon />} className={classes.avatar} />
+              <Avatar alt='User Profile' src={userData?.profilePicture || <PersonOutlineIcon />} className={classes.avatar} />
             </IconButton>
           </Tooltip>
           <Popover
@@ -153,8 +153,8 @@ const DashboardHeader = ({
             }}
           >
             <Box className={classes.popoverContent}>
-              <Typography>Email: {userData.email}</Typography>
-              <Typography>Phone: {userData.phone}</Typography>
+              <Typography>Email: {userData?.email}</Typography>
+              <Typography>Phone: {userData?.phone}</Typography>
               {/* Display more user details as needed */}
             </Box>
           </Popover>
