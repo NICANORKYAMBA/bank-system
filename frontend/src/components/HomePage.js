@@ -1,13 +1,15 @@
 import React from 'react';
 import {
   Container,
-  Grid,
   makeStyles,
   AppBar,
   Toolbar,
   Typography,
+  Button,
   Box,
-  InputBase
+  InputBase,
+  useTheme,
+  useMediaQuery
 } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import IconButton from '@material-ui/core/IconButton';
@@ -15,12 +17,12 @@ import Badge from '@material-ui/core/Badge';
 import SearchIcon from '@material-ui/icons/Search';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import HomeIcon from './HomeIcon';
-import WelcomeMessage from './WelcomeMessage';
 import AuthButtonsContainer from './AuthButtonsContainer';
 import FeaturesSection from './FeaturesSection';
 import NewsAndUpdatesSection from './NewsAndUpdatesSection';
 import PromotionsAndOffersSection from './PromotionsAndOffersSection';
 import DarkModeToggle from './DarkModeToggle';
+import heroImage from '../assets/hero-image.jpg';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,11 +54,12 @@ const useStyles = makeStyles((theme) => ({
   },
   headerSection: {
     padding: theme.spacing(3),
+    color: theme.palette.common.white,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: '60vh',
+    minHeight: '72vh',
     [theme.breakpoints.up('md')]: {
       flexDirection: 'row',
       justifyContent: 'space-between'
@@ -132,25 +135,55 @@ const useStyles = makeStyles((theme) => ({
   },
   darkModeToggleContainer: {
     marginLeft: 'auto'
+  },
+  heroSection: {
+    padding: theme.spacing(3),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '70vh',
+    backgroundImage: `url(${heroImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    [theme.breakpoints.up('md')]: {
+      flexDirection: 'row',
+      justifyContent: 'space-between'
+    }
+  },
+  highlightedText: {
+    backgroundColor: 'blue',
+    color: 'white',
+    padding: theme.spacing(1),
+    borderRadius: theme.spacing(1)
+  },
+  ctaButton: {
+    marginTop: theme.spacing(3),
+    backgroundColor: 'blue',
+    color: 'white',
+    fontSize: '1.2em',
+    padding: theme.spacing(2, 4),
+    '&:hover': {
+      backgroundColor: 'darkblue'
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
+    }
   }
-
 }));
 
 function HomePage () {
   const classes = useStyles();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <div className={classes.root}>
       <AppBar position='fixed' className={classes.appBar}>
         <Toolbar>
           <Typography variant='h6' className={classes.title}>
-            <Link
-              to='/'
-              style={{
-                textDecoration: 'none',
-                color: 'inherit'
-              }}
-            >
+            <Link to='/' style={{ textDecoration: 'none', color: 'inherit' }}>
               FinTrust
             </Link>
           </Typography>
@@ -181,22 +214,37 @@ function HomePage () {
         </Toolbar>
       </AppBar>
       <Toolbar />
+      <Box className={classes.heroSection} style={{ backgroundImage: `url(${heroImage})` }}>
+        <Container maxWidth='lg'>
+          <Box className={classes.headerSection}>
+            <Box style={{ maxWidth: '600px' }}>
+              <Typography variant='h2' component='h1' gutterBottom>
+                Your Trusted Financial Partner
+              </Typography>
+              <Typography variant='h6' color='textSecondary' paragraph>
+                <span className={classes.highlightedText}>
+                  Manage your finances with ease and confidence.
+                  Join FinTrust today and experience the difference.
+                </span>
+              </Typography>
+              <Button
+                variant='contained'
+                color='primary' size='large'
+                className={classes.ctaButton}
+                component={Link}
+                to='/registration'
+              >
+                Get Started
+              </Button>
+            </Box>
+            {!isMobile && <HomeIcon style={{ fontSize: '10rem' }} />}
+          </Box>
+        </Container>
+      </Box>
       <Container className={classes.container} maxWidth='lg'>
-        <div className={classes.headerSection}>
-          <HomeIcon />
-          <WelcomeMessage />
-        </div>
-        <Grid container spacing={4} justifyContent='center'>
-          <Grid item xs={12} className={classes.section}>
-            <FeaturesSection />
-          </Grid>
-          <Grid item xs={12} className={classes.section}>
-            <NewsAndUpdatesSection />
-          </Grid>
-          <Grid item xs={12} className={classes.section}>
-            <PromotionsAndOffersSection />
-          </Grid>
-        </Grid>
+        <FeaturesSection />
+        <NewsAndUpdatesSection />
+        <PromotionsAndOffersSection />
       </Container>
     </div>
   );
