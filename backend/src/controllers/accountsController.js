@@ -318,12 +318,13 @@ export const getAccountsByUserId = [
           accounts
         });
       } else {
-        res.status(404).json({
-          message: `No accounts found for user with ID ${userId}`,
+        res.status(200).json({
+          message: `User with ID ${userId} has no accounts`,
           limit,
           offset,
           sort,
-          order
+          order,
+          accounts: []
         });
       }
     } catch (err) {
