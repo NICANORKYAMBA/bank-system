@@ -67,12 +67,6 @@ function NewsAndUpdatesSection () {
       date: 'November 28, 2022',
       content:
        'Learn valuable insights and tips for making successful investments. Our experts share their advice for financial growth.'
-    },
-    {
-      title: 'FinTrust Bank Announces New Mobile App Features',
-      date: 'December 15, 2022',
-      content:
-        'Explore the latest features and enhancements in our mobile banking app. Stay connected with your finances on the go!'
     }
   ];
 
