@@ -9,7 +9,11 @@ import {
   makeStyles
 } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
-import { fetchAccount, fetchAccounts, fetchTransactions } from '../api/api';
+import {
+  fetchAccount,
+  fetchAccounts,
+  fetchTransactionsByAccountId
+} from '../api/api';
 
 import DashboardHeader from '../components/DashboardHeader';
 import AccountsList from '../components/AccountList';
@@ -162,6 +166,9 @@ function Dashboard ({ reload, onTransactionCreated }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [transactions, setTransactions] = useState([]);
+  const [showTransferForm, setShowTransferForm] = useState(false);
+  const [showWithdrawalForm, setShowWithdrawalForm] = useState(false);
+  const [showDepositForm, setShowDepositForm] = useState(false);
 
   const handleProfilePopoverOpen = (event) => {
     setProfileAnchorEl(event.currentTarget);
@@ -176,41 +183,41 @@ function Dashboard ({ reload, onTransactionCreated }) {
     lastName: sessionStorage.getItem('lastName')
   })[0];
 
+  const fetchAllAccountsData = async () => {
+    setLoading(true);
+    try {
+      const userId = sessionStorage.getItem('userId');
+      const accountsData = await fetchAccounts(userId);
+      setAccountsData(accountsData);
+    } catch (error) {
+      console.error(error);
+      setError('Error fetching all accounts data');
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const userId = sessionStorage.getItem('userId');
+    fetchAllAccountsData();
+  }, []);
 
-        let accountsData = [];
-        try {
-          accountsData = await fetchAccounts(userId);
-        } catch (error) {
-          if (error.response && error.response.status === 404) {
-            console.log('No accounts found for this user.');
-            accountsData = [];
-            console.log(accountsData);
-          } else {
-            throw error;
-          }
-        }
-        const transactionsData = await fetchTransactions(userId);
-
-        setAccountsData(accountsData);
-        setTransactions(transactionsData);
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
-        setError('Error fetching data');
-        setLoading(false);
-      }
+  useEffect(() => {
+    const fetchSelectedAccountData = async () => {
       if (selectedAccount) {
-        const selectedAccountData = await fetchAccount(selectedAccount.id);
-        setSelectedAccountData(selectedAccountData);
+        try {
+          const transactionsData = await fetchTransactionsByAccountId(selectedAccount.id);
+          setTransactions(transactionsData);
+
+          const AccountData = await fetchAccount(selectedAccount.id);
+          setSelectedAccountData(AccountData);
+        } catch (error) {
+          console.error(error);
+          setError('Error fetching data for selected account');
+        }
       }
     };
 
-    fetchData();
-  }, [reload, selectedAccount]);
+    fetchSelectedAccountData();
+  }, [selectedAccount]);
 
   const accountsScrollContainerRef = useRef(null);
   const transactionsScrollContainerRef = useRef(null);
@@ -225,8 +232,6 @@ function Dashboard ({ reload, onTransactionCreated }) {
     transactionsScrollContainerRef.current.scrollLeft += scrollOffset;
   };
 
-  const [showTransferForm, setShowTransferForm] = useState(false);
-
   const handleTransferClick = () => {
     setShowTransferForm(true);
   };
@@ -235,8 +240,6 @@ function Dashboard ({ reload, onTransactionCreated }) {
     setShowTransferForm(false);
     onTransactionCreated();
   };
-
-  const [showWithdrawalForm, setShowWithdrawalForm] = useState(false);
 
   const handleWithdrawalClick = () => {
     setShowWithdrawalForm(true);
@@ -247,8 +250,6 @@ function Dashboard ({ reload, onTransactionCreated }) {
     onTransactionCreated();
   };
 
-  const [showDepositForm, setShowDepositForm] = useState(false);
-
   const handleDepositClick = () => {
     setShowDepositForm(true);
   };
@@ -258,8 +259,27 @@ function Dashboard ({ reload, onTransactionCreated }) {
     onTransactionCreated();
   };
 
-  const handleTransactionCreated = () => {
-    onTransactionCreated();
+  const handleTransactionCreated = async () => {
+    try {
+      const transactionsData = await fetchTransactionsByAccountId(selectedAccount.id);
+      setTransactions(transactionsData);
+
+      const accountData = await fetchAccount(selectedAccount.id);
+      setSelectedAccountData(accountData);
+
+      await fetchAllAccountsData();
+    } catch (error) {
+      console.error(error);
+      setError('Error fetching data after transaction');
+    }
+
+    setShowTransferForm(false);
+    setShowWithdrawalForm(false);
+    setShowDepositForm(false);
+
+    if (onTransactionCreated) {
+      onTransactionCreated();
+    }
   };
 
   const profileOpen = Boolean(profileAnchorEl);
@@ -328,12 +348,16 @@ function Dashboard ({ reload, onTransactionCreated }) {
                 />
               </Grid>
               <Grid item xs={12} sm={8} md={6}>
-                <AccountSummary classes={classes} selectedAccount={selectedAccountData} />
+                <AccountSummary
+                  classes={classes}
+                  selectedAccount={selectedAccountData}
+                />
               </Grid>
               <Grid item xs={12} sm={4} md={6}>
                 <TransactionsList
                   classes={classes}
                   transactions={transactions}
+                  selectedAccount={selectedAccount}
                   scrollTransactions={scrollTransactions}
                   transactionsScrollContainerRef={transactionsScrollContainerRef}
                 />
