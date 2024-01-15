@@ -71,7 +71,7 @@ const Transactions = () => {
     const userId = sessionStorage.getItem('userId');
     fetchTransactions(userId, 500, 0, 'createdAt', 'DESC')
       .then(data => {
-        setAllTransactions(data); // Store the fetched transactions in allTransactions
+        setAllTransactions(data);
         setLoading(false);
       })
       .catch(err => {
@@ -87,13 +87,13 @@ const Transactions = () => {
         console.log('Failed to fetch accounts:', err);
       });
   }, [transactionCount]);
-
+  
   const filteredTransactions = useMemo(() => {
     return allTransactions.filter(transaction =>
       (!filterFromAccount || transaction.sourceTransactionAccount.accountNumber.includes(filterFromAccount)) &&
       (!filterToAccount || transaction.destinationTransactionAccount.accountNumber.includes(filterToAccount))
     );
-  }, [allTransactions, filterFromAccount, filterToAccount]);
+}, [allTransactions, filterFromAccount, filterToAccount]);
 
   const clearFilters = () => {
     setFilterFromAccount('');
