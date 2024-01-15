@@ -450,14 +450,9 @@ export const getTransactionsByAccountId = [
     try {
       const account = await Account.findByPk(accountId);
       if (!account) {
-        return res.status(404).json({
-          message: `Account with ID ${accountId} not found`
-        });
-      }
-
-      if (account.status !== 'active') {
-        return res.status(400).json({
-          message: 'Account is not active'
+        return res.status(200).json({
+          message: `Account with ID ${accountId} not found`,
+          transactions: []
         });
       }
 
@@ -477,20 +472,14 @@ export const getTransactionsByAccountId = [
         ],
         limit,
         offset,
-        order: [[sort, order]]
+        order: sort && order ? [[sort, order]] : undefined
       });
 
-      if (transactions.length > 0) {
-        const message = transactions.length === 1 ? 'transaction' : 'transactions';
-        res.status(200).json({
-          message: `${transactions.length} ${message} found`,
-          transactions
-        });
-      } else {
-        res.status(404).json({
-          message: 'No transactions found'
-        });
-      }
+      const message = transactions.length === 0 ? 'No transactions found' : `${transactions.length} transaction(s) found`;
+      res.status(200).json({
+        message,
+        transactions
+      });
     } catch (err) {
       if (err instanceof Sequelize.ValidationError) {
         return handleValidationError(res, err.message);
