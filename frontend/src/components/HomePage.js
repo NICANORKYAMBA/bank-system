@@ -23,6 +23,7 @@ import NewsAndUpdatesSection from './NewsAndUpdatesSection';
 import PromotionsAndOffersSection from './PromotionsAndOffersSection';
 import DarkModeToggle from './DarkModeToggle';
 import heroImage from '../assets/hero-image.jpg';
+import Footer from './Footer';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -153,14 +154,14 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   highlightedText: {
-    backgroundColor: 'blue',
+    backgroundColor: '#1976D2',
     color: 'white',
     padding: theme.spacing(1),
     borderRadius: theme.spacing(1)
   },
   ctaButton: {
     marginTop: theme.spacing(3),
-    backgroundColor: 'blue',
+    backgroundColor: '#1976D2',
     color: 'white',
     fontSize: '1.2em',
     padding: theme.spacing(2, 4),
@@ -214,7 +215,10 @@ function HomePage () {
         </Toolbar>
       </AppBar>
       <Toolbar />
-      <Box className={classes.heroSection} style={{ backgroundImage: `url(${heroImage})` }}>
+      <Box
+        className={classes.heroSection}
+        style={{ backgroundImage: `url(${heroImage})` }}
+      >
         <Container maxWidth='lg'>
           <Box className={classes.headerSection}>
             <Box style={{ maxWidth: '600px' }}>
@@ -246,6 +250,7 @@ function HomePage () {
         <NewsAndUpdatesSection />
         <PromotionsAndOffersSection />
       </Container>
+      <Footer />
     </div>
   );
 }
