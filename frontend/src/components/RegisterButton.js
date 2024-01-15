@@ -12,16 +12,16 @@ import RegisterForm from './RegisterForm';
 const useStyles = makeStyles((theme) => ({
   registerButton: {
     backgroundColor: 'transparent',
-    color: theme.palette.primary.main,
-    border: `2px solid ${theme.palette.primary.main}`,
+    color: '#1976D2',
+    border: '2px solid #1976D2',
     padding: theme.spacing(1, 1.5),
     borderRadius: theme.spacing(1),
     fontSize: '1em',
-    marginTop: theme.spacing(6),
+    marginTop: theme.spacing(1),
     boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
     transition: '0.3s',
     '&:hover': {
-      backgroundColor: theme.palette.primary.main,
+      backgroundColor: '#1976D2',
       color: theme.palette.common.white,
       transform: 'scale(1.1)'
     }
