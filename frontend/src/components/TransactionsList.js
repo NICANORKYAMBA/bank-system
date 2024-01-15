@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Typography, IconButton, Paper, Chip, Avatar, useMediaQuery, Box } from '@material-ui/core';
 import { useTheme, makeStyles } from '@material-ui/core/styles';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
@@ -56,6 +56,7 @@ const useStyles = makeStyles((theme) => ({
 
 const TransactionsList = ({
   transactions,
+  selectedAccount,
   transactionsScrollContainerRef
 }) => {
   const classes = useStyles();
@@ -63,6 +64,20 @@ const TransactionsList = ({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 1;
+
+  useEffect(() => {
+    setCurrentPage(0);
+    // Optionally, if you have a ref to a scrollable container, you may want to reset its scroll position
+    if (transactionsScrollContainerRef.current) {
+      transactionsScrollContainerRef.current.scrollTo(0, 0);
+    }
+  }, [selectedAccount, transactionsScrollContainerRef]);
+
+  const filteredTransactions = transactions.filter(
+    (transaction) =>
+      transaction.sourceAccountId === selectedAccount?.id ||
+    transaction.destinationAccountId === selectedAccount?.id
+  );
 
   const handleNextPage = () => {
     setCurrentPage(prevPage => prevPage + 1);
@@ -72,8 +87,8 @@ const TransactionsList = ({
     setCurrentPage(prevPage => prevPage - 1);
   };
 
-  const isLastPage = currentPage >= Math.ceil(transactions.length / itemsPerPage) - 1;
-  const displayedTransactions = (transactions || []).slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+  const isLastPage = currentPage >= Math.ceil(filteredTransactions.length / itemsPerPage) - 1;
+  const displayedTransactions = (filteredTransactions || []).slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 
   const getTransactionIcon = (type) => {
     switch (type) {

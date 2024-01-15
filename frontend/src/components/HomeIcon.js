@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     height: 150,
     width: 150,
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: '#1976D2',
     borderRadius: '50%',
     boxShadow: '0 6px 12px 0 rgba(0,0,0,0.2)',
     transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     marginTop: theme.spacing(1),
     fontWeight: 'bold',
-    color: theme.palette.text.primary
+    color: theme.palette.common.black
   }
 }));
 

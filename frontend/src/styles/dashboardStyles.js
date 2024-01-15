@@ -2,26 +2,11 @@ import { makeStyles } from '@material-ui/core';
 import { alpha } from '@material-ui/core/styles';
 
 export const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    marginBottom: theme.spacing(2)
-  },
   appBar: {
     marginBottom: theme.spacing(3),
     height: '50%',
     width: '100%',
     backgroundColor: theme.palette.primary.main
-  },
-  menuButton: {
-    marginRight: theme.spacing(2)
-  },
-  drawer: {
-    width: 240,
-    flexShrink: 0
-  },
-  drawerPaper: {
-    width: 240,
-    backgroundColor: '#3f51b5'
   },
   toolbar: {
     display: 'flex',
@@ -96,8 +81,12 @@ export const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold'
   },
   dashboardContainer: {
-    marginTop: theme.spacing(-6),
-    marginLeft: theme.spacing(28)
+    padding: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    backgroundColor: theme.palette.background.paper,
+    borderRadius: theme.shape.borderRadius,
+    maxWidth: 'calc(100% - ' + theme.spacing(2) + 'px)',
+    margin: 'auto'
   },
   dashboardButton: {
     margin: theme.spacing(1),

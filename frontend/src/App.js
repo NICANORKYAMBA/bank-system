@@ -10,6 +10,8 @@ import AccountDetails from './pages/accountDetails';
 import AccountOverview from './pages/AccountOverview';
 import SingleAccountOverview from './pages/SingleAccountOverview';
 import Navigation from './components/Navigation';
+import WelcomeBonusPage from './pages/WelcomeBonusPage';
+import HolidaySavingsSpecialPage from './pages/HolidaySavingsPage';
 
 function AppWithNavigation () {
   const location = useLocation();
@@ -26,6 +28,8 @@ function AppWithNavigation () {
        location.pathname !== '/registration' &&
        location.pathname !== '/login' &&
         location.pathname !== '/create-account' &&
+        location.pathname !== '/welcome-bonus' &&
+        location.pathname !== '/holiday-savings' &&
           <Navigation onTransactionCreated={handleTransactionCreated} />
 }
       <Switch>
@@ -42,6 +46,8 @@ function AppWithNavigation () {
         <Route path='/account-overview/:accountId' component={SingleAccountOverview} />
         <Route path='/account-overview' component={AccountOverview} />
         <Route path='/account-details' component={AccountDetails} />
+        <Route path='/welcome-bonus' component={WelcomeBonusPage} />
+        <Route path='/holiday-savings' component={HolidaySavingsSpecialPage} />
         {/* Add more routes as needed */}
       </Switch>
     </>

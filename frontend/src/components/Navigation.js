@@ -124,6 +124,10 @@ const Navigation = ({ onTransactionCreated }) => {
         <ListItemIcon><AddCircleOutlineIcon /></ListItemIcon>
         <ListItemText primary='Create Account' />
       </ListItem>
+      <ListItem button key='Schedule Payments'>
+        <ListItemIcon><PaymentIcon /></ListItemIcon>
+        <ListItemText primary='Schedule Payments' />
+      </ListItem>
       <ListItem button key='Transfer Funds'>
         <ListItemIcon><SwapHorizIcon /></ListItemIcon>
         <ListItemText primary='Transfer Funds' />
