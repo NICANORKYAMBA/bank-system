@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Container,
   Typography,
@@ -8,7 +8,11 @@ import {
   Card,
   CardContent,
   Chip,
-  Box
+  Box,
+  TextField,
+  Button,
+  Select,
+  MenuItem
 } from '@material-ui/core';
 import { fetchTransactions, fetchAccounts } from '../api/api';
 import QuickActions from '../components/QuickActions';
@@ -54,7 +58,6 @@ const formatDate = (dateString) => {
 
 const Transactions = () => {
   const classes = useStyles();
-  const [transactions, setTransactions] = useState([]);
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -62,12 +65,16 @@ const Transactions = () => {
   const [showTransferForm, setShowTransferForm] = useState(false);
   const [showWithdrawalForm, setShowWithdrawalForm] = useState(false);
   const [transactionCount, setTransactionCount] = useState(0);
+  const [filterFromAccount, setFilterFromAccount] = useState('');
+  const [filterToAccount, setFilterToAccount] = useState('');
+  const [allTransactions, setAllTransactions] = useState([]);
+  const [filterTransactionType, setFilterTransactionType] = useState('');
 
   useEffect(() => {
     const userId = sessionStorage.getItem('userId');
     fetchTransactions(userId, 500, 0, 'createdAt', 'DESC')
       .then(data => {
-        setTransactions(data);
+        setAllTransactions(data);
         setLoading(false);
       })
       .catch(err => {
@@ -83,6 +90,20 @@ const Transactions = () => {
         console.log('Failed to fetch accounts:', err);
       });
   }, [transactionCount]);
+
+  const filteredTransactions = useMemo(() => {
+    return allTransactions.filter(transaction =>
+      (!filterFromAccount || transaction.sourceTransactionAccount.accountNumber.includes(filterFromAccount)) &&
+      (!filterToAccount || transaction.destinationTransactionAccount.accountNumber.includes(filterToAccount)) &&
+      (!filterTransactionType || transaction.type === filterTransactionType)
+    );
+  }, [allTransactions, filterFromAccount, filterToAccount, filterTransactionType]);
+
+  const clearFilters = () => {
+    setFilterFromAccount('');
+    setFilterToAccount('');
+    setFilterTransactionType('');
+  };
 
   const getTransactionIcon = (type) => {
     switch (type) {
@@ -117,6 +138,36 @@ const Transactions = () => {
       <Typography variant='h4' gutterBottom>
         Transactions
       </Typography>
+      <Box display='flex' justifyContent='space-between' mb={2}>
+        <TextField
+          label='Filter From Account'
+          variant='outlined'
+          value={filterFromAccount}
+          onChange={(e) => setFilterFromAccount(e.target.value)}
+        />
+        <TextField
+          label='Filter To Account'
+          variant='outlined'
+          value={filterToAccount}
+          onChange={(e) => setFilterToAccount(e.target.value)}
+        />
+        <Select
+          value={filterTransactionType}
+          onChange={(e) => setFilterTransactionType(e.target.value)}
+          displayEmpty
+          inputProps={{ 'aria-label': 'Without label' }}
+        >
+          <MenuItem value=''>
+            <em>All Types</em>
+          </MenuItem>
+          <MenuItem value='deposit'>Deposit</MenuItem>
+          <MenuItem value='withdrawal'>Withdrawal</MenuItem>
+          <MenuItem value='transfer'>Transfer</MenuItem>
+        </Select>
+        <Button variant='contained' color='secondary' onClick={clearFilters}>
+          Clear Filters
+        </Button>
+      </Box>
       <Backdrop className={classes.backdrop} open={loading}>
         <CircularProgress color='inherit' />
       </Backdrop>
@@ -125,7 +176,7 @@ const Transactions = () => {
           {error}
         </Typography>
       )}
-      {!loading && !error && transactions.length === 0 && (
+      {!loading && !error && filteredTransactions.length === 0 && (
         <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center' minHeight='50vh'>
           <Typography variant='h5' gutterBottom>
             Welcome, {userFirstName}!
@@ -150,7 +201,7 @@ const Transactions = () => {
           />
         </Box>
       )}
-      {!loading && !error && transactions.length > 0 && transactions.map((transaction) => (
+      {!loading && !error && filteredTransactions.length > 0 && filteredTransactions.map((transaction) => (
         <Card key={transaction.id} className={classes.card}>
           <CardContent className={classes.cardContent}>
             <div>
