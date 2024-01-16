@@ -10,7 +10,9 @@ import {
   Chip,
   Box,
   TextField,
-  Button
+  Button,
+  Select,
+  MenuItem
 } from '@material-ui/core';
 import { fetchTransactions, fetchAccounts } from '../api/api';
 import QuickActions from '../components/QuickActions';
@@ -66,6 +68,7 @@ const Transactions = () => {
   const [filterFromAccount, setFilterFromAccount] = useState('');
   const [filterToAccount, setFilterToAccount] = useState('');
   const [allTransactions, setAllTransactions] = useState([]);
+  const [filterTransactionType, setFilterTransactionType] = useState('');
 
   useEffect(() => {
     const userId = sessionStorage.getItem('userId');
@@ -87,17 +90,19 @@ const Transactions = () => {
         console.log('Failed to fetch accounts:', err);
       });
   }, [transactionCount]);
-  
+
   const filteredTransactions = useMemo(() => {
     return allTransactions.filter(transaction =>
       (!filterFromAccount || transaction.sourceTransactionAccount.accountNumber.includes(filterFromAccount)) &&
-      (!filterToAccount || transaction.destinationTransactionAccount.accountNumber.includes(filterToAccount))
+      (!filterToAccount || transaction.destinationTransactionAccount.accountNumber.includes(filterToAccount)) &&
+      (!filterTransactionType || transaction.type === filterTransactionType)
     );
-}, [allTransactions, filterFromAccount, filterToAccount]);
+  }, [allTransactions, filterFromAccount, filterToAccount, filterTransactionType]);
 
   const clearFilters = () => {
     setFilterFromAccount('');
     setFilterToAccount('');
+    setFilterTransactionType('');
   };
 
   const getTransactionIcon = (type) => {
@@ -146,6 +151,19 @@ const Transactions = () => {
           value={filterToAccount}
           onChange={(e) => setFilterToAccount(e.target.value)}
         />
+        <Select
+          value={filterTransactionType}
+          onChange={(e) => setFilterTransactionType(e.target.value)}
+          displayEmpty
+          inputProps={{ 'aria-label': 'Without label' }}
+        >
+          <MenuItem value=''>
+            <em>All Types</em>
+          </MenuItem>
+          <MenuItem value='deposit'>Deposit</MenuItem>
+          <MenuItem value='withdrawal'>Withdrawal</MenuItem>
+          <MenuItem value='transfer'>Transfer</MenuItem>
+        </Select>
         <Button variant='contained' color='secondary' onClick={clearFilters}>
           Clear Filters
         </Button>
