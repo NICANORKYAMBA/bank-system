@@ -223,6 +223,7 @@ export const getAccountByType = [
 
 export const getAccountByStatus = [
   param('status').isIn(['active', 'inactive']).withMessage('Status must be one of: active, inactive'),
+  param('userId').isUUID().withMessage('User ID must be a valid UUID'),
   query('limit').optional().isInt({ min: 1 }).withMessage('Limit must be an integer greater than 0'),
   query('offset').optional().isInt({ min: 0 }).withMessage('Offset must be an integer greater than or equal to 0'),
   query('sort').optional().isIn(['createdAt', 'updatedAt', 'id']).withMessage('Sort must be one of: createdAt, updatedAt, id'),
@@ -237,32 +238,30 @@ export const getAccountByStatus = [
     const offset = parseInt(req.query.offset) || 0;
     const sort = req.query.sort || 'createdAt';
     const order = req.query.order || 'DESC';
-    const { status } = req.params;
+    const { status, userId } = req.params;
     try {
       const account = await Account.findAll({
-        where: { status },
+        where: { status, userId },
         limit,
         offset,
         order: [[sort, order]]
       });
+
+      let message = '';
       if (account.length > 0) {
-        res.status(200).json({
-          message: `${account.length} accounts with status ${status} retrieved`,
-          limit,
-          offset,
-          sort,
-          order,
-          accounts: account
-        });
+        message = `${account.length} accounts with status ${status} retrieved`;
       } else {
-        res.status(404).json({
-          message: `No accounts with status ${status} found`,
-          limit,
-          offset,
-          sort,
-          order
-        });
+        message = `No accounts with status ${status} found`;
       }
+
+      res.status(200).json({
+        message,
+        limit,
+        offset,
+        sort,
+        order,
+        accounts: account
+      });
     } catch (err) {
       if (err instanceof Sequelize.DatabaseError) {
         return handleDatabaseError(res, err);
@@ -271,7 +270,7 @@ export const getAccountByStatus = [
         return handleValidationError(res, err.message);
       }
       logger.error(
-        `Server error while trying to get account by status: ${err}`);
+       `Server error while trying to get account by status: ${err}`);
       next(err);
     }
   }
