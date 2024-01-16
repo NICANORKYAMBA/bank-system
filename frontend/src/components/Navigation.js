@@ -28,6 +28,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import HomeIcon from '@material-ui/icons/Home';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -123,6 +124,10 @@ const Navigation = ({ onTransactionCreated }) => {
       <ListItem button key='Create Account' onClick={handleCreateAccountOpen}>
         <ListItemIcon><AddCircleOutlineIcon /></ListItemIcon>
         <ListItemText primary='Create Account' />
+      </ListItem>
+      <ListItem button key='Activate Account' component={Link} to='/activate-account'>
+        <ListItemIcon><VerifiedUserIcon /></ListItemIcon>
+        <ListItemText primary='Activate Account' />
       </ListItem>
       <ListItem button key='Schedule Payments'>
         <ListItemIcon><PaymentIcon /></ListItemIcon>

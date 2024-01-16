@@ -24,7 +24,7 @@ router.put('/:accountNumber/activate', activateAccount);
 router.delete('/:accountNumber', deleteAccount);
 router.get('/name/:name', getAccountByName);
 router.get('/type/:accountType', getAccountByType);
-router.get('/status/:status', getAccountByStatus);
+router.get('/user/:userId/status/:status', getAccountByStatus);
 router.get('/user/:userId', getAccountsByUserId);
 
 export default router;
