@@ -18,7 +18,8 @@ import {
   Button,
   Grid,
   Dialog,
-  DialogContent
+  DialogContent,
+  TextField
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import Skeleton from '@material-ui/lab/Skeleton';
@@ -28,22 +29,49 @@ import CreateAccountForm from '../components/CreateAccountForm';
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    marginTop: theme.spacing(-6),
+    paddingTop: theme.spacing(8),
+    paddingBottom: theme.spacing(8),
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    marginTop: theme.spacing(-16),
     marginBottom: theme.spacing(4),
-    marginLeft: theme.spacing(10),
+    marginLeft: theme.spacing(30),
     marginRight: 'auto',
-    maxWidth: `calc(100% - ${theme.spacing(10)}px)`
+    maxWidth: `calc(100% - ${theme.spacing(30)}px)`,
+    boxSizing: 'border-box'
   },
   paper: {
-    padding: theme.spacing(3),
-    margin: 'auto',
-    maxWidth: 600,
-    backgroundColor: theme.palette.white
+    padding: theme.spacing(4),
+    margin: theme.spacing(2, 0),
+    maxWidth: 800,
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: theme.shadows[2],
+    borderRadius: theme.shape.borderRadius
+  },
+  header: {
+    fontWeight: 700,
+    color: theme.palette.primary.main,
+    marginBottom: theme.spacing(2),
+    position: 'relative',
+    '&::after': {
+      content: '""',
+      display: 'block',
+      width: '50%',
+      height: '4px',
+      backgroundColor: theme.palette.secondary.main,
+      position: 'absolute',
+      bottom: '-8px',
+      left: '0'
+    }
   },
   listItem: {
-    margin: theme.spacing(1),
+    padding: theme.spacing(2),
+    borderBottom: `1px solid ${theme.palette.divider}`,
     '&:hover': {
       backgroundColor: theme.palette.action.hover
+    },
+    '&:last-child': {
+      borderBottom: 'none'
     }
   },
   list: {
@@ -61,9 +89,6 @@ const useStyles = makeStyles((theme) => ({
   listItemAvatar: {
     color: theme.palette.primary.main
   },
-  listItemText: {
-    marginLeft: theme.spacing(2)
-  },
   loadingBox: {
     display: 'flex',
     justifyContent: 'center',
@@ -75,12 +100,22 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(4)
   },
   primaryText: {
-    color: theme.palette.primary.main,
-    fontSize: '1.2em'
+    color: theme.palette.primary.dark,
+    fontWeight: 600,
+    display: 'block',
+    fontSize: '1rem',
+    marginBottom: theme.spacing(0.5)
   },
   secondaryText: {
-    color: theme.palette.text.secondary,
-    fontSize: '1.1em'
+    color: theme.palette.secondary.dark,
+    fontSize: '0.875rem'
+  },
+  listItemText: {
+    marginLeft: theme.spacing(2),
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start'
   },
   noAccountsContainer: {
     textAlign: 'center',
@@ -94,20 +129,25 @@ const useStyles = makeStyles((theme) => ({
   },
   noAccountsHeader: {
     marginBottom: theme.spacing(2),
-    color: theme.palette.primary.main
+    color: theme.palette.primary.main,
+    fontWeight: 600
   },
   noAccountsMessage: {
-    marginBottom: theme.spacing(3)
+    marginBottom: theme.spacing(3),
+    color: theme.palette.text.secondary
   },
   createAccountButton: {
-    marginTop: theme.spacing(2),
-    padding: theme.spacing(1),
+    marginTop: theme.spacing(3),
+    padding: theme.spacing(1.5),
     fontSize: '1rem',
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.common.white,
     '&:hover': {
       backgroundColor: theme.palette.primary.dark
     }
+  },
+  searchField: {
+    marginBottom: theme.spacing(3)
   }
 }));
 
@@ -134,6 +174,7 @@ const AccountOverview = () => {
   const [open, setOpen] = useState(false);
   const [openCreateAccountDialog, setOpenCreateAccountDialog] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleOpenCreateAccountDialog = () => {
     setOpenCreateAccountDialog(true);
@@ -144,6 +185,12 @@ const AccountOverview = () => {
   };
 
   const userId = useMemo(() => sessionStorage.getItem('userId'), []);
+
+  const filteredAccounts = useMemo(() => {
+    return accounts.filter(account =>
+      account.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [accounts, searchTerm]);
 
   useEffect(() => {
     fetchAccounts(userId)
@@ -255,11 +302,20 @@ const AccountOverview = () => {
       )}
       <Container className={classes.container}>
         <Paper className={classes.paper}>
-          <Typography variant='h4' gutterBottom>
+          <Typography variant='h4' gutterBottom className={classes.header}>
             Accounts Overview
           </Typography>
+          <TextField
+            label='Search Accounts'
+            variant='outlined'
+            fullWidth
+            margin='normal'
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className={classes.searchField}
+          />
           <List className={classes.list}>
-            {accounts.map((account) => (
+            {filteredAccounts.map((account) => (
               <ListItem
                 button
                 key={account.id}
@@ -273,8 +329,21 @@ const AccountOverview = () => {
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary={<span className={classes.primaryText}>{`Account ${account.id}: ${account.name}`}</span>}
-                  secondary={<span className={classes.secondaryText}>{`Balance: ${account.balance}`}</span>}
+                  primary={
+                    <span className={classes.primaryText}>
+                      {`Account Number: ${account.accountNumber}`}
+                    </span>
+                  }
+                  secondary={
+                    <>
+                      <span className={classes.primaryText}>
+                        {`Account Name: ${account.name}`}
+                      </span>
+                      <span className={classes.secondaryText}>
+                        {`Balance: ${account.balance}`}
+                      </span>
+                    </>
+                  }
                   className={classes.listItemText}
                 />
               </ListItem>
