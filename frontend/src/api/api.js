@@ -50,3 +50,20 @@ export const fetchTransactionsByAccountId = async (accountId, limit = 10, offset
     throw error;
   }
 };
+
+export const fetchAccountsByStatus = async (userId, status, limit = 10, offset = 0, sort = 'createdAt', order = 'DESC') => {
+  try {
+    const response = await axios.get(`http://localhost:5000/api/accounts/user/${userId}/status/${status}`, {
+      params: {
+        limit,
+        offset,
+        sort,
+        order
+      }
+    });
+    return response.data.accounts;
+  } catch (error) {
+    console.error(`Failed to fetch ${status} accounts for user ${userId}:`, error);
+    throw error;
+  }
+};
