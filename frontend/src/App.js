@@ -12,6 +12,7 @@ import SingleAccountOverview from './pages/SingleAccountOverview';
 import Navigation from './components/Navigation';
 import WelcomeBonusPage from './pages/WelcomeBonusPage';
 import HolidaySavingsSpecialPage from './pages/HolidaySavingsPage';
+import ActivateAccountPage from './pages/ActivateAccountPage';
 
 function AppWithNavigation () {
   const location = useLocation();
@@ -48,6 +49,7 @@ function AppWithNavigation () {
         <Route path='/account-details' component={AccountDetails} />
         <Route path='/welcome-bonus' component={WelcomeBonusPage} />
         <Route path='/holiday-savings' component={HolidaySavingsSpecialPage} />
+        <Route path='/activate-account' component={ActivateAccountPage} />
         {/* Add more routes as needed */}
       </Switch>
     </>
