@@ -67,3 +67,15 @@ export const fetchAccountsByStatus = async (userId, status, limit = 10, offset =
     throw error;
   }
 };
+
+export const updateAccountsName = async (accountNumber, name) => {
+  try {
+    const response = await axios.put(`http://localhost:5000/api/accounts/${accountNumber}`, {
+      name
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to update account name for account number ${accountNumber}:`, error);
+    throw error;
+  }
+};

@@ -402,10 +402,6 @@ export const createAccount = [
 export const updateAccount = [
   param('accountNumber').isString().withMessage('Account number must be a string'),
   body('name').optional().isString().withMessage('Name must be a string'),
-  body('balance').optional().isNumeric().withMessage('Balance must be a number'),
-  body('accountType').optional().isIn(['checking', 'savings', 'credit']).withMessage('Account type must be one of: checking, savings, credit'),
-  body('currency').optional().isIn(['USD', 'EUR', 'GBP']).withMessage('Currency must be one of: USD, EUR, GBP'),
-  body('status').optional().isIn(['active', 'inactive']).withMessage('Status must be one of: active, inactive'),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -413,7 +409,7 @@ export const updateAccount = [
     }
 
     const { accountNumber } = req.params;
-    const { name, balance, accountType, currency, status } = req.body;
+    const { name } = req.body;
     try {
       const account = await getAccount(accountNumber);
       if (!account) {
@@ -423,7 +419,7 @@ export const updateAccount = [
       }
 
       await Account.update(
-        { name, balance, accountType, currency, status },
+        { name },
         { where: { accountNumber } }
       );
       const updatedAccount = await Account.findOne({

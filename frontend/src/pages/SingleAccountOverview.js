@@ -12,10 +12,10 @@ import {
   CardContent,
   IconButton,
   Tooltip,
-  List,
   ListItem,
   ListItemText,
-  ListItemIcon
+  ListItemIcon,
+  Grid
 } from '@material-ui/core';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import RefreshIcon from '@material-ui/icons/Refresh';
@@ -31,24 +31,20 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 const useStyles = makeStyles((theme) => ({
   container: {
+    marginLeft: theme.spacing(30),
+    marginTop: theme.spacing(-8),
+    maxWidth: `calc(100% - ${theme.spacing(30)}px)`,
     padding: theme.spacing(4),
-    height: '100vh',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: theme.spacing(-8),
-    marginLeft: theme.spacing(20),
-    marginRight: 'auto',
-    maxWidth: `calc(100% - ${theme.spacing(20)}px)`
+    alignItems: 'center'
   },
   paper: {
     padding: theme.spacing(3),
-    maxWidth: 800,
     width: '100%',
     boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-    maxHeight: '90vh',
-    overflow: 'auto'
+    overflow: 'auto',
+    marginBottom: theme.spacing(4)
   },
   loadingBox: {
     display: 'flex',
@@ -83,9 +79,16 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     marginBottom: theme.spacing(2),
     padding: theme.spacing(2),
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
+    backgroundColor: theme.palette.secondary.main,
+    color: theme.palette.secondary.contrastText,
     borderRadius: theme.shape.borderRadius
+  },
+  gridContainer: {
+    flexGrow: 1,
+    padding: theme.spacing(2)
+  },
+  gridItem: {
+    padding: theme.spacing(2)
   },
   headerContent: {
     flexGrow: 1
@@ -94,9 +97,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     marginRight: theme.spacing(2),
     fontSize: '3rem'
-  },
-  gridItem: {
-    padding: theme.spacing(1)
   },
   status: {
     fontWeight: 'bold',
@@ -181,54 +181,92 @@ const SingleAccountOverview = () => {
             </IconButton>
           </Tooltip>
         </Box>
-        <Card className={classes.card}>
-          <CardContent>
-            <List>
-              <ListItem>
-                <ListItemIcon>
-                  <PermIdentityIcon className={classes.icon} />
-                </ListItemIcon>
-                <ListItemText primary='Account Number' secondary={account.accountNumber} />
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <PersonOutlineIcon className={classes.icon} />
-                </ListItemIcon>
-                <ListItemText primary='Account Name' secondary={account.name} />
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <AccountBalanceIcon className={classes.icon} />
-                </ListItemIcon>
-                <ListItemText primary='Account Type' secondary={account.accountType} />
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <MonetizationOnIcon className={classes.icon} />
-                </ListItemIcon>
-                <ListItemText primary='Balance' secondary={account.balance} />
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <EuroSymbolIcon className={classes.icon} />
-                </ListItemIcon>
-                <ListItemText primary='Currency' secondary={account.currency} />
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <CheckCircleIcon className={classes.icon} />
-                </ListItemIcon>
-                <ListItemText primary='Status' secondary={account.status} />
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <DateRangeIcon className={classes.icon} />
-                </ListItemIcon>
-                <ListItemText primary='Date of Creation' secondary={new Date(account.createdAt).toLocaleDateString()} />
-              </ListItem>
-            </List>
-          </CardContent>
-        </Card>
+        <Grid container spacing={2} className={classes.gridContainer}>
+          <Grid item xs={12} sm={6} md={4} className={classes.gridItem}>
+            <Card className={classes.card}>
+              <CardContent>
+                <ListItem>
+                  <ListItemIcon>
+                    <PermIdentityIcon className={classes.icon} />
+                  </ListItemIcon>
+                  <ListItemText primary='Account Number' secondary={account.accountNumber} />
+                </ListItem>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} className={classes.gridItem}>
+            <Card className={classes.card}>
+              <CardContent>
+                <ListItem>
+                  <ListItemIcon>
+                    <PersonOutlineIcon className={classes.icon} />
+                  </ListItemIcon>
+                  <ListItemText primary='Account Name' secondary={account.name} />
+                </ListItem>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} className={classes.gridItem}>
+            <Card className={classes.card}>
+              <CardContent>
+                <ListItem>
+                  <ListItemIcon>
+                    <AccountBalanceIcon className={classes.icon} />
+                  </ListItemIcon>
+                  <ListItemText primary='Account Type' secondary={account.accountType} />
+                </ListItem>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} className={classes.gridItem}>
+            <Card className={classes.card}>
+              <CardContent>
+                <ListItem>
+                  <ListItemIcon>
+                    <CheckCircleIcon className={classes.icon} />
+                  </ListItemIcon>
+                  <ListItemText primary='Status' secondary={account.status} />
+                </ListItem>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} className={classes.gridItem}>
+            <Card className={classes.card}>
+              <CardContent>
+                <ListItem>
+                  <ListItemIcon>
+                    <MonetizationOnIcon className={classes.icon} />
+                  </ListItemIcon>
+                  <ListItemText primary='Balance' secondary={account.balance} />
+                </ListItem>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} className={classes.gridItem}>
+            <Card className={classes.card}>
+              <CardContent>
+                <ListItem>
+                  <ListItemIcon>
+                    <EuroSymbolIcon className={classes.icon} />
+                  </ListItemIcon>
+                  <ListItemText primary='Currency' secondary={account.currency} />
+                </ListItem>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} className={classes.gridItem}>
+            <Card className={classes.card}>
+              <CardContent>
+                <ListItem>
+                  <ListItemIcon>
+                    <DateRangeIcon className={classes.icon} />
+                  </ListItemIcon>
+                  <ListItemText primary='Date of Creation' secondary={new Date(account.createdAt).toLocaleDateString()} />
+                </ListItem>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
       </Paper>
     </Container>
   );

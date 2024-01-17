@@ -142,8 +142,8 @@ const TransferForm = ({ handleClose, onTransactionCreated }) => {
     };
 
     try {
+      // eslint-disable-next-line no-unused-vars
       const response = await axios.post('http://localhost:5000/api/transactions', data);
-      console.log('Transfer initiated successfully: ', response);
       setSnackbarMessage('Transfer initiated successfully!');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
@@ -153,7 +153,7 @@ const TransferForm = ({ handleClose, onTransactionCreated }) => {
       }, 6000);
     } catch (error) {
       console.error('Error initiating transfer: ', error);
-      setSnackbarMessage('Failed to initiate transfer.');
+      setSnackbarMessage('Failed to initiate transfer. Please try again later.');
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
     } finally {

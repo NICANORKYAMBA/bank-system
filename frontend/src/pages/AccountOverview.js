@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { fetchAccounts } from '../api/api';
+import { fetchAccounts, updateAccountsName } from '../api/api';
 import { Link } from 'react-router-dom';
 import {
   CircularProgress,
@@ -19,12 +18,18 @@ import {
   Grid,
   Dialog,
   DialogContent,
-  TextField
+  TextField,
+  IconButton,
+  DialogTitle,
+  DialogContentText,
+  DialogActions
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import Skeleton from '@material-ui/lab/Skeleton';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import AddIcon from '@material-ui/icons/Add';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import EditIcon from '@material-ui/icons/Edit';
+import SaveIcon from '@material-ui/icons/Save';
 import CreateAccountForm from '../components/CreateAccountForm';
 
 const useStyles = makeStyles((theme) => ({
@@ -148,6 +153,14 @@ const useStyles = makeStyles((theme) => ({
   },
   searchField: {
     marginBottom: theme.spacing(3)
+  },
+  actionButton: {
+    marginLeft: theme.spacing(4)
+  },
+  dialogTitle: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white,
+    padding: theme.spacing(2)
   }
 }));
 
@@ -175,6 +188,52 @@ const AccountOverview = () => {
   const [openCreateAccountDialog, setOpenCreateAccountDialog] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
+  const [currentAccount, setCurrentAccount] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+
+  const handleOpenUpdateDialog = (account) => {
+    setCurrentAccount(account);
+    setOpenUpdateDialog(true);
+  };
+
+  const handleCloseUpdateDialog = () => {
+    setOpenUpdateDialog(false);
+    setCurrentAccount(null);
+  };
+
+  const updateAccountName = async () => {
+    if (!currentAccount || !currentAccount.accountNumber || !currentAccount.name) {
+      setSnackbarMessage('Invalid account details');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    }
+
+    try {
+      // eslint-disable-next-line no-unused-vars
+      const response = await updateAccountsName(
+        currentAccount.accountNumber,
+        currentAccount.name
+      );
+      setAccounts(accounts.map(account =>
+        account.accountNumber === currentAccount.accountNumber
+          ? {
+              ...account, name: currentAccount.name
+            }
+          : account));
+      handleCloseUpdateDialog();
+      setSnackbarMessage('Account name updated successfully');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
+    } catch (error) {
+      setSnackbarMessage('Error updating account name: ' + error.message);
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    }
+  };
 
   const handleOpenCreateAccountDialog = () => {
     setOpenCreateAccountDialog(true);
@@ -285,13 +344,11 @@ const AccountOverview = () => {
 
   return (
     <>
-      {loading
-        ? (
-          <Box className={classes.loadingBox}>
-            <Skeleton variant='rectangular' width={210} height={118} />
-          </Box>
-          )
-        : null}
+      {loading && (
+        <Box className={classes.loadingBox}>
+          <CircularProgress />
+        </Box>
+      )}
 
       {error && (
         <Snackbar open={open} autoHideDuration={6000} onClose={() => setOpen(false)}>
@@ -300,6 +357,17 @@ const AccountOverview = () => {
           </Alert>
         </Snackbar>
       )}
+
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+      >
+        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       <Container className={classes.container}>
         <Paper className={classes.paper}>
           <Typography variant='h4' gutterBottom className={classes.header}>
@@ -317,10 +385,7 @@ const AccountOverview = () => {
           <List className={classes.list}>
             {filteredAccounts.map((account) => (
               <ListItem
-                button
                 key={account.id}
-                component={Link}
-                to={`/account-overview/${account.id}`}
                 className={classes.listItem}
               >
                 <ListItemAvatar>
@@ -346,17 +411,65 @@ const AccountOverview = () => {
                   }
                   className={classes.listItemText}
                 />
+                <IconButton
+                  edge='end'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  component={Link}
+                  to={`/account-overview/${account.id}`}
+                  color='secondary'
+                >
+                  <VisibilityIcon />
+                </IconButton>
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenUpdateDialog(account);
+                  }}
+                  color='secondary'
+                  variant='contained'
+                  size='small'
+                  startIcon={<EditIcon />}
+                  className={classes.actionButton}
+                >
+                  Update Name
+                </Button>
               </ListItem>
             ))}
           </List>
+          <Dialog open={openUpdateDialog} onClose={handleCloseUpdateDialog} aria-labelledby='form-dialog-title'>
+            <DialogTitle id='form-dialog-title' className={classes.dialogTitle}>
+              Update Account Name
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                To update the account name, please enter the new name below.
+              </DialogContentText>
+              <TextField
+                autoFocus
+                margin='dense'
+                id='name'
+                label='New Account Name'
+                type='text'
+                fullWidth
+                value={currentAccount?.name || ''}
+                onChange={(e) => setCurrentAccount({ ...currentAccount, name: e.target.value })}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseUpdateDialog} color='secondary'>
+                Cancel
+              </Button>
+              <Button onClick={() => updateAccountName()} color='primary' variant='contained' startIcon={<SaveIcon />}>
+                Update
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Paper>
       </Container>
     </>
   );
-};
-
-AccountOverview.propTypes = {
-  userId: PropTypes.string.isRequired
 };
 
 export default AccountOverview;
