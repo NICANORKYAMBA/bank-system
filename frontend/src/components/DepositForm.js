@@ -98,7 +98,6 @@ const DepositForm = ({ handleClose, onTransactionCreated }) => {
         const response = await axios.get(`http://localhost:5000/api/accounts/user/${userId}`);
         setAccounts(response.data.accounts);
       } catch (error) {
-        console.error('Error fetching accounts:', error);
         setSnackbarMessage('Failed to fetch accounts.');
         setSnackbarSeverity('error');
         setSnackbarOpen(true);
@@ -139,8 +138,8 @@ const DepositForm = ({ handleClose, onTransactionCreated }) => {
     };
 
     try {
+      // eslint-disable-next-line no-unused-vars
       const response = await axios.post('http://localhost:5000/api/transactions', data);
-      console.log(response.data);
       setSnackbarMessage('Deposit successful!');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
@@ -149,7 +148,6 @@ const DepositForm = ({ handleClose, onTransactionCreated }) => {
         handleClose();
       }, 6000);
     } catch (error) {
-      console.error('Error making deposit:', error);
       setSnackbarMessage('Failed to make a deposit.');
       setSnackbarSeverity('error');
       setSnackbarOpen(true);

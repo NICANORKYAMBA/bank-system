@@ -100,7 +100,6 @@ const WithdrawalForm = ({ handleClose, onTransactionCreated }) => {
         const response = await axios.get(`http://localhost:5000/api/accounts/user/${userId}`);
         setAccounts(response.data.accounts);
       } catch (error) {
-        console.error('Error fetching accounts: ', error);
         setSnackbarMessage('Failed to fetch accounts');
         setSnackbarSeverity('error');
         setSnackbarOpen(true);
@@ -141,8 +140,8 @@ const WithdrawalForm = ({ handleClose, onTransactionCreated }) => {
     };
 
     try {
+      // eslint-disable-next-line no-unused-vars
       const response = await axios.post('http://localhost:5000/api/transactions', data);
-      console.log(response.data);
       setSnackbarMessage('Withdrawal successful!');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
@@ -151,7 +150,6 @@ const WithdrawalForm = ({ handleClose, onTransactionCreated }) => {
         handleClose();
       }, 6000);
     } catch (error) {
-      console.error(error);
       setSnackbarMessage('Failed to process withdrawal.');
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
