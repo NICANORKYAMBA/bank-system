@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import PropTypes from 'prop-types';
 import { fetchAccounts } from '../api/api';
 import { Link } from 'react-router-dom';
 import {
@@ -353,10 +352,6 @@ const AccountOverview = () => {
       </Container>
     </>
   );
-};
-
-AccountOverview.propTypes = {
-  userId: PropTypes.string.isRequired
 };
 
 export default AccountOverview;
