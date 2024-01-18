@@ -79,3 +79,13 @@ export const updateAccountsName = async (accountNumber, name) => {
     throw error;
   }
 };
+
+export const updateUserProfile = async (userId, userData) => {
+  try {
+    const response = await axios.put(`http://localhost:5000/api/users/${userId}`, userData);
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to update user profile for user ${userId}:`, error);
+    throw error;
+  }
+};
