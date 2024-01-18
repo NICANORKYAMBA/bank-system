@@ -8,8 +8,6 @@ import {
   ListItemIcon,
   ListItemText,
   makeStyles,
-  Popover,
-  Button,
   Dialog,
   useTheme,
   useMediaQuery,
@@ -67,9 +65,6 @@ const Navigation = ({ onTransactionCreated }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const {
-    anchorEl,
-    handleMenuOpen,
-    handleMenuClose,
     handleDrawerOpen,
     handleDrawerClose,
     open: drawerOpen
@@ -91,17 +86,6 @@ const Navigation = ({ onTransactionCreated }) => {
       onTransactionCreated();
     }
   };
-
-  const handleClick = (event) => {
-    handleMenuOpen(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    handleMenuClose();
-  };
-
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
 
   const navItems = (
     <List component='nav'>
@@ -145,25 +129,12 @@ const Navigation = ({ onTransactionCreated }) => {
         <ListItemIcon><SettingsIcon /></ListItemIcon>
         <ListItemText primary='Settings' />
       </ListItem>
-      <ListItem button key='Profile Management' onClick={handleClick}>
+      <ListItem
+        button key='Profile Management'
+        component={Link} to='/profile-management'
+      >
         <ListItemIcon><AccountCircle /></ListItemIcon>
         <ListItemText primary='Profile Management' />
-        <Popover
-          id={id}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center'
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'center'
-          }}
-        >
-          <Button onClick={handleClose}>Close</Button>
-        </Popover>
       </ListItem>
       <ListItem button key='Logout'>
         <ListItemIcon><ExitToAppIcon /></ListItemIcon>

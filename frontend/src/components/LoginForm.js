@@ -20,6 +20,7 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
+import { useUserContext } from './userContext';
 
 const useStyles = makeStyles((theme) => ({
   loginForm: {
@@ -115,6 +116,7 @@ function LoginForm () {
     }
   };
 
+  const { updateUser } = useUserContext();
   const history = useHistory();
 
   const handleSubmit = async (e) => {
@@ -143,6 +145,11 @@ function LoginForm () {
       sessionStorage.setItem('userId', response.data.userId);
       sessionStorage.setItem('firstName', response.data.firstName);
       sessionStorage.setItem('lastName', response.data.lastName);
+
+      updateUser({
+        firstName: response.data.firstName,
+        lastName: response.data.lastName
+      });
 
       setTimeout(() => {
         history.push('/dashboard');

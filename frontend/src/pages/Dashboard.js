@@ -178,10 +178,21 @@ function Dashboard ({ reload, onTransactionCreated }) {
     setProfileAnchorEl(null);
   };
 
-  const userData = useState({
-    firstName: sessionStorage.getItem('firstName'),
-    lastName: sessionStorage.getItem('lastName')
-  })[0];
+  const [userData, setUserData] = useState({
+    firstName: '',
+    lastName: ''
+  });
+
+  useEffect(() => {
+    const storedFirstName = sessionStorage.getItem('firstName');
+    const storedLastName = sessionStorage.getItem('lastName');
+    if (storedFirstName && storedLastName) {
+      setUserData({
+        firstName: storedFirstName,
+        lastName: storedLastName
+      });
+    }
+  }, []);
 
   const fetchAllAccountsData = async () => {
     setLoading(true);

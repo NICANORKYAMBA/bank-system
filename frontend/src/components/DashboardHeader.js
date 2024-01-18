@@ -18,6 +18,7 @@ import {
 import SearchIcon from '@material-ui/icons/Search';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
+import { useUserContext } from './userContext';
 
 const useStyles = makeStyles((theme) => ({
   headerContainer: {
@@ -66,7 +67,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const DashboardHeader = ({
-  userData,
   handleProfilePopoverOpen,
   profileOpen,
   profileAnchorEl,
@@ -76,6 +76,7 @@ const DashboardHeader = ({
   notificationsCount,
   handleNotificationsClick
 }) => {
+  const { userData } = useUserContext();
   const classes = useStyles();
   const [searchCategory, setSearchCategory] = useState('all');
 
