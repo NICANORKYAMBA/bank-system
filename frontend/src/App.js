@@ -13,6 +13,8 @@ import Navigation from './components/Navigation';
 import WelcomeBonusPage from './pages/WelcomeBonusPage';
 import HolidaySavingsSpecialPage from './pages/HolidaySavingsPage';
 import ActivateAccountPage from './pages/ActivateAccountPage';
+import ProfileManagementForm from './components/UserProfileUpdate';
+import { UserProvider } from './components/userContext';
 
 function AppWithNavigation () {
   const location = useLocation();
@@ -25,13 +27,13 @@ function AppWithNavigation () {
   return (
     <>
       {
-       location.pathname !== '/' &&
-       location.pathname !== '/registration' &&
-       location.pathname !== '/login' &&
-        location.pathname !== '/create-account' &&
-        location.pathname !== '/welcome-bonus' &&
-        location.pathname !== '/holiday-savings' &&
-          <Navigation onTransactionCreated={handleTransactionCreated} />
+      location.pathname !== '/' &&
+      location.pathname !== '/registration' &&
+      location.pathname !== '/login' &&
+       location.pathname !== '/create-account' &&
+       location.pathname !== '/welcome-bonus' &&
+       location.pathname !== '/holiday-savings' &&
+         <Navigation onTransactionCreated={handleTransactionCreated} />
 }
       <Switch>
         <Route path='/' exact component={HomePage} />
@@ -50,6 +52,7 @@ function AppWithNavigation () {
         <Route path='/welcome-bonus' component={WelcomeBonusPage} />
         <Route path='/holiday-savings' component={HolidaySavingsSpecialPage} />
         <Route path='/activate-account' component={ActivateAccountPage} />
+        <Route path='/profile-management' component={ProfileManagementForm} />
         {/* Add more routes as needed */}
       </Switch>
     </>
@@ -58,9 +61,11 @@ function AppWithNavigation () {
 
 function App () {
   return (
-    <Router>
-      <AppWithNavigation />
-    </Router>
+    <UserProvider>
+      <Router>
+        <AppWithNavigation />
+      </Router>
+    </UserProvider>
   );
 }
 
