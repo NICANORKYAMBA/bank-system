@@ -87,6 +87,12 @@ const Navigation = ({ onTransactionCreated }) => {
     }
   };
 
+  const handleLogout = () => {
+    sessionStorage.clear();
+
+    window.location.href = '/';
+  };
+
   const navItems = (
     <List component='nav'>
       <ListItem button key='Home' component={Link} to='/'>
@@ -136,7 +142,7 @@ const Navigation = ({ onTransactionCreated }) => {
         <ListItemIcon><AccountCircle /></ListItemIcon>
         <ListItemText primary='Profile Management' />
       </ListItem>
-      <ListItem button key='Logout'>
+      <ListItem button key='Logout' onClick={handleLogout}>
         <ListItemIcon><ExitToAppIcon /></ListItemIcon>
         <ListItemText primary='Logout' />
       </ListItem>

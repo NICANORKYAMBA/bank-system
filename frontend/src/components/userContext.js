@@ -6,12 +6,25 @@ export const useUserContext = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
   const [userData, setUserData] = useState({
+    userId: '',
     firstName: '',
-    lastName: ''
+    lastName: '',
+    email: '',
+    addresses: []
   });
 
   const updateUser = (updatedUserData) => {
-    setUserData(updatedUserData);
+    if (updatedUserData.addresses) {
+      if (typeof updatedUserData.addresses === 'string') {
+        updatedUserData.addresses = JSON.parse(updatedUserData.addresses);
+      }
+      updatedUserData.addresses = Array.isArray(updatedUserData.addresses) ? updatedUserData.addresses : [updatedUserData.addresses];
+    }
+
+    setUserData({
+      ...userData,
+      ...updatedUserData
+    });
   };
 
   return (

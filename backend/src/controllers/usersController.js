@@ -186,7 +186,10 @@ export const loginUser = [
     const { email, password } = req.body;
 
     try {
-      const user = await User.findOne({ where: { email } });
+      const user = await User.findOne({
+        where: { email },
+        include: [{ model: UserAddress, as: 'Addresses' }]
+      });
 
       if (!user) {
         return res.status(401).json({
@@ -213,7 +216,9 @@ export const loginUser = [
         token,
         userId: user.id,
         firstName: user.firstName,
-        lastName: user.lastName
+        lastName: user.lastName,
+        email: user.email,
+        addresses: user.Addresses
       });
     } catch (err) {
       if (err instanceof Sequelize.DatabaseError) {

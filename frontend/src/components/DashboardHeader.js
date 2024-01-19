@@ -156,7 +156,22 @@ const DashboardHeader = ({
             <Box className={classes.popoverContent}>
               <Typography>Email: {userData?.email}</Typography>
               <Typography>Phone: {userData?.phone}</Typography>
-              {/* Display more user details as needed */}
+              {Array.isArray(userData?.addresses)
+                ? (
+                    userData.addresses.map((address, index) => (
+                      address && (
+                        <Box key={index}>
+                          <Typography>Address {index + 1}:</Typography>
+                          <Typography>
+                            {address.street}, {address.city}, {address.state}, {address.zipCode}, {address.country}
+                          </Typography>
+                        </Box>
+                      )
+                    ))
+                  )
+                : (
+                  <Typography>No addresses available.</Typography>
+                  )}
             </Box>
           </Popover>
         </Box>
