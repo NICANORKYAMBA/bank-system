@@ -145,10 +145,15 @@ function LoginForm () {
       sessionStorage.setItem('userId', response.data.userId);
       sessionStorage.setItem('firstName', response.data.firstName);
       sessionStorage.setItem('lastName', response.data.lastName);
+      sessionStorage.setItem('email', response.data.email);
+      sessionStorage.setItem('addresses', JSON.stringify(response.data.addresses));
 
       updateUser({
+        userId: response.data.userId,
         firstName: response.data.firstName,
-        lastName: response.data.lastName
+        lastName: response.data.lastName,
+        email: response.data.email,
+        addresses: response.data.addresses
       });
 
       setTimeout(() => {
