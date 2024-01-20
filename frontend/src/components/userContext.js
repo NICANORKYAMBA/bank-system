@@ -25,6 +25,10 @@ export const UserProvider = ({ children }) => {
       ...userData,
       ...updatedUserData
     });
+
+    Object.keys(updatedUserData).forEach(key => {
+      sessionStorage.setItem(key, updatedUserData[key]);
+    });
   };
 
   return (
