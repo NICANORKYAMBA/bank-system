@@ -8,6 +8,7 @@ import {
   useMediaQuery,
   makeStyles
 } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 import MuiAlert from '@material-ui/lab/Alert';
 import {
   fetchAccount,
@@ -21,6 +22,7 @@ import AccountSummary from '../components/AccountSummary';
 import TransactionsList from '../components/TransactionsList';
 import QuickActions from '../components/QuickActions';
 import GraphsAndCharts from '../components/GraphsAndCharts';
+import { useUserContext } from '../components/userContext';
 
 const useDashboardStyles = makeStyles((theme) => ({
   root: {
@@ -183,16 +185,25 @@ function Dashboard ({ reload, onTransactionCreated }) {
     lastName: ''
   });
 
+  const history = useHistory();
+  const { updateUser } = useUserContext();
+
   useEffect(() => {
-    const storedFirstName = sessionStorage.getItem('firstName');
-    const storedLastName = sessionStorage.getItem('lastName');
-    if (storedFirstName && storedLastName) {
-      setUserData({
-        firstName: storedFirstName,
-        lastName: storedLastName
-      });
+    const storedUserData = {
+      userId: sessionStorage.getItem('userId'),
+      firstName: sessionStorage.getItem('firstName'),
+      lastName: sessionStorage.getItem('lastName'),
+      email: sessionStorage.getItem('email'),
+      addresses: JSON.parse(sessionStorage.getItem('addresses') || '[]')
+    };
+
+    if (storedUserData.userId && storedUserData.firstName && storedUserData.lastName) {
+      setUserData(storedUserData);
+      updateUser(storedUserData);
+    } else {
+      history.push('/login');
     }
-  }, []);
+  }, [history, updateUser]);
 
   const fetchAllAccountsData = async () => {
     setLoading(true);
