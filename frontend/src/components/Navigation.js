@@ -142,7 +142,10 @@ const Navigation = ({ onTransactionCreated }) => {
         <ListItemIcon><AccountCircle /></ListItemIcon>
         <ListItemText primary='Profile Management' />
       </ListItem>
-      <ListItem button key='Logout' onClick={handleLogout}>
+      <ListItem
+        button key='Logout'
+        onClick={handleLogout}
+      >
         <ListItemIcon><ExitToAppIcon /></ListItemIcon>
         <ListItemText primary='Logout' />
       </ListItem>
