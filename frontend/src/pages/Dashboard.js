@@ -1,4 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef
+} from 'react';
 import {
   CircularProgress,
   Snackbar,
@@ -180,30 +184,31 @@ function Dashboard ({ reload, onTransactionCreated }) {
     setProfileAnchorEl(null);
   };
 
-  const [userData, setUserData] = useState({
+  const [userData] = useState({
     firstName: '',
     lastName: ''
   });
 
   const history = useHistory();
-  const { updateUser } = useUserContext();
+
+  const { userData: contextUserData, updateUser } = useUserContext();
 
   useEffect(() => {
-    const storedUserData = {
-      userId: sessionStorage.getItem('userId'),
-      firstName: sessionStorage.getItem('firstName'),
-      lastName: sessionStorage.getItem('lastName'),
-      email: sessionStorage.getItem('email'),
-      addresses: JSON.parse(sessionStorage.getItem('addresses') || '[]')
-    };
+    const storedUserId = sessionStorage.getItem('userId');
+    const storedFirstName = sessionStorage.getItem('firstName');
+    const storedLastName = sessionStorage.getItem('lastName');
 
-    if (storedUserData.userId && storedUserData.firstName && storedUserData.lastName) {
-      setUserData(storedUserData);
+    if (storedUserId && storedFirstName && storedLastName) {
+      const storedUserData = {
+        userId: storedUserId,
+        firstName: storedFirstName,
+        lastName: storedLastName
+      };
       updateUser(storedUserData);
-    } else {
+    } else if (!contextUserData.userId || !contextUserData.firstName || !contextUserData.lastName) {
       history.push('/login');
     }
-  }, [history, updateUser]);
+  }, [contextUserData, history, updateUser]);
 
   const fetchAllAccountsData = async () => {
     setLoading(true);
