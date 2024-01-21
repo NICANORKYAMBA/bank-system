@@ -175,6 +175,7 @@ function Dashboard ({ reload, onTransactionCreated }) {
   const [showTransferForm, setShowTransferForm] = useState(false);
   const [showWithdrawalForm, setShowWithdrawalForm] = useState(false);
   const [showDepositForm, setShowDepositForm] = useState(false);
+  const [searchCategory, setSearchCategory] = useState('all');
 
   const handleProfilePopoverOpen = (event) => {
     setProfileAnchorEl(event.currentTarget);
@@ -183,11 +184,6 @@ function Dashboard ({ reload, onTransactionCreated }) {
   const handleProfilePopoverClose = () => {
     setProfileAnchorEl(null);
   };
-
-  const [userData] = useState({
-    firstName: '',
-    lastName: ''
-  });
 
   const history = useHistory();
 
@@ -324,6 +320,11 @@ function Dashboard ({ reload, onTransactionCreated }) {
   // This could involve calling an API and updating your state with the results
   };
 
+  const handleNotificationsClick = () => {
+    // Logic to handle notifications click
+    console.log('Notifications clicked');
+  };
+
   const notificationsCount = 4;
 
   return (
@@ -354,8 +355,6 @@ function Dashboard ({ reload, onTransactionCreated }) {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <DashboardHeader
-                  classes={classes}
-                  userData={userData}
                   handleProfilePopoverOpen={handleProfilePopoverOpen}
                   profileOpen={profileOpen}
                   profileAnchorEl={profileAnchorEl}
@@ -363,6 +362,10 @@ function Dashboard ({ reload, onTransactionCreated }) {
                   handleSearchChange={handleSearchChange}
                   handleSearchSubmit={handleSearchSubmit}
                   notificationsCount={notificationsCount}
+                  handleNotificationsClick={handleNotificationsClick}
+                  userData={contextUserData}
+                  searchCategory={searchCategory}
+                  handleSearchCategoryChange={(event) => setSearchCategory(event.target.value)}
                 />
               </Grid>
               <Grid item xs={12} sm={8} md={6}>
