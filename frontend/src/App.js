@@ -6,7 +6,6 @@ import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
 import CreateAccountForm from './components/CreateAccountForm';
 import Transactions from './pages/Transactions';
-import AccountDetails from './pages/accountDetails';
 import AccountOverview from './pages/AccountOverview';
 import SingleAccountOverview from './pages/SingleAccountOverview';
 import Navigation from './components/Navigation';
@@ -48,12 +47,10 @@ function AppWithNavigation () {
         />
         <Route path='/account-overview/:accountId' component={SingleAccountOverview} />
         <Route path='/account-overview' component={AccountOverview} />
-        <Route path='/account-details' component={AccountDetails} />
         <Route path='/welcome-bonus' component={WelcomeBonusPage} />
         <Route path='/holiday-savings' component={HolidaySavingsSpecialPage} />
         <Route path='/activate-account' component={ActivateAccountPage} />
         <Route path='/profile-management' component={ProfileManagementForm} />
-        {/* Add more routes as needed */}
       </Switch>
     </>
   );

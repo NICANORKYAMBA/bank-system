@@ -5,19 +5,12 @@ import {
   Box,
   TextField,
   Button,
-  IconButton,
-  Badge,
-  Avatar,
-  Popover,
-  Tooltip,
   Select,
   MenuItem,
   InputAdornment,
   makeStyles
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 import { useUserContext } from './userContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -67,14 +60,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const DashboardHeader = ({
-  handleProfilePopoverOpen,
-  profileOpen,
-  profileAnchorEl,
-  handleProfilePopoverClose,
   handleSearchChange,
-  handleSearchSubmit,
-  notificationsCount,
-  handleNotificationsClick
+  handleSearchSubmit
 }) => {
   const { userData } = useUserContext();
   const classes = useStyles();
@@ -118,62 +105,6 @@ const DashboardHeader = ({
               Filter
             </Button>
           </form>
-        </Box>
-      </Grid>
-      <Grid item xs={12} sm={3} md={4}>
-        <Box display='flex' justifyContent='flex-end' alignItems='center'>
-          <Tooltip title='Notifications'>
-            <IconButton color='inherit' onClick={handleNotificationsClick} aria-label='Notifications'>
-              <Badge badgeContent={notificationsCount} color='secondary'>
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-          </Tooltip>
-          <Tooltip title='User Profile'>
-            <IconButton
-              edge='end'
-              aria-label='User Profile'
-              color='inherit'
-              onClick={handleProfilePopoverOpen}
-            >
-              <Avatar alt='User Profile' src={userData?.profilePicture || <PersonOutlineIcon />} className={classes.avatar} />
-            </IconButton>
-          </Tooltip>
-          <Popover
-            id='profile-popover'
-            open={profileOpen}
-            anchorEl={profileAnchorEl}
-            onClose={handleProfilePopoverClose}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right'
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right'
-            }}
-          >
-            <Box className={classes.popoverContent}>
-              <Typography>Email: {userData?.email}</Typography>
-              <Typography>Phone: {userData?.phone}</Typography>
-              {Array.isArray(userData?.addresses)
-                ? (
-                    userData.addresses.map((address, index) => (
-                      address && (
-                        <Box key={index}>
-                          <Typography>Address {index + 1}:</Typography>
-                          <Typography>
-                            {address.street}, {address.city}, {address.state}, {address.zipCode}, {address.country}
-                          </Typography>
-                        </Box>
-                      )
-                    ))
-                  )
-                : (
-                  <Typography>No addresses available.</Typography>
-                  )}
-            </Box>
-          </Popover>
         </Box>
       </Grid>
     </Grid>

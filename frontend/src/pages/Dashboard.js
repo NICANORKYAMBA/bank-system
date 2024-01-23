@@ -165,7 +165,6 @@ function Dashboard ({ reload, onTransactionCreated }) {
 
   const classes = useDashboardStyles({ drawerWidth, shouldAdjustForDrawer });
 
-  const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [selectedAccountData, setSelectedAccountData] = useState(null);
   const [accountsData, setAccountsData] = useState([]);
@@ -176,14 +175,6 @@ function Dashboard ({ reload, onTransactionCreated }) {
   const [showWithdrawalForm, setShowWithdrawalForm] = useState(false);
   const [showDepositForm, setShowDepositForm] = useState(false);
   const [searchCategory, setSearchCategory] = useState('all');
-
-  const handleProfilePopoverOpen = (event) => {
-    setProfileAnchorEl(event.currentTarget);
-  };
-
-  const handleProfilePopoverClose = () => {
-    setProfileAnchorEl(null);
-  };
 
   const history = useHistory();
 
@@ -305,8 +296,6 @@ function Dashboard ({ reload, onTransactionCreated }) {
     }
   };
 
-  const profileOpen = Boolean(profileAnchorEl);
-
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearchChange = (event) => {
@@ -319,13 +308,6 @@ function Dashboard ({ reload, onTransactionCreated }) {
     console.log(`Searching transactions for: ${searchTerm}`);
   // This could involve calling an API and updating your state with the results
   };
-
-  const handleNotificationsClick = () => {
-    // Logic to handle notifications click
-    console.log('Notifications clicked');
-  };
-
-  const notificationsCount = 4;
 
   return (
     <div className={classes.root}>
@@ -355,17 +337,13 @@ function Dashboard ({ reload, onTransactionCreated }) {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <DashboardHeader
-                  handleProfilePopoverOpen={handleProfilePopoverOpen}
-                  profileOpen={profileOpen}
-                  profileAnchorEl={profileAnchorEl}
-                  handleProfilePopoverClose={handleProfilePopoverClose}
                   handleSearchChange={handleSearchChange}
                   handleSearchSubmit={handleSearchSubmit}
-                  notificationsCount={notificationsCount}
-                  handleNotificationsClick={handleNotificationsClick}
                   userData={contextUserData}
                   searchCategory={searchCategory}
-                  handleSearchCategoryChange={(event) => setSearchCategory(event.target.value)}
+                  handleSearchCategoryChange={
+                    (event) => setSearchCategory(event.target.value)
+}
                 />
               </Grid>
               <Grid item xs={12} sm={8} md={6}>

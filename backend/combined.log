@@ -160,3 +160,172 @@
 {"level":"error","message":"Transaction with ID 123e4567-e89b-12d3-a456-426614174000 not found","service":"user-service"}
 {"level":"error","message":"Transaction d8355cdc-7f6a-45c3-9894-2209eb94b6c3 is already reversed","service":"user-service"}
 {"level":"error","message":"Cannot read properties of undefined (reading '_modelAttribute')","service":"user-service"}
+{"level":"error","message":"Cannot read properties of undefined (reading '_modelAttribute')","service":"user-service"}
+{"level":"error","message":"Cannot read properties of undefined (reading '_modelAttribute')","service":"user-service"}
+{"level":"error","message":"Cannot read properties of undefined (reading '_modelAttribute')","service":"user-service"}
+{"level":"error","message":"Cannot read properties of undefined (reading '_modelAttribute')","service":"user-service"}
+{"level":"error","message":"Cannot read properties of undefined (reading '_modelAttribute')","service":"user-service"}
+{"level":"error","message":"sourceAccountId is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"Source account is not active","service":"user-service"}
+{"level":"error","message":"Source account is not active","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"Cannot read properties of undefined (reading '_modelAttribute')","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"Server error while trying to get all accounts: SequelizeConnectionRefusedError: connect ECONNREFUSED ::1:5432","service":"user-service"}
+{"level":"error","message":"connect ECONNREFUSED ::1:5432","service":"user-service"}
+{"level":"error","message":"Server error while trying to get all accounts: SequelizeConnectionRefusedError: connect ECONNREFUSED ::1:5432","service":"user-service"}
+{"level":"error","message":"connect ECONNREFUSED ::1:5432","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"Destination account is not active","service":"user-service"}
+{"level":"error","message":"Destination account is not active","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"Validation error: Validation min on amount failed","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"Validation error: Validation min on balance failed","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"Destination account with number 1212121212121212 not found","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"Destination account with number 00000000000001 not found","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"Server error while trying to get accounts by user ID: SequelizeConnectionRefusedError: connect ECONNREFUSED ::1:5432","service":"user-service"}
+{"level":"error","message":"connect ECONNREFUSED ::1:5432","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"Destination account with number 123456789123456 not found","service":"user-service"}
+{"level":"error","message":"Destination account with number 123456789654321 not found","service":"user-service"}
+{"level":"error","message":"Destination account with number 120000000000001 not found","service":"user-service"}
+{"level":"error","message":"Destination account with number 120000000000000 not found","service":"user-service"}
+{"level":"error","message":"Destination account with number 100000000011111 not found","service":"user-service"}
+{"level":"error","message":"Destination account is not active","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
