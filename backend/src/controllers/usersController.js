@@ -106,13 +106,23 @@ export const createUser = [
   body('address.state').optional().isString().withMessage('Must be a string'),
   body('address.country').optional().isString().withMessage('Must be a string'),
   body('address.zipCode').optional().isString().withMessage('Must be a string'),
+  body('phoneNumber').optional().isMobilePhone().withMessage('Must be a valid phone number'),
+  body('dataOfBirth').optional().isISO8601().withMessage('Must be a valid date'),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { email, address, password, firstName, lastName } = req.body;
+    const {
+      email,
+      address,
+      password,
+      firstName,
+      lastName,
+      phoneNumber,
+      dateOfBirth
+    } = req.body;
 
     try {
       const existingUser = await User.findOne({ where: { email } });
@@ -129,7 +139,9 @@ export const createUser = [
         firstName,
         lastName,
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        phoneNumber,
+        dateOfBirth
       });
 
       if (address) {
@@ -320,6 +332,8 @@ export const updateUser = [
   body('address.state').optional().isString().withMessage('State must be a string'),
   body('address.country').optional().isString().withMessage('Country must be a string'),
   body('address.zipCode').optional().isString().withMessage('Zip code must be a string'),
+  body('phoneNumber').optional().isMobilePhone().withMessage('Must be a valid phone number'),
+  body('dateOfBirth').optional().isDate().withMessage('Date of birth must be a valid date'),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
