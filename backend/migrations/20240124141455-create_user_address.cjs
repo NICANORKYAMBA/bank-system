@@ -1,13 +1,13 @@
 'use strict';
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+ up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('UserAddresses', {
       id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        allowNull: true,
+        allowNull: false,
         primaryKey: true,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.literal('gen_random_uuid()'),
       },
       street: {
         type: Sequelize.STRING,
@@ -36,7 +36,6 @@ module.exports = {
           model: 'Users',
           key: 'id',
         },
-        onDelete: 'CASCADE',
       },
       createdAt: {
         allowNull: false,
@@ -47,9 +46,9 @@ module.exports = {
         type: Sequelize.DATE,
       },
     });
-  },
+ },
 
-  down: async (queryInterface, Sequelize) => {
+ down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('UserAddresses');
-  },
+ },
 };
