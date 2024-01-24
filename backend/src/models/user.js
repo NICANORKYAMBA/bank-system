@@ -35,6 +35,31 @@ const User = sequelize.define('User', {
   resetPasswordExpires: {
     type: DataTypes.DATE,
     allowNull: true
+  },
+  isAdmin: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
+  profileImage: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  phoneNumber: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  dateOfBirth: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false
   }
 }, {
   tableName: 'Users',
