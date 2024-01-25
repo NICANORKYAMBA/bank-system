@@ -1,7 +1,12 @@
-import rootReducer from './reducers/reducers';
+import { configureStore } from '@reduxjs/toolkit';
+import registerFormReducer from './reducers/RegisterFormReducers';
+import loginFormReducer from './reducers/LoginFormReducers';
 
-import { createStore } from 'redux';
-
-const store = createStore(rootReducer);
+const store = configureStore({
+  reducer: {
+    registerForm: registerFormReducer,
+    loginForm: loginFormReducer
+  }
+});
 
 export default store;
