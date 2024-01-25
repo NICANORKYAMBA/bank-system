@@ -14,6 +14,8 @@ import HolidaySavingsSpecialPage from './pages/HolidaySavingsPage';
 import ActivateAccountPage from './pages/ActivateAccountPage';
 import ProfileManagementForm from './components/UserProfileUpdate';
 import { UserProvider } from './components/userContext';
+import { Provider } from 'react-redux';
+import store from './redux/store';
 
 function AppWithNavigation () {
   const location = useLocation();
@@ -58,11 +60,13 @@ function AppWithNavigation () {
 
 function App () {
   return (
-    <UserProvider>
-      <Router>
-        <AppWithNavigation />
-      </Router>
-    </UserProvider>
+    <Provider store={store}>
+      <UserProvider>
+        <Router>
+          <AppWithNavigation />
+        </Router>
+      </UserProvider>
+    </Provider>
   );
 }
 
