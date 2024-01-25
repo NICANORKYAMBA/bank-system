@@ -35,6 +35,10 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
 
+const FIELD_EMAIL = 'email';
+const FIELD_PASSWORD = 'password';
+const FIELD_CONFIRM_PASSWORD = 'confirmPassword';
+
 const useStyles = makeStyles((theme) => ({
   loginForm: {
     padding: theme.spacing(2),
@@ -118,10 +122,6 @@ function LoginForm () {
     }
   };
 
-  const FIELD_EMAIL = 'email';
-  const FIELD_PASSWORD = 'password';
-  const FIELD_CONFIRM_PASSWORD = 'confirmPassword';
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -141,17 +141,25 @@ function LoginForm () {
 
     dispatch(setIsSubmitting(true));
     try {
-      const response = await axios.post('http://localhost:5000/api/users/login', formData);
-      dispatch(setSnackbarMessage('Login successful! Redirecting...'));
-      dispatch(setOpenSnackbar(true));
-      dispatch(setAuthToken(response.data.token));
-      dispatch(setUserData(response.data.userData));
-      dispatch(clearFormData());
-      dispatch(clearFormErrors());
+      const response = await axios.post('http://localhost:5000/api/users/login', {
+        email: formData.email,
+        password: formData.password
+      });
 
-      setTimeout(() => {
-        history.push('/dashboard');
-      }, 2000);
+      if (response.status === 200) {
+        dispatch(setUserData(response.data.userData));
+        dispatch(setSnackbarMessage('Login successful! Redirecting...'));
+        dispatch(setOpenSnackbar(true));
+        dispatch(setAuthToken(response.data.token));
+        dispatch(clearFormData());
+        dispatch(clearFormErrors());
+
+        setTimeout(() => {
+          history.push('/dashboard');
+        }, 2000);
+      } else {
+        throw new Error(`Server responded with a status: ${response.status}`);
+      }
     } catch (error) {
       console.error(error);
       let errorMessage = 'An unexpected error occurred. Please try again later.';
