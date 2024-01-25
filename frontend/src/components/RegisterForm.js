@@ -209,7 +209,7 @@ const RegisterForm = () => {
       });
 
       if (response.status === 201) {
-        const user = response.data.user;
+        const user = response.data.userData;
 
         dispatch(setUserData(user));
         dispatch(setSnackbarMessage('Registration successful! Redirecting...'));
