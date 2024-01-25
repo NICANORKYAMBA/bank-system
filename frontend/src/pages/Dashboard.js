@@ -19,6 +19,7 @@ import {
   fetchAccounts,
   fetchTransactionsByAccountId
 } from '../api/api';
+import { useSelector } from 'react-redux';
 
 import DashboardHeader from '../components/DashboardHeader';
 import AccountsList from '../components/AccountList';
@@ -26,7 +27,6 @@ import AccountSummary from '../components/AccountSummary';
 import TransactionsList from '../components/TransactionsList';
 import QuickActions from '../components/QuickActions';
 import GraphsAndCharts from '../components/GraphsAndCharts';
-import { useUserContext } from '../components/userContext';
 
 const useDashboardStyles = makeStyles((theme) => ({
   root: {
@@ -157,6 +157,34 @@ function Alert (props) {
   return <MuiAlert elevation={6} variant='filled' {...props} />;
 }
 
+const fetchAllAccountsData = async (setLoading, setAccountsData, setError, userData) => {
+  setLoading(true);
+  try {
+    const userId = userData.userId;
+    const accountsData = await fetchAccounts(userId);
+    setAccountsData(accountsData);
+  } catch (error) {
+    console.error(error);
+    setError('Error fetching all accounts data');
+  }
+  setLoading(false);
+};
+
+const fetchSelectedAccountData = async (selectedAccount, setTransactions, setSelectedAccountData, setError) => {
+  if (selectedAccount) {
+    try {
+      const transactionsData = await fetchTransactionsByAccountId(selectedAccount.id);
+      setTransactions(transactionsData);
+
+      const AccountData = await fetchAccount(selectedAccount.id);
+      setSelectedAccountData(AccountData);
+    } catch (error) {
+      console.error(error);
+      setError('Error fetching data for selected account');
+    }
+  }
+};
+
 function Dashboard ({ reload, onTransactionCreated }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -178,59 +206,20 @@ function Dashboard ({ reload, onTransactionCreated }) {
 
   const history = useHistory();
 
-  const { userData: contextUserData, updateUser } = useUserContext();
+  const userData = useSelector(state => state.loginForm.userData || {});
 
   useEffect(() => {
-    const storedUserId = sessionStorage.getItem('userId');
-    const storedFirstName = sessionStorage.getItem('firstName');
-    const storedLastName = sessionStorage.getItem('lastName');
-
-    if (storedUserId && storedFirstName && storedLastName) {
-      const storedUserData = {
-        userId: storedUserId,
-        firstName: storedFirstName,
-        lastName: storedLastName
-      };
-      updateUser(storedUserData);
-    } else if (!contextUserData.userId || !contextUserData.firstName || !contextUserData.lastName) {
+    if (!userData.userId || !userData.firstName || !userData.lastName) {
       history.push('/login');
     }
-  }, [contextUserData, history, updateUser]);
-
-  const fetchAllAccountsData = async () => {
-    setLoading(true);
-    try {
-      const userId = sessionStorage.getItem('userId');
-      const accountsData = await fetchAccounts(userId);
-      setAccountsData(accountsData);
-    } catch (error) {
-      console.error(error);
-      setError('Error fetching all accounts data');
-    }
-    setLoading(false);
-  };
+  }, [userData, history]);
 
   useEffect(() => {
-    fetchAllAccountsData();
-  }, []);
+    fetchAllAccountsData(setLoading, setAccountsData, setError, userData);
+  }, [userData]);
 
   useEffect(() => {
-    const fetchSelectedAccountData = async () => {
-      if (selectedAccount) {
-        try {
-          const transactionsData = await fetchTransactionsByAccountId(selectedAccount.id);
-          setTransactions(transactionsData);
-
-          const AccountData = await fetchAccount(selectedAccount.id);
-          setSelectedAccountData(AccountData);
-        } catch (error) {
-          console.error(error);
-          setError('Error fetching data for selected account');
-        }
-      }
-    };
-
-    fetchSelectedAccountData();
+    fetchSelectedAccountData(selectedAccount, setTransactions, setSelectedAccountData, setError);
   }, [selectedAccount]);
 
   const accountsScrollContainerRef = useRef(null);
@@ -339,7 +328,7 @@ function Dashboard ({ reload, onTransactionCreated }) {
                 <DashboardHeader
                   handleSearchChange={handleSearchChange}
                   handleSearchSubmit={handleSearchSubmit}
-                  userData={contextUserData}
+                  userData={userData}
                   searchCategory={searchCategory}
                   handleSearchCategoryChange={
                     (event) => setSearchCategory(event.target.value)
