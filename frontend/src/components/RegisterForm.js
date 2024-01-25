@@ -1,5 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, Link } from 'react-router-dom';
+import {
+  setUserData,
+  updateFormData,
+  clearFormData,
+  setFormError,
+  setFormErrors,
+  clearFormErrors,
+  resetForm,
+  setIsSubmitting,
+  setSnackbarMessage,
+  toggleShowPassword,
+  toggleShowConfirmPassword,
+  setConfirmPassword,
+  setPasswordStrength,
+  setOpenSnackbar,
+  setTermsAccepted,
+  setErrorMessage,
+  setIsAdmin
+} from '../redux/actions/RegisterFormActions';
 import {
   Button,
   TextField,
@@ -25,8 +45,8 @@ import { calculatePasswordStrength } from './PasswordStrengthCalculator';
 
 const useStyles = makeStyles((theme) => ({
   registerForm: {
-    padding: theme.spacing(4),
-    margin: theme.spacing(2, 'auto'),
+    padding: theme.spacing(2),
+    margin: theme.spacing(1, 'auto'),
     maxWidth: 500,
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
@@ -63,93 +83,75 @@ const useStyles = makeStyles((theme) => ({
 
 const RegisterForm = () => {
   const classes = useStyles();
+  const history = useHistory();
+  const dispatch = useDispatch();
 
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    address: {
-      street: '',
-      city: '',
-      state: '',
-      country: '',
-      zipCode: ''
-    }
-  });
+  const formData = useSelector(state => state.registerForm.formData || {});
+  const formErrors = useSelector(state => state.registerForm.formErrors);
+  const isSubmitting = useSelector(state => state.registerForm.isSubmitting);
+  const snackbarMessage = useSelector(state => state.registerForm.snackbarMessage);
+  const showPassword = useSelector(state => state.registerForm.showPassword);
+  const showConfirmPassword = useSelector(state => state.registerForm.showConfirmPassword);
+  const confirmPassword = useSelector(state => state.registerForm.confirmPassword);
+  const passwordStrength = useSelector(state => state.registerForm.passwordStrength);
+  const termsAccepted = useSelector(state => state.registerForm.termsAccepted);
+  const isAdmin = useSelector(state => state.registerForm.isAdmin);
+  const openSnackbar = useSelector(state => state.registerForm.openSnackbar);
+  const errorMessage = useSelector(state => state.registerForm.errorMessage);
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordStrength, setPasswordStrength] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [formErrors, setFormErrors] = useState({
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    street: '',
-    city: '',
-    state: '',
-    country: '',
-    zipCode: ''
-  });
+  useEffect(() => {
+    return () => {
+      dispatch(clearFormData());
+      dispatch(clearFormErrors());
+    };
+  }, [dispatch]);
 
   const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
+    dispatch(toggleShowPassword(!showPassword));
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
+    dispatch(updateFormData(name, value));
+  };
+
+  const handleIsAdminChange = (event) => {
+    dispatch(setIsAdmin(event.target.checked));
   };
 
   const handleAddressChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      address: {
-        ...prevState.address,
-        [name]: value
-      }
-    }));
+    dispatch(updateFormData('address', { ...formData.address, [name]: value }));
   };
 
   const handleConfirmPasswordChange = (e) => {
     const newConfirmPassword = e.target.value;
-    setConfirmPassword(newConfirmPassword);
-
-    setFormErrors(prevErrors => ({
-      ...prevErrors,
-      confirmPassword: formData.password !== newConfirmPassword ? 'Passwords do not match' : ''
-    }));
+    dispatch(setConfirmPassword(newConfirmPassword));
+    const passwordMismatchError = formData.password !== newConfirmPassword ? 'Passwords do not match' : '';
+    if (passwordMismatchError) {
+      dispatch(setFormError('confirmPassword', passwordMismatchError));
+    }
   };
 
   const handleClickShowConfirmPassword = () => {
-    setShowConfirmPassword(!showConfirmPassword);
+    dispatch(toggleShowConfirmPassword(!showConfirmPassword));
   };
 
   const handlePasswordChange = (e) => {
     handleChange(e);
     const strength = calculatePasswordStrength(e.target.value);
-    setPasswordStrength(strength);
+    dispatch(setPasswordStrength(strength));
   };
 
   const handleTermsChange = (event) => {
-    setTermsAccepted(event.target.checked);
+    dispatch(setTermsAccepted(event.target.checked));
   };
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-    setOpenSnackbar(false);
+    dispatch(setOpenSnackbar(false));
   };
 
   const validateForm = () => {
@@ -186,14 +188,10 @@ const RegisterForm = () => {
       errors.confirmPassword = 'Passwords do not match';
     }
 
-    setFormErrors(errors);
+    dispatch(setFormErrors(errors));
 
     return isValid;
   };
-
-  const history = useHistory();
-
-  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -202,46 +200,44 @@ const RegisterForm = () => {
       return;
     }
 
-    setIsSubmitting(true);
+    dispatch(setIsSubmitting(true));
 
     try {
-      const response = await axios.post('http://localhost:5000/api/users', formData);
+      const response = await axios.post('http://localhost:5000/api/users', {
+        ...formData,
+        isAdmin: formData.isAdmin ? 'true' : 'false'
+      });
 
-      if (response.status >= 200 && response.status <= 299) {
-        console.log(response.data);
-        setErrorMessage('');
-        setFormErrors({});
+      if (response.status === 201) {
+        const user = response.data.userData;
 
-        const user = response.data.user;
-
-        sessionStorage.setItem('userId', user.userId);
-        sessionStorage.setItem('firstName', user.firstName);
-        sessionStorage.setItem('lastName', user.lastName);
-        sessionStorage.setItem('email', user.email);
-
-        setSnackbarMessage('Registration successful! Redirecting...');
-        setOpenSnackbar(true);
+        dispatch(setUserData(user));
+        dispatch(setSnackbarMessage('Registration successful! Redirecting...'));
+        dispatch(setOpenSnackbar(true));
 
         setTimeout(() => {
           history.push('/dashboard');
         }, 6000);
+
+        dispatch(resetForm());
       } else {
-        throw new Error('Server responded with a status other than 2xx');
+        throw new Error('Server responded with a status other than 201');
       }
     } catch (error) {
       console.error(error);
 
       if (error.response && error.response.status === 400) {
         if (error.response.data.message.includes('already exists')) {
-          setFormErrors({ email: 'Email already exists' });
-          setSnackbarMessage('Email already exists');
+          dispatch(setFormErrors({ email: 'Email already exists' }));
+          dispatch(setSnackbarMessage('Email already exists'));
         } else {
-          setErrorMessage(error.response.data.message);
-          setSnackbarMessage(error.response.data.message);
+          dispatch(setErrorMessage(error.response.data.message));
+          dispatch(setSnackbarMessage(error.response.data.message));
         }
+        dispatch(setOpenSnackbar(true));
       }
     } finally {
-      setIsSubmitting(false);
+      dispatch(setIsSubmitting(false));
     }
   };
 
@@ -416,6 +412,17 @@ const RegisterForm = () => {
             {formErrors.termsAccepted && (
               <Typography color='error'>{formErrors.termsAccepted}</Typography>
             )}
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isAdmin}
+                  onChange={handleIsAdminChange}
+                  name='isAdmin'
+                  color='primary'
+                />
+      }
+              label='Create as Admin'
+            />
             <FormControlLabel
               control={
                 <Checkbox

@@ -228,6 +228,10 @@ function HomePage () {
               <Typography variant='h6' color='textSecondary' paragraph>
                 <span className={classes.highlightedText}>
                   Manage your finances with ease and confidence.
+                </span>
+              </Typography>
+              <Typography variant='h6' color='textSecondary' paragraph>
+                <span className={classes.highlightedText}>
                   Join FinTrust today and experience the difference.
                 </span>
               </Typography>

@@ -1,5 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory, Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setUserData,
+  updateFormData,
+  setAuthToken,
+  clearFormData,
+  setFormError,
+  clearFormErrors,
+  toggleShowPassword,
+  toggleShowConfirmPassword,
+  setIsSubmitting,
+  setSnackbarMessage,
+  setOpenSnackbar
+} from '../redux/actions/LoginFormActions';
 import {
   Button,
   TextField,
@@ -20,12 +34,15 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
-import { useUserContext } from './userContext';
+
+const FIELD_EMAIL = 'email';
+const FIELD_PASSWORD = 'password';
+const FIELD_CONFIRM_PASSWORD = 'confirmPassword';
 
 const useStyles = makeStyles((theme) => ({
   loginForm: {
-    padding: theme.spacing(4),
-    margin: theme.spacing(2, 'auto'),
+    padding: theme.spacing(2),
+    margin: theme.spacing(1, 'auto'),
     maxWidth: 500,
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
@@ -66,115 +83,104 @@ function Alert (props) {
 
 function LoginForm () {
   const classes = useStyles();
+  const history = useHistory();
+  const dispatch = useDispatch();
 
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
-
-  const [errors, setErrors] = useState({
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: ''
-  });
+  const formData = useSelector(state => state.loginForm.formData || {});
+  const errors = useSelector(state => state.loginForm.errors || {});
+  const isSubmitting = useSelector(state => state.loginForm.isSubmitting || false);
+  const openSnackbar = useSelector(state => state.loginForm.openSnackbar || false);
+  const snackbarMessage = useSelector(state => state.loginForm.snackbarMessage || '');
+  const showPassword = useSelector(state => state.loginForm.showPassword || false);
+  const showConfirmPassword = useSelector(state => state.loginForm.showConfirmPassword || false);
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-    setSnackbar({ ...snackbar, open: false });
+    dispatch(setOpenSnackbar(false));
   };
 
   const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
+    dispatch(toggleShowPassword(!showPassword));
+  };
+
+  const handleClickShowConfirmPassword = () => {
+    dispatch(toggleShowConfirmPassword(!showConfirmPassword));
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+    dispatch(updateFormData(name, value));
 
-    if (name === 'password' || name === 'confirmPassword') {
-      const passwordError = name === 'password' && !value ? 'Please enter your password.' : '';
+    if (name === 'password') {
+      const passwordError = !value ? 'Please enter your password.' : '';
+      dispatch(setFormError({ key: FIELD_PASSWORD, value: passwordError }));
+    } else if (name === 'confirmPassword') {
       const confirmPasswordError = formData.password !== value ? 'Passwords do not match.' : '';
-      setErrors({
-        ...errors,
-        password: passwordError,
-        confirmPassword: name === 'confirmPassword' ? confirmPasswordError : errors.confirmPassword
-      });
+      dispatch(setFormError({ key: FIELD_CONFIRM_PASSWORD, value: confirmPasswordError }));
     }
   };
-
-  const { updateUser } = useUserContext();
-  const history = useHistory();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.email) {
-      setErrors((prevErrors) => ({ ...prevErrors, email: 'Please enter your email.' }));
+      dispatch(setFormError({ key: FIELD_EMAIL, value: 'Please enter your email.' }));
       return;
     }
     if (!formData.password) {
-      setErrors((prevErrors) => ({ ...prevErrors, password: 'Please enter your password.' }));
+      dispatch(setFormError({ key: FIELD_PASSWORD, value: 'Please enter your password.' }));
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setErrors((prevErrors) => ({ ...prevErrors, confirmPassword: 'Passwords do not match.' }));
+      dispatch(setFormError({ key: FIELD_CONFIRM_PASSWORD, value: 'Passwords do not match.' }));
       return;
     }
 
-    setLoading(true);
+    dispatch(setIsSubmitting(true));
     try {
-      const response = await axios.post('http://localhost:5000/api/users/login', formData);
-      setSnackbar({ open: true, message: 'Login successful! Redirecting...' });
-      setErrors({ email: '', password: '' });
-
-      sessionStorage.setItem('userId', response.data.userId);
-      sessionStorage.setItem('firstName', response.data.firstName);
-      sessionStorage.setItem('lastName', response.data.lastName);
-      sessionStorage.setItem('email', response.data.email);
-      sessionStorage.setItem('addresses', JSON.stringify(response.data.addresses));
-
-      updateUser({
-        userId: response.data.userId,
-        firstName: response.data.firstName,
-        lastName: response.data.lastName,
-        email: response.data.email,
-        addresses: response.data.addresses
+      const response = await axios.post('http://localhost:5000/api/users/login', {
+        email: formData.email,
+        password: formData.password
       });
 
-      setTimeout(() => {
-        history.push('/dashboard');
-      }, 2000);
+      if (response.status === 200) {
+        dispatch(setUserData(response.data.userData));
+        dispatch(setSnackbarMessage('Login successful! Redirecting...'));
+        dispatch(setOpenSnackbar(true));
+        dispatch(setAuthToken(response.data.token));
+        dispatch(clearFormData());
+        dispatch(clearFormErrors());
+
+        setTimeout(() => {
+          history.push('/dashboard');
+        }, 2000);
+      } else {
+        throw new Error(`Server responded with a status: ${response.status}`);
+      }
     } catch (error) {
       console.error(error);
-      if (error.response && error.response.status === 401) {
-        const errorMessage = error.response.data.message;
-        if (errorMessage.includes('Incorrect password')) {
-          setErrors({ email: '', password: 'Incorrect password. Please try again.' });
-          setSnackbar({ open: true, message: 'Incorrect password. Please try again.' });
-        } else if (errorMessage.includes('User not found')) {
-          setErrors({ email: 'User not found', password: '' });
-          setSnackbar({ open: true, message: 'User not found. Please check your email.' });
-        } else {
-          setSnackbar({ open: true, message: 'An unexpected error occurred. Please try again later.' });
+      let errorMessage = 'An unexpected error occurred. Please try again later.';
+      if (error.response) {
+        errorMessage = error.response.data.message;
+        switch (error.response.status) {
+          case 401:
+            if (errorMessage.includes('Incorrect password')) {
+              dispatch(setFormError({ key: FIELD_PASSWORD, value: 'Incorrect password. Please try again.' }));
+            } else if (errorMessage.includes('User not found')) {
+              dispatch(setFormError({ key: FIELD_EMAIL, value: 'User not found' }));
+            }
+            break;
+          default:
+            errorMessage = `An error occurred. Status code: ${error.response.status}`;
         }
       }
+      dispatch(setSnackbarMessage(errorMessage));
+      dispatch(setOpenSnackbar(true));
     } finally {
-      setLoading(false);
+      dispatch(setIsSubmitting(false));
     }
   };
 
@@ -237,7 +243,7 @@ function LoginForm () {
                 <InputAdornment position='end'>
                   <IconButton
                     aria-label='toggle password visibility'
-                    onClick={handleClickShowPassword}
+                    onClick={handleClickShowConfirmPassword}
                   >
                     {showPassword ? <Visibility /> : <VisibilityOff />}
                   </IconButton>
@@ -258,10 +264,10 @@ function LoginForm () {
               variant='contained'
               color='primary'
               type='submit'
-              disabled={loading}
+              disabled={isSubmitting}
               fullWidth
             >
-              {loading ? <CircularProgress size={24} /> : 'Login'}
+              {isSubmitting ? <CircularProgress size={24} /> : 'Login'}
             </Button>
             <Typography variant='body2' style={{ marginTop: '1rem', textAlign: 'center' }}>
               Forgot password?
@@ -277,9 +283,13 @@ function LoginForm () {
             </Typography>
           </Grid>
         </form>
-        <Snackbar open={snackbar.open} autoHideDuration={15000} onClose={handleCloseSnackbar}>
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={15000}
+          onClose={handleCloseSnackbar}
+        >
           <Alert onClose={handleCloseSnackbar} severity='success'>
-            {snackbar.message}
+            {snackbarMessage}
           </Alert>
         </Snackbar>
       </Paper>
