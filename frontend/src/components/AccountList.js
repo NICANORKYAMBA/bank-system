@@ -36,10 +36,12 @@ const AccountsList = ({
 
   const handleNextPage = () => {
     setCurrentPage(prevPage => prevPage + 1);
+    refreshAccounts();
   };
 
   const handlePrevPage = () => {
     setCurrentPage(prevPage => prevPage - 1);
+    refreshAccounts();
   };
 
   const handleOpenCreateDialog = () => {
