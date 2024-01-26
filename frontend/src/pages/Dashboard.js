@@ -1,8 +1,17 @@
-import React, {
-  useState,
-  useEffect,
-  useRef
-} from 'react';
+import React, { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setSelectedAccount,
+  setError,
+  setShowTransferForm,
+  setShowWithdrawalForm,
+  setShowDepositForm,
+  setSearchTerm,
+  setSearchCategory,
+  fetchAllAccountsDataThunk,
+  fetchSelectedAccountDataThunk
+} from '../redux/actions/DashboardActions';
+
 import {
   CircularProgress,
   Snackbar,
@@ -14,12 +23,6 @@ import {
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import MuiAlert from '@material-ui/lab/Alert';
-import {
-  fetchAccount,
-  fetchAccounts,
-  fetchTransactionsByAccountId
-} from '../api/api';
-import { useSelector } from 'react-redux';
 
 import DashboardHeader from '../components/DashboardHeader';
 import AccountsList from '../components/AccountList';
@@ -157,34 +160,6 @@ function Alert (props) {
   return <MuiAlert elevation={6} variant='filled' {...props} />;
 }
 
-const fetchAllAccountsData = async (setLoading, setAccountsData, setError, userData) => {
-  setLoading(true);
-  try {
-    const userId = userData.userId;
-    const accountsData = await fetchAccounts(userId);
-    setAccountsData(accountsData);
-  } catch (error) {
-    console.error(error);
-    setError('Error fetching all accounts data');
-  }
-  setLoading(false);
-};
-
-const fetchSelectedAccountData = async (selectedAccount, setTransactions, setSelectedAccountData, setError) => {
-  if (selectedAccount) {
-    try {
-      const transactionsData = await fetchTransactionsByAccountId(selectedAccount.id);
-      setTransactions(transactionsData);
-
-      const AccountData = await fetchAccount(selectedAccount.id);
-      setSelectedAccountData(AccountData);
-    } catch (error) {
-      console.error(error);
-      setError('Error fetching data for selected account');
-    }
-  }
-};
-
 function Dashboard ({ reload, onTransactionCreated }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -193,20 +168,23 @@ function Dashboard ({ reload, onTransactionCreated }) {
 
   const classes = useDashboardStyles({ drawerWidth, shouldAdjustForDrawer });
 
-  const [selectedAccount, setSelectedAccount] = useState(null);
-  const [selectedAccountData, setSelectedAccountData] = useState(null);
-  const [accountsData, setAccountsData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [transactions, setTransactions] = useState([]);
-  const [showTransferForm, setShowTransferForm] = useState(false);
-  const [showWithdrawalForm, setShowWithdrawalForm] = useState(false);
-  const [showDepositForm, setShowDepositForm] = useState(false);
-  const [searchCategory, setSearchCategory] = useState('all');
-
+  const dispatch = useDispatch();
+  const dashboardState = useSelector(state => state.dashboard || {});
   const history = useHistory();
-
   const userData = useSelector(state => state.loginForm.userData || {});
+
+  const {
+    selectedAccount = {},
+    selectedAccountData = {},
+    accountsData = [],
+    loading = false,
+    error = null,
+    transactions = [],
+    showTransferForm = false,
+    showWithdrawalForm = false,
+    showDepositForm = false,
+    searchCategory = ''
+  } = dashboardState;
 
   useEffect(() => {
     if (!userData.userId || !userData.firstName || !userData.lastName) {
@@ -215,12 +193,14 @@ function Dashboard ({ reload, onTransactionCreated }) {
   }, [userData, history]);
 
   useEffect(() => {
-    fetchAllAccountsData(setLoading, setAccountsData, setError, userData);
-  }, [userData]);
+    dispatch(fetchAllAccountsDataThunk(userData.userId));
+  }, [userData, dispatch]);
 
   useEffect(() => {
-    fetchSelectedAccountData(selectedAccount, setTransactions, setSelectedAccountData, setError);
-  }, [selectedAccount]);
+    if (selectedAccount) {
+      dispatch(fetchSelectedAccountDataThunk(selectedAccount.id));
+    }
+  }, [selectedAccount, dispatch]);
 
   const accountsScrollContainerRef = useRef(null);
   const transactionsScrollContainerRef = useRef(null);
@@ -236,66 +216,47 @@ function Dashboard ({ reload, onTransactionCreated }) {
   };
 
   const handleTransferClick = () => {
-    setShowTransferForm(true);
+    dispatch(setShowTransferForm(true));
   };
 
   const handleClose = () => {
-    setShowTransferForm(false);
-    onTransactionCreated();
+    dispatch(setShowTransferForm(false));
+    if (onTransactionCreated) onTransactionCreated();
   };
 
   const handleWithdrawalClick = () => {
-    setShowWithdrawalForm(true);
+    dispatch(setShowWithdrawalForm(true));
   };
 
   const handleCloseWithdrawal = () => {
-    setShowWithdrawalForm(false);
-    onTransactionCreated();
+    dispatch(setShowWithdrawalForm(false));
+    if (onTransactionCreated) onTransactionCreated();
   };
 
   const handleDepositClick = () => {
-    setShowDepositForm(true);
+    dispatch(setShowDepositForm(true));
   };
 
   const handleCloseDeposit = () => {
-    setShowDepositForm(false);
-    onTransactionCreated();
+    dispatch(setShowDepositForm(false));
+    if (onTransactionCreated) onTransactionCreated();
   };
 
-  const handleTransactionCreated = async () => {
-    try {
-      const transactionsData = await fetchTransactionsByAccountId(selectedAccount.id);
-      setTransactions(transactionsData);
-
-      const accountData = await fetchAccount(selectedAccount.id);
-      setSelectedAccountData(accountData);
-
-      await fetchAllAccountsData();
-    } catch (error) {
-      console.error(error);
-      setError('Error fetching data after transaction');
-    }
-
-    setShowTransferForm(false);
-    setShowWithdrawalForm(false);
-    setShowDepositForm(false);
-
-    if (onTransactionCreated) {
-      onTransactionCreated();
+  const handleTransactionCreated = () => {
+    if (selectedAccount) {
+      dispatch(fetchSelectedAccountDataThunk(selectedAccount.id));
+      dispatch(fetchAllAccountsDataThunk());
     }
   };
-
-  const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
+    dispatch(setSearchTerm(event.target.value));
   };
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
-    // Perform the search using the searchTerm
-    console.log(`Searching transactions for: ${searchTerm}`);
-  // This could involve calling an API and updating your state with the results
+    console.log(`Searching transactions for: ${dashboardState.searchTerm}`);
+    // Perform search logic here
   };
 
   return (
@@ -332,7 +293,7 @@ function Dashboard ({ reload, onTransactionCreated }) {
                   searchCategory={searchCategory}
                   handleSearchCategoryChange={
                     (event) => setSearchCategory(event.target.value)
-}
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={8} md={6}>
