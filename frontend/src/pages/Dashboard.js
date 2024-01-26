@@ -202,14 +202,7 @@ function Dashboard ({ reload, onTransactionCreated }) {
     }
   }, [selectedAccount, dispatch]);
 
-  const accountsScrollContainerRef = useRef(null);
   const transactionsScrollContainerRef = useRef(null);
-
-  const scrollAccounts = (scrollOffset) => {
-    if (accountsScrollContainerRef.current) {
-      accountsScrollContainerRef.current.scrollLeft += scrollOffset;
-    }
-  };
 
   const scrollTransactions = (scrollOffset) => {
     transactionsScrollContainerRef.current.scrollLeft += scrollOffset;
@@ -251,6 +244,10 @@ function Dashboard ({ reload, onTransactionCreated }) {
 
   const handleSearchChange = (event) => {
     dispatch(setSearchTerm(event.target.value));
+  };
+
+  const refreshAccounts = () => {
+    dispatch(fetchAllAccountsDataThunk(userData.userId));
   };
 
   const handleSearchSubmit = (event) => {
@@ -301,10 +298,10 @@ function Dashboard ({ reload, onTransactionCreated }) {
                   classes={classes}
                   accountsData={accountsData}
                   setSelectedAccount={setSelectedAccount}
-                  scrollAccounts={scrollAccounts}
-                  accountsScrollContainerRef={accountsScrollContainerRef}
+                  refreshAccounts={refreshAccounts}
                 />
               </Grid>
+
               <Grid item xs={12} sm={8} md={6}>
                 <AccountSummary
                   classes={classes}
