@@ -9,7 +9,25 @@ const Transaction = sequelize.define('Transaction', {
     primaryKey: true
   },
   type: {
-    type: DataTypes.ENUM('deposit', 'withdrawal', 'transfer'),
+    type: DataTypes.ENUM(
+      'deposit',
+      'withdrawal',
+      'transfer',
+      'interest',
+      'fee',
+      'loanDisbursement',
+      'loanRepayment',
+      'billPayment',
+      'directDebit',
+      'standingOrder',
+      'refund',
+      'chargeback',
+      'foreignExchange',
+      'cashDeposit',
+      'cashWithdrawal',
+      'checkDeposit',
+      'checkCashing'
+    ),
     allowNull: false
   },
   amount: {
@@ -28,7 +46,7 @@ const Transaction = sequelize.define('Transaction', {
     }
   },
   currency: {
-    type: DataTypes.ENUM('USD', 'EUR', 'GBP'),
+    type: DataTypes.ENUM('USD', 'EUR', 'GBP', 'KSH'),
     allowNull: false
   },
   status: {
@@ -88,9 +106,65 @@ const Transaction = sequelize.define('Transaction', {
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false
+  },
+  fee: {
+    type: DataTypes.DECIMAL,
+    allowNull: true,
+    validate: {
+      isDecimal: true
+    }
+  },
+  exchangeRate: {
+    type: DataTypes.DECIMAL,
+    allowNull: true,
+    validate: {
+      isDecimal: true
+    }
+  },
+  transactionReference: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
+  },
+  authorizedBy: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  channel: {
+    type: DataTypes.ENUM('online', 'branch', 'ATM', 'mobile'),
+    allowNull: false
+  },
+  ipAddress: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  deviceInformation: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  checkNumber: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  attachmentUrl: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  deletedAt: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  statusChangedAt: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  notes: {
+    type: DataTypes.TEXT,
+    allowNull: true
   }
 }, {
   timestamps: true,
+  paranoid: true,
   hooks: {
     beforeUpdate: (transaction, options) => {
       transaction.lastUpdated = new Date();
