@@ -52,6 +52,10 @@ const AccountsList = ({
     setOpenCreateDialog(false);
   };
 
+  const handleAccountClick = (account) => {
+    setSelectedAccount(account);
+  };
+
   const isLastPage = currentPage >= Math.ceil(accountsData.length / itemsPerPage) - 1;
   const displayedAccounts = (accountsData || []).slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
   if (isLastPage && displayedAccounts.length < 2) {
@@ -98,7 +102,7 @@ const AccountsList = ({
                           <TableRow
                             key={account.id || index}
                             hover
-                            onClick={() => setSelectedAccount(account)}
+                            onClick={() => handleAccountClick(account)}
                             style={{ cursor: 'pointer' }}
                             className={classes.tableRow}
                           >

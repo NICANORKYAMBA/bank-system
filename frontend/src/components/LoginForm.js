@@ -112,13 +112,12 @@ function LoginForm () {
   const handleChange = (e) => {
     const { name, value } = e.target;
     dispatch(updateFormData(name, value));
-
-    if (name === 'password') {
-      const passwordError = !value ? 'Please enter your password.' : '';
-      dispatch(setFormError({ key: FIELD_PASSWORD, value: passwordError }));
-    } else if (name === 'confirmPassword') {
-      const confirmPasswordError = formData.password !== value ? 'Passwords do not match.' : '';
-      dispatch(setFormError({ key: FIELD_CONFIRM_PASSWORD, value: confirmPasswordError }));
+    if (name === 'password' || name === 'confirmPassword') {
+      if (formData.password !== formData.confirmPassword) {
+        dispatch(setFormError('confirmPassword', 'Passwords do not match.'));
+      } else {
+        dispatch(setFormError('confirmPassword', ''));
+      }
     }
   };
 
@@ -127,15 +126,21 @@ function LoginForm () {
 
     if (!formData.email) {
       dispatch(setFormError({ key: FIELD_EMAIL, value: 'Please enter your email.' }));
+      dispatch(setSnackbarMessage('Please enter your email.'));
+      dispatch(setOpenSnackbar(true));
       return;
     }
     if (!formData.password) {
       dispatch(setFormError({ key: FIELD_PASSWORD, value: 'Please enter your password.' }));
+      dispatch(setSnackbarMessage('Please enter your password.'));
+      dispatch(setOpenSnackbar(true));
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
       dispatch(setFormError({ key: FIELD_CONFIRM_PASSWORD, value: 'Passwords do not match.' }));
+      dispatch(setSnackbarMessage('Passwords do not match.'));
+      dispatch(setOpenSnackbar(true));
       return;
     }
 
@@ -165,17 +170,6 @@ function LoginForm () {
       let errorMessage = 'An unexpected error occurred. Please try again later.';
       if (error.response) {
         errorMessage = error.response.data.message;
-        switch (error.response.status) {
-          case 401:
-            if (errorMessage.includes('Incorrect password')) {
-              dispatch(setFormError({ key: FIELD_PASSWORD, value: 'Incorrect password. Please try again.' }));
-            } else if (errorMessage.includes('User not found')) {
-              dispatch(setFormError({ key: FIELD_EMAIL, value: 'User not found' }));
-            }
-            break;
-          default:
-            errorMessage = `An error occurred. Status code: ${error.response.status}`;
-        }
       }
       dispatch(setSnackbarMessage(errorMessage));
       dispatch(setOpenSnackbar(true));
@@ -232,7 +226,7 @@ function LoginForm () {
           <TextField
             className={classes.loginInput}
             label='Confirm Password'
-            type={showPassword ? 'text' : 'password'}
+            type={showConfirmPassword ? 'text' : 'password'}
             variant='outlined'
             required
             name='confirmPassword'
@@ -251,7 +245,7 @@ function LoginForm () {
               )
             }}
             error={!!errors.confirmPassword}
-            helperText={errors.confirmPassword}
+            helperText={errors.confirmPassword || ' '}
           />
           <Grid container direction='column' justifyContent='center' alignItems='center'>
             <FormControlLabel
@@ -285,10 +279,17 @@ function LoginForm () {
         </form>
         <Snackbar
           open={openSnackbar}
-          autoHideDuration={15000}
+          autoHideDuration={6000}
           onClose={handleCloseSnackbar}
         >
-          <Alert onClose={handleCloseSnackbar} severity='success'>
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={
+              snackbarMessage.startsWith('Login successful')
+                ? 'success'
+                : 'error'
+            }
+          >
             {snackbarMessage}
           </Alert>
         </Snackbar>
