@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useFetchAccounts } from '../hooks/useFetchAccounts';
+import { useSelectedAccount } from '../hooks/useSelectedAccount';
 import {
   setSelectedAccount,
   setError,
@@ -165,13 +167,12 @@ function Dashboard ({ reload, onTransactionCreated }) {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const drawerWidth = 240;
   const shouldAdjustForDrawer = !isMobile;
-
   const classes = useDashboardStyles({ drawerWidth, shouldAdjustForDrawer });
-
-  const dispatch = useDispatch();
-  const dashboardState = useSelector(state => state.dashboard || {});
   const history = useHistory();
+  const dispatch = useDispatch();
+
   const userData = useSelector(state => state.loginForm.userData || {});
+  const dashboardState = useSelector(state => state.dashboard);
 
   const {
     selectedAccount = {},
@@ -192,15 +193,8 @@ function Dashboard ({ reload, onTransactionCreated }) {
     }
   }, [userData, history]);
 
-  useEffect(() => {
-    dispatch(fetchAllAccountsDataThunk(userData.userId));
-  }, [userData, dispatch]);
-
-  useEffect(() => {
-    if (selectedAccount) {
-      dispatch(fetchSelectedAccountDataThunk(selectedAccount.id));
-    }
-  }, [selectedAccount, dispatch]);
+  useFetchAccounts(userData.userId);
+  useSelectedAccount(dashboardState.selectedAccount); 
 
   const transactionsScrollContainerRef = useRef(null);
 
