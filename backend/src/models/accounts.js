@@ -19,8 +19,9 @@ const Account = sequelize.define('Account', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
     validate: {
-      isAlpha: true
+      is: /^[a-zA-Z ]+$/i
     }
   },
   balance: {
@@ -32,11 +33,11 @@ const Account = sequelize.define('Account', {
     }
   },
   accountType: {
-    type: DataTypes.ENUM('checking', 'savings', 'credit'),
+    type: DataTypes.ENUM('checking', 'savings', 'credit', 'CD', 'moneyMarket', 'prepaid', 'businessChecking', 'studentChecking', 'travelersCheck', 'paypal'),
     allowNull: false
   },
   currency: {
-    type: DataTypes.ENUM('USD', 'EUR', 'GBP'),
+    type: DataTypes.ENUM('USD', 'EUR', 'GBP', 'KSH'),
     allowNull: false
   },
   status: {
@@ -50,6 +51,23 @@ const Account = sequelize.define('Account', {
       model: 'Users',
       key: 'id'
     }
+  },
+  interestRate: {
+    type: DataTypes.DECIMAL(5, 2),
+    allowNull: true
+  },
+  overdraftLimit: {
+    type: DataTypes.DECIMAL(15, 2),
+    allowNull: true
+  },
+  lastTransactionDate: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  creationDate: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: Sequelize.NOW
   }
 }, {
   timestamps: true,
