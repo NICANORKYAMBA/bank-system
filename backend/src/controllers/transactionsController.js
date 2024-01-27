@@ -43,13 +43,37 @@ export const createTransaction = [
   body('destinationAccountNumber').optional().isString().withMessage('Must be a valid account number'),
   body('userId').isUUID().withMessage('Must be a valid UUID'),
   body('description').optional().isString().withMessage('Must be a string'),
+  body('fee').optional().isNumeric().withMessage('Fee must be a number'),
+  body('exchangeRate').optional().isNumeric().withMessage('Exchange rate must be a number'),
+  body('transactionReference').optional().isString().withMessage('Transaction reference must be a string'),
+  body('channel').optional().isIn(['online', 'branch', 'ATM', 'mobile']).withMessage('Channel must be one of: online, branch, ATM, mobile'),
+  body('ipAddress').optional().isIP().withMessage('IP address must be a valid IP address'),
+  body('deviceInformation').optional().isString().withMessage('Device information must be a string'),
+  body('checkNumber').optional().isString().withMessage('Check number must be a string'),
+  body('attachmentUrl').optional().isURL().withMessage('Attachment URL must be a valid URL'),
+
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { type, amount, sourceAccountNumber, destinationAccountNumber, userId, description } = req.body;
+    const {
+      type,
+      amount,
+      sourceAccountNumber,
+      destinationAccountNumber,
+      userId,
+      description,
+      fee,
+      exchangeRate,
+      transactionReference,
+      channel,
+      ipAddress,
+      deviceInformation,
+      checkNumber,
+      attachmentUrl
+    } = req.body;
 
     if ((type === 'deposit' && amount < 10) || (type !== 'deposit' && amount < 100)) {
       return handleValidationError(
@@ -112,6 +136,14 @@ export const createTransaction = [
       const transactionData = {
         type,
         amount,
+        fee,
+        exchangeRate,
+        transactionReference,
+        channel,
+        ipAddress,
+        deviceInformation,
+        checkNumber,
+        attachmentUrl,
         balance: sourceAccount.balance,
         currency: sourceAccount.currency,
         status: 'completed',
