@@ -194,7 +194,7 @@ function Dashboard ({ reload, onTransactionCreated }) {
   }, [userData, history]);
 
   useFetchAccounts(userData.userId);
-  useSelectedAccount(dashboardState.selectedAccount); 
+  useSelectedAccount(dashboardState.selectedAccount);
 
   const transactionsScrollContainerRef = useRef(null);
 
