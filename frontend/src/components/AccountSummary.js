@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import {
   CardContent,
   Typography,
@@ -20,6 +22,10 @@ import { green, red } from '@material-ui/core/colors';
 
 const AccountSummary = ({ classes, selectedAccount }) => {
   const theme = useTheme();
+  const loading = useSelector(state => state.dashboard.loading);
+
+  useEffect(() => {
+  }, [selectedAccount]);
 
   const iconColor = theme.palette.text.secondary;
 
@@ -39,51 +45,57 @@ const AccountSummary = ({ classes, selectedAccount }) => {
         <Typography variant='h6' component='h2' gutterBottom style={{ paddingBottom: theme.spacing(0) }}>
           Account Summary
         </Typography>
-        {selectedAccount
+        {loading
           ? (
-            <List dense>
-              <ListItem style={listItemStyle()}>
-                <ListItemIcon>
-                  <AccountBalanceIcon color={iconColor} />
-                </ListItemIcon>
-                <ListItemText primary='Account Number' secondary={selectedAccount.accountNumber} style={listItemTextStyle} />
-              </ListItem>
-              <ListItem style={listItemStyle()}>
-                <ListItemIcon>
-                  <PersonIcon color={iconColor} />
-                </ListItemIcon>
-                <ListItemText primary='Name' secondary={selectedAccount.name} style={listItemTextStyle} />
-              </ListItem>
-              <ListItem style={listItemStyle(selectedAccount.balance < 0)}>
-                <ListItemIcon>
-                  <AttachMoneyIcon color={iconColor} />
-                </ListItemIcon>
-                <ListItemText primary='Balance' secondary={selectedAccount.balance} style={listItemTextStyle} />
-              </ListItem>
-              <ListItem style={listItemStyle()}>
-                <ListItemIcon>
-                  <AccountBalanceWalletIcon color={iconColor} />
-                </ListItemIcon>
-                <ListItemText primary='Account Type' secondary={selectedAccount.accountType} style={listItemTextStyle} />
-              </ListItem>
-              <ListItem style={listItemStyle()}>
-                <ListItemIcon>
-                  <MonetizationOnIcon color={iconColor} />
-                </ListItemIcon>
-                <ListItemText primary='Currency' secondary={selectedAccount.currency} style={listItemTextStyle} />
-              </ListItem>
-              <ListItem style={listItemStyle()}>
-                <ListItemIcon>
-                  {selectedAccount.status === 'active' ? <CheckCircleOutlineIcon style={{ color: green[500] }} /> : <HighlightOffIcon color='error' />}
-                </ListItemIcon>
-                <ListItemText primary='Status' secondary={selectedAccount.status} style={listItemTextStyle} />
-              </ListItem>
-            </List>
+            <CircularProgress />
             )
           : (
-            <Typography color='textSecondary'>
-              Click an account to see its summary.
-            </Typography>
+              selectedAccount && selectedAccount !== null
+                ? (
+                  <List dense>
+                    <ListItem style={listItemStyle()}>
+                      <ListItemIcon>
+                        <AccountBalanceIcon color={iconColor} />
+                      </ListItemIcon>
+                      <ListItemText primary='Account Number' secondary={selectedAccount.accountNumber} style={listItemTextStyle} />
+                    </ListItem>
+                    <ListItem style={listItemStyle()}>
+                      <ListItemIcon>
+                        <PersonIcon color={iconColor} />
+                      </ListItemIcon>
+                      <ListItemText primary='Name' secondary={selectedAccount.name} style={listItemTextStyle} />
+                    </ListItem>
+                    <ListItem style={listItemStyle(selectedAccount.balance < 0)}>
+                      <ListItemIcon>
+                        <AttachMoneyIcon color={iconColor} />
+                      </ListItemIcon>
+                      <ListItemText primary='Balance' secondary={selectedAccount.balance} style={listItemTextStyle} />
+                    </ListItem>
+                    <ListItem style={listItemStyle()}>
+                      <ListItemIcon>
+                        <AccountBalanceWalletIcon color={iconColor} />
+                      </ListItemIcon>
+                      <ListItemText primary='Account Type' secondary={selectedAccount.accountType} style={listItemTextStyle} />
+                    </ListItem>
+                    <ListItem style={listItemStyle()}>
+                      <ListItemIcon>
+                        <MonetizationOnIcon color={iconColor} />
+                      </ListItemIcon>
+                      <ListItemText primary='Currency' secondary={selectedAccount.currency} style={listItemTextStyle} />
+                    </ListItem>
+                    <ListItem style={listItemStyle()}>
+                      <ListItemIcon>
+                        {selectedAccount.status === 'active' ? <CheckCircleOutlineIcon style={{ color: green[500] }} /> : <HighlightOffIcon color='error' />}
+                      </ListItemIcon>
+                      <ListItemText primary='Status' secondary={selectedAccount.status} style={listItemTextStyle} />
+                    </ListItem>
+                  </List>
+                  )
+                : (
+                  <Typography color='textSecondary'>
+                    Click an account to see its summary.
+                  </Typography>
+                  )
             )}
       </CardContent>
     </Paper>
