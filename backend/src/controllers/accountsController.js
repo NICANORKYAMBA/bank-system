@@ -1,4 +1,5 @@
 import { param, body, query, validationResult } from 'express-validator';
+import { v4 as uuidv4 } from 'uuid';
 import Account from '../models/accounts.js';
 import User from '../models/user.js';
 import { Sequelize } from 'sequelize';
@@ -11,6 +12,12 @@ import logger from './logger.js';
 
 const getAccount = async (accountNumber) => {
   return await Account.findOne({ where: { accountNumber } });
+};
+
+const generateUniqueAccountNumber = () => {
+  const randomNumber = Math.floor(Math.random() * 9e14) + 1e14;
+  const accountNumber = randomNumber.toString().padStart(15, '0');
+  return accountNumber;
 };
 
 export const getAllAccounts = [
@@ -335,13 +342,15 @@ export const getAccountsByUserId = [
 ];
 
 export const createAccount = [
-  body('accountNumber').isString().withMessage('Account number must be a string'),
-  body('name').isString().withMessage('Name must be a string'),
+  body('name').matches(/^[a-zA-Z ]+$/).withMessage('Name must be only alphabetical chars and spaces'),
   body('balance').isNumeric().withMessage('Balance must be a number'),
-  body('accountType').isIn(['checking', 'savings', 'credit']).withMessage('Account type must be one of: checking, savings, credit'),
-  body('currency').isIn(['USD', 'EUR', 'GBP']).withMessage('Currency must be one of: USD, EUR, GBP'),
+  body('accountType').isIn(['checking', 'savings', 'credit', 'CD', 'moneyMarket', 'prepaid', 'businessChecking', 'studentChecking', 'travelersCheck', 'paypal']).withMessage('Account type must be one of: checking, savings, credit'),
+  body('currency').isIn(['USD', 'EUR', 'GBP', 'KSH']).withMessage('Currency must be one of: USD, EUR, GBP'),
   body('status').isIn(['active', 'inactive']).withMessage('Status must be one of: active, inactive'),
   body('userId').isUUID().withMessage('User ID must be a valid UUID'),
+  body('interestRate').optional().isNumeric().withMessage('Interest rate must be a number'),
+  body('overdraftLimit').optional().isNumeric().withMessage('Overdraft limit must be a number'),
+  body('lastTransactionDate').optional().isISO8601().withMessage('Last transaction date must be a valid ISO 8601 date'),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -349,27 +358,25 @@ export const createAccount = [
     }
 
     const {
-      accountNumber,
       name,
       balance,
       accountType,
       currency,
       status,
-      userId
+      userId,
+      interestRate,
+      overdraftLimit,
+      lastTransactionDate
     } = req.body;
+
+    // Generate a unique account number
+    const accountNumber = generateUniqueAccountNumber();
 
     try {
       const user = await User.findByPk(userId);
       if (!user) {
         return res.status(404).json({
           message: `User with ID ${userId} not found`
-        });
-      }
-
-      const account = await getAccount(accountNumber);
-      if (account) {
-        return res.status(400).json({
-          message: `Account with number ${accountNumber} already exists`
         });
       }
 
@@ -380,7 +387,10 @@ export const createAccount = [
         accountType,
         currency,
         status,
-        userId
+        userId,
+        interestRate,
+        overdraftLimit,
+        lastTransactionDate
       });
 
       res.status(201).json({
@@ -401,7 +411,7 @@ export const createAccount = [
 
 export const updateAccount = [
   param('accountNumber').isString().withMessage('Account number must be a string'),
-  body('name').optional().isString().withMessage('Name must be a string'),
+  body('name').isString().withMessage('Name must be a string'),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -410,6 +420,13 @@ export const updateAccount = [
 
     const { accountNumber } = req.params;
     const { name } = req.body;
+
+    if (!name) {
+      return res.status(400).json({
+        message: 'Account name is required for update'
+      });
+    }
+
     try {
       const account = await getAccount(accountNumber);
       if (!account) {
@@ -422,9 +439,9 @@ export const updateAccount = [
         { name },
         { where: { accountNumber } }
       );
-      const updatedAccount = await Account.findOne({
-        where: { accountNumber }
-      });
+
+      const updatedAccount = await getAccount(accountNumber);
+
       res.status(200).json({
         message: 'Account updated', account: updatedAccount
       });
