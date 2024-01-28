@@ -333,3 +333,18 @@
 {"level":"error","message":"SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string","service":"user-service"}
 {"level":"error","message":"Server error while trying to get all accounts: SequelizeConnectionError: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string","service":"user-service"}
 {"level":"error","message":"SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string","service":"user-service"}
+{"level":"error","message":"sendSMS is not defined","service":"user-service"}
+{"level":"error","message":"Validation error","service":"user-service"}
+{"level":"error","message":"Server error while trying to get all accounts: Error: secretOrPrivateKey must have a value","service":"user-service"}
+{"level":"error","message":"secretOrPrivateKey must have a value","service":"user-service"}
+{"level":"error","message":"Server error while trying to get all accounts: Error: secretOrPrivateKey must have a value","service":"user-service"}
+{"level":"error","message":"secretOrPrivateKey must have a value","service":"user-service"}
+{"level":"error","message":"Server error while trying to get all accounts: Error: secretOrPrivateKey must have a value","service":"user-service"}
+{"level":"error","message":"secretOrPrivateKey must have a value","service":"user-service"}
+{"level":"error","message":"Server error while trying to get all accounts: Error: secretOrPrivateKey must have a value","service":"user-service"}
+{"level":"error","message":"secretOrPrivateKey must have a value","service":"user-service"}
+{"level":"error","message":"Server error while trying to get all accounts: Error: secretOrPrivateKey must have a value","service":"user-service"}
+{"level":"error","message":"secretOrPrivateKey must have a value","service":"user-service"}
+{"level":"error","message":"Server error while trying to get all accounts: Error: secretOrPrivateKey must have a value","service":"user-service"}
+{"level":"error","message":"secretOrPrivateKey must have a value","service":"user-service"}
+{"level":"error","message":"Unexpected token 'j', ...\"{\"email\": johnie.doo\"... is not valid JSON","service":"user-service"}
