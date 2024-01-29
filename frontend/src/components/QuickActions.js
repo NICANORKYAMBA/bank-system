@@ -1,4 +1,13 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  showDepositForm,
+  hideDepositForm,
+  showTransferForm,
+  hideTransferForm,
+  showWithdrawalForm,
+  hideWithdrawalForm
+} from '../redux/actions/QuickActions';
 import {
   Card,
   CardContent,
@@ -81,15 +90,13 @@ const QuickActions = ({
   handleDepositClick,
   handleTransferClick,
   handleWithdrawalClick,
-  showDepositForm,
-  showTransferForm,
-  showWithdrawalForm,
-  handleCloseDeposit,
-  handleClose,
-  handleCloseWithdrawal,
   onTransactionCreated
 }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const showDepositFormState = useSelector(state => state.quick.showDepositForm);
+  const showTransferFormState = useSelector(state => state.quick.showTransferForm);
+  const showWithdrawalFormState = useSelector(state => state.quick.showWithdrawalForm);
 
   return (
     <Card className={classes.dashboardCard}>
@@ -115,16 +122,25 @@ const QuickActions = ({
                   color='primary'
                   startIcon={<DepositIcon />}
                   className={clsx(classes.dashboardButton, classes.depositButton)}
-                  onClick={handleDepositClick}
+                  onClick={() => {
+                    handleDepositClick();
+                    dispatch(showDepositForm());
+                  }}
                   disabled={!accountsData || accountsData.length === 0}
                 >
                   Deposit
                 </Button>
               </span>
             </Tooltip>
-            <Dialog open={showDepositForm} onClose={handleCloseDeposit}>
+            <Dialog
+              open={showDepositFormState}
+              onClose={() => dispatch(hideDepositForm())}
+            >
               <DialogContent className={classes.dialogContent}>
-                <DepositForm handleClose={handleCloseDeposit} onTransactionCreated={onTransactionCreated} />
+                <DepositForm
+                  handleClose={() => dispatch(hideDepositForm())}
+                  onTransactionCreated={onTransactionCreated}
+                />
               </DialogContent>
             </Dialog>
           </Grid>
@@ -141,16 +157,25 @@ const QuickActions = ({
                   color='secondary'
                   startIcon={<TransferIcon />}
                   className={clsx(classes.dashboardButton, classes.transferButton)}
-                  onClick={handleTransferClick}
+                  onClick={() => {
+                    handleTransferClick();
+                    dispatch(showTransferForm());
+                  }}
                   disabled={!accountsData || accountsData.length === 0}
                 >
                   Transfer
                 </Button>
               </span>
             </Tooltip>
-            <Dialog open={showTransferForm} onClose={handleClose}>
+            <Dialog
+              open={showTransferFormState}
+              onClose={() => dispatch(hideTransferForm())}
+            >
               <DialogContent className={classes.dialogContent}>
-                <TransferForm handleClose={handleClose} onTransactionCreated={onTransactionCreated} />
+                <TransferForm
+                  handleClose={() => dispatch(hideTransferForm())}
+                  onTransactionCreated={onTransactionCreated}
+                />
               </DialogContent>
             </Dialog>
           </Grid>
@@ -166,16 +191,25 @@ const QuickActions = ({
                   variant='contained'
                   startIcon={<WithdrawIcon />}
                   className={clsx(classes.dashboardButton, classes.withdrawButton)}
-                  onClick={handleWithdrawalClick}
+                  onClick={() => {
+                    handleWithdrawalClick();
+                    dispatch(showWithdrawalForm());
+                  }}
                   disabled={!accountsData || accountsData.length === 0}
                 >
-                  Withdrawal
+                  Withdraw
                 </Button>
               </span>
             </Tooltip>
-            <Dialog open={showWithdrawalForm} onClose={handleCloseWithdrawal}>
+            <Dialog
+              open={showWithdrawalFormState}
+              onClose={() => dispatch(hideWithdrawalForm())}
+            >
               <DialogContent className={classes.dialogContent}>
-                <WithdrawalForm handleClose={handleCloseWithdrawal} onTransactionCreated={onTransactionCreated} />
+                <WithdrawalForm
+                  handleClose={() => dispatch(hideWithdrawalForm())}
+                  onTransactionCreated={onTransactionCreated}
+                />
               </DialogContent>
             </Dialog>
           </Grid>
