@@ -1,4 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  updateFormData,
+  validateForm,
+  setErrors,
+  submitForm,
+  setLoading,
+  setSnackbarState,
+  resetForm
+} from '../redux/actions/CreateAccountFormActions';
 import {
   TextField,
   Button,
@@ -53,38 +63,32 @@ const useStyles = makeStyles((theme) => ({
   errorIcon: {
     color: theme.palette.error.main,
     marginRight: theme.spacing(1)
+  },
+  optionalInput: {
+    fontStyle: 'italic'
   }
 }));
 
 const CreateAccountForm = ({ onAccountCreated }) => {
   const classes = useStyles();
-  const [formData, setFormData] = useState({
-    accountNumber: '',
-    name: '',
-    balance: '',
-    accountType: '',
-    currency: '',
-    status: ''
-  });
-  const [errors, setErrors] = useState({});
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-  const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();
+
+  const formData = useSelector(state => state.formData);
+  const errors = useSelector(state => state.errors);
+  const openSnackbar = useSelector(state => state.openSnackbar);
+  const snackbarMessage = useSelector(state => state.snackbarMessage);
+  const snackbarSeverity = useSelector(state => state.snackbarSeverity);
+  const loading = useSelector(state => state.loading);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData({ ...formData, [name]: value });
+    dispatch(updateFormData(name, value));
   };
 
-  const validateForm = () => {
+  const validateLocalForm = () => {
     const newErrors = {};
     const missingFields = [];
-    if (!formData.accountNumber) {
-      newErrors.accountNumber = 'Account number is required';
-      missingFields.push('Account Number');
-    }
-    if (formData.accountNumber.length !== 15) newErrors.accountNumber = 'Account number must be a 15-digit number';
     if (!formData.name) {
       newErrors.name = 'Name is required';
       missingFields.push('Name');
@@ -93,11 +97,21 @@ const CreateAccountForm = ({ onAccountCreated }) => {
       newErrors.balance = 'Balance must be a number';
       missingFields.push('Balance');
     }
-    if (!['checking', 'savings', 'credit'].includes(formData.accountType)) {
+    if (![
+      'checking',
+      'savings',
+      'credit',
+      'CD',
+      'moneyMarket',
+      'prepaid',
+      'paypal',
+      'businessChecking',
+      'studentChecking',
+      'travelersCheck'].includes(formData.accountType)) {
       newErrors.accountType = 'Invalid account type';
       missingFields.push('Account Type');
     }
-    if (!['USD', 'EUR', 'GBP'].includes(formData.currency)) {
+    if (!['USD', 'EUR', 'GBP', 'KSH'].includes(formData.currency)) {
       newErrors.currency = 'Invalid currency';
       missingFields.push('Currency');
     }
@@ -106,12 +120,13 @@ const CreateAccountForm = ({ onAccountCreated }) => {
       missingFields.push('Status');
     }
 
-    setErrors(newErrors);
+    dispatch(setErrors(newErrors));
 
     if (missingFields.length > 0) {
-      setSnackbarMessage(`Please fill in the following fields: ${missingFields.join(', ')}`);
-      setSnackbarSeverity('error');
-      setOpenSnackbar(true);
+      dispatch(setSnackbarState(true,
+        `Please fill in the following fields: ${missingFields.join(', ')}`, 'error'));
+    } else {
+      dispatch(submitForm(formData));
     }
 
     return Object.keys(newErrors).length === 0;
@@ -119,63 +134,37 @@ const CreateAccountForm = ({ onAccountCreated }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!validateForm()) {
+    dispatch(validateForm(event.target.value));
+    if (!validateLocalForm()) {
       return;
     }
-    setLoading(true);
+    dispatch(setLoading(true));
     const userId = sessionStorage.getItem('userId');
     if (!userId) {
-      setSnackbarMessage('User ID is missing. Please log in again.');
-      setSnackbarSeverity('error');
-      setOpenSnackbar(true);
-      setLoading(false);
+      dispatch(setSnackbarState(true, 'User ID is missing. Please log in again.', 'error'));
+      dispatch(setLoading(false));
       return;
     }
     try {
-      const response = await axios.post('http://localhost:5000/api/accounts', { ...formData, userId });
-      setSnackbarMessage(response.data.message);
-      setSnackbarSeverity('success');
-      setOpenSnackbar(true);
-      setFormData({
-        accountNumber: '',
-        name: '',
-        balance: '',
-        accountType: '',
-        currency: '',
-        status: ''
-      });
-      setLoading(false);
+      const response = await axios.post('http://localhost:5000/api/accounts',
+        { ...formData, userId });
+      dispatch(setSnackbarState(true, response.data.message, 'success'));
+      dispatch(resetForm());
+      dispatch(setLoading(false));
       onAccountCreated();
     } catch (error) {
-      setSnackbarMessage(error.response?.data?.message || 'An error occurred');
-      setSnackbarSeverity('error');
-      setOpenSnackbar(true);
-      setLoading(false);
+      dispatch(setSnackbarState(true, error.response?.data?.message || 'An error occurred', 'error'));
+      dispatch(setLoading(false));
     }
   };
 
   const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
+    dispatch(setSnackbarState(false));
   };
 
   return (
     <form className={classes.form} onSubmit={handleSubmit} noValidate>
       <Grid container spacing={2} className={classes.formContainer}>
-        <Grid item xs={12}>
-          <TextField
-            variant='outlined'
-            required
-            fullWidth
-            id='accountNumber'
-            label='Account Number'
-            name='accountNumber'
-            autoComplete='account-number'
-            value={formData.accountNumber}
-            onChange={handleChange}
-            error={!!errors.accountNumber}
-            helperText={errors.accountNumber || 'Must be a 15-digit number'}
-          />
-        </Grid>
         <Grid item xs={12}>
           <TextField
             variant='outlined'
@@ -221,6 +210,13 @@ const CreateAccountForm = ({ onAccountCreated }) => {
               <MenuItem value='checking'>Checking</MenuItem>
               <MenuItem value='savings'>Savings</MenuItem>
               <MenuItem value='credit'>Credit</MenuItem>
+              <MenuItem value='CD'>CD</MenuItem>
+              <MenuItem value='moneyMarket'>Money Market</MenuItem>
+              <MenuItem value='prepaid'>Prepaid</MenuItem>
+              <MenuItem value='paypal'>Paypal</MenuItem>
+              <MenuItem value='businessChecking'>Business Checking</MenuItem>
+              <MenuItem value='studentChecking'>Student Checking</MenuItem>
+              <MenuItem value='travelersCheck'>Travelers Check</MenuItem>
             </Select>
             <FormHelperText>{errors.accountType}</FormHelperText>
           </FormControl>
@@ -250,15 +246,63 @@ const CreateAccountForm = ({ onAccountCreated }) => {
               control={
                 <Switch
                   checked={formData.status === 'active'}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.checked ? 'active' : 'inactive' })}
+                  onChange={(e) => dispatch(updateFormData('status', e.target.checked ? 'active' : 'inactive'))}
                   name='status'
                   color='primary'
                 />
-              }
+      }
               label='Account Status'
             />
             <Typography variant='caption' color='error'>{errors.status}</Typography>
           </FormGroup>
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            variant='outlined'
+            fullWidth
+            id='interestRate'
+            label='Interest Rate (Optional)'
+            name='interestRate'
+            type='number'
+            autoComplete='interest-rate'
+            value={formData.interestRate}
+            onChange={handleChange}
+            className={classes.optionalInput}
+            helperText='If applicable'
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            variant='outlined'
+            fullWidth
+            id='overdraftLimit'
+            label='Overdraft Limit (Optional)'
+            name='overdraftLimit'
+            type='number'
+            autoComplete='overdraft-limit'
+            value={formData.overdraftLimit}
+            onChange={handleChange}
+            className={classes.optionalInput}
+            helperText='If applicable'
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            variant='outlined'
+            fullWidth
+            id='lastTransactionDate'
+            label='Last Transaction Date (Optional)'
+            name='lastTransactionDate'
+            type='date'
+            autoComplete='last-transaction-date'
+            value={formData.lastTransactionDate}
+            onChange={handleChange}
+            className={classes.optionalInput}
+            InputLabelProps={{
+              shrink: true
+            }}
+            helperText='If applicable'
+          />
         </Grid>
         <Grid item xs={12}>
           <Button
