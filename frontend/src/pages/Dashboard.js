@@ -5,14 +5,16 @@ import { useSelectedAccount } from '../hooks/useSelectedAccount';
 import {
   setSelectedAccount,
   setError,
-  setShowTransferForm,
-  setShowWithdrawalForm,
-  setShowDepositForm,
   setSearchTerm,
   setSearchCategory,
   fetchAllAccountsDataThunk,
   fetchSelectedAccountDataThunk
 } from '../redux/actions/DashboardActions';
+import {
+  getUserId,
+  getUserFirstName,
+  getUserLastName
+} from '../redux/selectors/userSelectors';
 
 import {
   CircularProgress,
@@ -171,7 +173,6 @@ function Dashboard ({ reload, onTransactionCreated }) {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const userData = useSelector(state => state.loginForm.userData || {});
   const dashboardState = useSelector(state => state.dashboard);
 
   const {
@@ -181,52 +182,26 @@ function Dashboard ({ reload, onTransactionCreated }) {
     loading = false,
     error = null,
     transactions = [],
-    showTransferForm = false,
-    showWithdrawalForm = false,
-    showDepositForm = false,
     searchCategory = ''
   } = dashboardState;
 
+  const userId = useSelector(getUserId);
+  const firstName = useSelector(getUserFirstName);
+  const lastName = useSelector(getUserLastName);
+
   useEffect(() => {
-    if (!userData.userId || !userData.firstName || !userData.lastName) {
+    if (!userId || !firstName || !lastName) {
       history.push('/login');
     }
-  }, [userData, history]);
+  }, [userId, firstName, lastName, history]);
 
-  useFetchAccounts(userData.userId);
+  useFetchAccounts(userId);
   useSelectedAccount(dashboardState.selectedAccount);
 
   const transactionsScrollContainerRef = useRef(null);
 
   const scrollTransactions = (scrollOffset) => {
     transactionsScrollContainerRef.current.scrollLeft += scrollOffset;
-  };
-
-  const handleTransferClick = () => {
-    dispatch(setShowTransferForm(true));
-  };
-
-  const handleClose = () => {
-    dispatch(setShowTransferForm(false));
-    if (onTransactionCreated) onTransactionCreated();
-  };
-
-  const handleWithdrawalClick = () => {
-    dispatch(setShowWithdrawalForm(true));
-  };
-
-  const handleCloseWithdrawal = () => {
-    dispatch(setShowWithdrawalForm(false));
-    if (onTransactionCreated) onTransactionCreated();
-  };
-
-  const handleDepositClick = () => {
-    dispatch(setShowDepositForm(true));
-  };
-
-  const handleCloseDeposit = () => {
-    dispatch(setShowDepositForm(false));
-    if (onTransactionCreated) onTransactionCreated();
   };
 
   const handleTransactionCreated = () => {
@@ -241,7 +216,7 @@ function Dashboard ({ reload, onTransactionCreated }) {
   };
 
   const refreshAccounts = () => {
-    dispatch(fetchAllAccountsDataThunk(userData.userId));
+    dispatch(fetchAllAccountsDataThunk(userId));
   };
 
   const handleSearchSubmit = (event) => {
@@ -267,7 +242,9 @@ function Dashboard ({ reload, onTransactionCreated }) {
           <Container
             className={classes.dashboardContainer}
             style={{
-              paddingLeft: shouldAdjustForDrawer ? theme.spacing(3) + drawerWidth : theme.spacing(3),
+              paddingLeft: shouldAdjustForDrawer
+                ? theme.spacing(3) + drawerWidth
+                : theme.spacing(3),
               paddingRight: theme.spacing(3),
               transition: theme.transitions.create(['padding-left'], {
                 easing: theme.transitions.easing.sharp,
@@ -280,7 +257,7 @@ function Dashboard ({ reload, onTransactionCreated }) {
                 <DashboardHeader
                   handleSearchChange={handleSearchChange}
                   handleSearchSubmit={handleSearchSubmit}
-                  userData={userData}
+                  userData={{ firstName, lastName }}
                   searchCategory={searchCategory}
                   handleSearchCategoryChange={
                     (event) => setSearchCategory(event.target.value)
@@ -291,7 +268,8 @@ function Dashboard ({ reload, onTransactionCreated }) {
                 <AccountsList
                   classes={classes}
                   accountsData={accountsData}
-                  setSelectedAccount={(account) => dispatch(setSelectedAccount(account))}
+                  setSelectedAccount={(account) => dispatch(
+                    setSelectedAccount(account))}
                   refreshAccounts={refreshAccounts}
                 />
               </Grid>
@@ -314,15 +292,6 @@ function Dashboard ({ reload, onTransactionCreated }) {
                 <QuickActions
                   classes={classes}
                   accountsData={accountsData}
-                  handleDepositClick={handleDepositClick}
-                  handleTransferClick={handleTransferClick}
-                  handleWithdrawalClick={handleWithdrawalClick}
-                  showDepositForm={showDepositForm}
-                  showTransferForm={showTransferForm}
-                  showWithdrawalForm={showWithdrawalForm}
-                  handleCloseDeposit={handleCloseDeposit}
-                  handleClose={handleClose}
-                  handleCloseWithdrawal={handleCloseWithdrawal}
                   onTransactionCreated={handleTransactionCreated}
                 />
               </Grid>
