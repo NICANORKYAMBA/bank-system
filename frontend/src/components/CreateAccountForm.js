@@ -1,6 +1,9 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  getUserId
+} from '../redux/selectors/userSelectors';
+import {
   updateFormData,
   validateForm,
   setErrors,
@@ -74,12 +77,14 @@ const CreateAccountForm = ({ onAccountCreated }) => {
 
   const dispatch = useDispatch();
 
-  const formData = useSelector(state => state.formData);
-  const errors = useSelector(state => state.errors);
-  const openSnackbar = useSelector(state => state.openSnackbar);
-  const snackbarMessage = useSelector(state => state.snackbarMessage);
-  const snackbarSeverity = useSelector(state => state.snackbarSeverity);
-  const loading = useSelector(state => state.loading);
+  const formData = useSelector(state => state.createAccountForm.formData);
+  const errors = useSelector(state => state.createAccountForm.errors);
+  const loading = useSelector(state => state.createAccountForm.loading);
+  const snackbarState = useSelector(state => state.createAccountForm.snackbar);
+  const openSnackbar = snackbarState.isOpen;
+  const snackbarMessage = snackbarState.message;
+  const snackbarSeverity = snackbarState.severity;
+  const userId = useSelector(getUserId);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -123,8 +128,10 @@ const CreateAccountForm = ({ onAccountCreated }) => {
     dispatch(setErrors(newErrors));
 
     if (missingFields.length > 0) {
-      dispatch(setSnackbarState(true,
-        `Please fill in the following fields: ${missingFields.join(', ')}`, 'error'));
+      dispatch(setSnackbarState(
+        true,
+        `Please fill in the following fields: ${missingFields.join(', ')}`, 'error'
+      ));
     } else {
       dispatch(submitForm(formData));
     }
@@ -139,9 +146,10 @@ const CreateAccountForm = ({ onAccountCreated }) => {
       return;
     }
     dispatch(setLoading(true));
-    const userId = sessionStorage.getItem('userId');
     if (!userId) {
-      dispatch(setSnackbarState(true, 'User ID is missing. Please log in again.', 'error'));
+      dispatch(setSnackbarState(
+        true, 'User ID is missing. Please log in again.', 'error'
+      ));
       dispatch(setLoading(false));
       return;
     }
@@ -153,7 +161,9 @@ const CreateAccountForm = ({ onAccountCreated }) => {
       dispatch(setLoading(false));
       onAccountCreated();
     } catch (error) {
-      dispatch(setSnackbarState(true, error.response?.data?.message || 'An error occurred', 'error'));
+      dispatch(setSnackbarState(
+        true, error.response?.data?.message || 'An error occurred', 'error'
+      ));
       dispatch(setLoading(false));
     }
   };
@@ -197,8 +207,17 @@ const CreateAccountForm = ({ onAccountCreated }) => {
           />
         </Grid>
         <Grid item xs={12}>
-          <FormControl variant='outlined' fullWidth required error={!!errors.accountType}>
-            <InputLabel id='accountType-label'>Account Type</InputLabel>
+          <FormControl
+            variant='outlined'
+            fullWidth required error={
+              !!errors.accountType
+            }
+          >
+            <InputLabel
+              id='accountType-label'
+            >
+              Account Type
+            </InputLabel>
             <Select
               labelId='accountType-label'
               id='accountType'
@@ -222,7 +241,10 @@ const CreateAccountForm = ({ onAccountCreated }) => {
           </FormControl>
         </Grid>
         <Grid item xs={12}>
-          <FormControl variant='outlined' fullWidth required error={!!errors.currency}>
+          <FormControl
+            variant='outlined'
+            fullWidth required error={!!errors.currency}
+          >
             <InputLabel id='currency-label'>Currency</InputLabel>
             <Select
               labelId='currency-label'
@@ -246,14 +268,22 @@ const CreateAccountForm = ({ onAccountCreated }) => {
               control={
                 <Switch
                   checked={formData.status === 'active'}
-                  onChange={(e) => dispatch(updateFormData('status', e.target.checked ? 'active' : 'inactive'))}
+                  onChange={
+                    (e) => dispatch(updateFormData(
+                      'status', e.target.checked ? 'active' : 'inactive'
+                    ))
+                  }
                   name='status'
                   color='primary'
                 />
-      }
+              }
               label='Account Status'
             />
-            <Typography variant='caption' color='error'>{errors.status}</Typography>
+            <Typography
+              variant='caption'
+              color='error'
+            >{errors.status}
+            </Typography>
           </FormGroup>
         </Grid>
         <Grid item xs={12}>
@@ -312,15 +342,26 @@ const CreateAccountForm = ({ onAccountCreated }) => {
             color='primary'
             className={classes.submit}
             disabled={loading}
-            startIcon={loading ? <CircularProgress size={24} /> : <CheckCircleOutlineIcon />}
+            startIcon={
+              loading
+                ? <CircularProgress size={24} />
+                : <CheckCircleOutlineIcon />
+            }
           >
             Create Account
           </Button>
         </Grid>
       </Grid>
-      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
         <MuiAlert
-          elevation={6} variant='filled' severity={snackbarSeverity} iconMapping={{
+          elevation={6}
+          variant='filled'
+          severity={snackbarSeverity}
+          iconMapping={{
             success: <CheckCircleOutlineIcon fontSize='inherit' />,
             error: <ErrorOutlineIcon fontSize='inherit' />
           }}

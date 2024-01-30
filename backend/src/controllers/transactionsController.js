@@ -226,23 +226,52 @@ export const getAllTransactions = [
           {
             model: Account,
             as: 'sourceTransactionAccount',
-            attributes: ['accountNumber', 'name', 'balance', 'currency']
+            attributes: [
+              'accountNumber',
+              'name',
+              'balance',
+              'currency',
+              'userId',
+              'status'
+            ]
           },
           {
             model: Account,
             as: 'destinationTransactionAccount',
-            attributes: ['accountNumber', 'name', 'balance', 'currency']
+            attributes: [
+              'accountNumber',
+              'name',
+              'balance',
+              'currency',
+              'userId',
+              'status'
+            ]
           }
+        ],
+        attributes: [
+          'id',
+          'type',
+          'amount',
+          'fee',
+          'exchangeRate',
+          'transactionReference',
+          'channel',
+          'ipAddress',
+          'deviceInformation',
+          'checkNumber',
+          'attachmentUrl',
+          'description',
+          'createdAt',
+          'updatedAt'
         ],
         limit,
         offset,
-        order: [[sort, order]]
+        order: sort ? [[sort, order]] : undefined
       });
 
       if (transactions.length > 0) {
-        const message = transactions.length === 1 ? 'transaction' : 'transactions';
         res.status(200).json({
-          message: `${transactions.length} ${message} found`,
+          message: `${transactions.length} transactions found`,
           transactions
         });
       } else {
@@ -277,12 +306,26 @@ export const getTransactionById = [
           {
             model: Account,
             as: 'sourceTransactionAccount',
-            attributes: ['accountNumber', 'name', 'balance', 'currency']
+            attributes: [
+              'accountNumber',
+              'name',
+              'balance',
+              'currency',
+              'userId',
+              'status'
+            ]
           },
           {
             model: Account,
             as: 'destinationTransactionAccount',
-            attributes: ['accountNumber', 'name', 'balance', 'currency']
+            attributes: [
+              'accountNumber',
+              'name',
+              'balance',
+              'currency',
+              'userId',
+              'status'
+            ]
           }
         ]
       });
@@ -316,6 +359,8 @@ export const getTransactionsByAccountNumber = [
   query('offset').optional().isInt({ min: 0 }).withMessage('Offset must be an integer greater than or equal to 0'),
   query('sort').optional().isIn(['createdAt', 'updatedAt', 'id']).withMessage('Sort must be one of: createdAt, updatedAt, id'),
   query('order').optional().isIn(['ASC', 'DESC']).withMessage('Order must be one of: ASC, DESC'),
+  query('type').optional().isIn(['deposit', 'withdrawal', 'transfer']).withMessage('Type must be one of: deposit, withdrawal, transfer'),
+  query('status').optional().isIn(['pending', 'completed', 'failed']).withMessage('Status must be one of: pending, completed, failed'),
 
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -356,12 +401,26 @@ export const getTransactionsByAccountNumber = [
           {
             model: Account,
             as: 'sourceTransactionAccount',
-            attributes: ['accountNumber', 'name', 'balance', 'currency']
+            attributes: [
+              'accountNumber',
+              'name',
+              'balance',
+              'currency',
+              'userId',
+              'status'
+            ]
           },
           {
             model: Account,
             as: 'destinationTransactionAccount',
-            attributes: ['accountNumber', 'name', 'balance', 'currency']
+            attributes: [
+              'accountNumber',
+              'name',
+              'balance',
+              'currency',
+              'userId',
+              'status'
+            ]
           }
         ],
         limit,
@@ -399,6 +458,8 @@ export const getTransactionsByUserId = [
   query('offset').optional().isInt({ min: 0 }).withMessage('Offset must be an integer greater than or equal to 0'),
   query('sort').optional().isIn(['createdAt', 'updatedAt', 'id']).withMessage('Sort must be one of: createdAt, updatedAt, id'),
   query('order').optional().isIn(['ASC', 'DESC']).withMessage('Order must be one of: ASC, DESC'),
+  query('type').optional().isIn(['deposit', 'withdrawal', 'transfer']).withMessage('Type must be one of: deposit, withdrawal, transfer'),
+  query('status').optional().isIn(['pending', 'completed', 'failed']).withMessage('Status must be one of: pending, completed, failed'),
 
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -426,12 +487,26 @@ export const getTransactionsByUserId = [
           {
             model: Account,
             as: 'sourceTransactionAccount',
-            attributes: ['accountNumber', 'name', 'balance', 'currency']
+            attributes: [
+              'accountNumber',
+              'name',
+              'balance',
+              'currency',
+              'userId',
+              'status'
+            ]
           },
           {
             model: Account,
             as: 'destinationTransactionAccount',
-            attributes: ['accountNumber', 'name', 'balance', 'currency']
+            attributes: [
+              'accountNumber',
+              'name',
+              'balance',
+              'currency',
+              'userId',
+              'status'
+            ]
           }
         ],
         limit,
@@ -469,6 +544,8 @@ export const getTransactionsByAccountId = [
   query('offset').optional().isInt({ min: 0 }).withMessage('Offset must be an integer greater than or equal to 0'),
   query('sort').optional().isIn(['createdAt', 'updatedAt', 'id']).withMessage('Sort must be one of: createdAt, updatedAt, id'),
   query('order').optional().isIn(['ASC', 'DESC']).withMessage('Order must be one of: ASC, DESC'),
+  query('type').optional().isIn(['deposit', 'withdrawal', 'transfer']).withMessage('Type must be one of: deposit, withdrawal, transfer'),
+  query('status').optional().isIn(['pending', 'completed', 'failed']).withMessage('Status must be one of: pending, completed, failed'),
 
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -494,12 +571,26 @@ export const getTransactionsByAccountId = [
           {
             model: Account,
             as: 'sourceTransactionAccount',
-            attributes: ['accountNumber', 'name', 'balance', 'currency']
+            attributes: [
+              'accountNumber',
+              'name',
+              'balance',
+              'currency',
+              'userId',
+              'status'
+            ]
           },
           {
             model: Account,
             as: 'destinationTransactionAccount',
-            attributes: ['accountNumber', 'name', 'balance', 'currency']
+            attributes: [
+              'accountNumber',
+              'name',
+              'balance',
+              'currency',
+              'userId',
+              'status'
+            ]
           }
         ],
         limit,

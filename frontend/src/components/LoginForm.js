@@ -1,8 +1,8 @@
 import React from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { setUserData } from '../redux/actions/userActions';
 import {
-  setUserData,
   updateFormData,
   setAuthToken,
   clearFormData,
@@ -92,7 +92,8 @@ function LoginForm () {
   const openSnackbar = useSelector(state => state.loginForm.openSnackbar || false);
   const snackbarMessage = useSelector(state => state.loginForm.snackbarMessage || '');
   const showPassword = useSelector(state => state.loginForm.showPassword || false);
-  const showConfirmPassword = useSelector(state => state.loginForm.showConfirmPassword || false);
+  const showConfirmPassword = useSelector(
+    state => state.loginForm.showConfirmPassword || false);
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
@@ -125,20 +126,29 @@ function LoginForm () {
     e.preventDefault();
 
     if (!formData.email) {
-      dispatch(setFormError({ key: FIELD_EMAIL, value: 'Please enter your email.' }));
+      dispatch(setFormError({
+        key: FIELD_EMAIL,
+        value: 'Please enter your email.'
+      }));
       dispatch(setSnackbarMessage('Please enter your email.'));
       dispatch(setOpenSnackbar(true));
       return;
     }
     if (!formData.password) {
-      dispatch(setFormError({ key: FIELD_PASSWORD, value: 'Please enter your password.' }));
+      dispatch(setFormError({
+        key: FIELD_PASSWORD,
+        value: 'Please enter your password.'
+      }));
       dispatch(setSnackbarMessage('Please enter your password.'));
       dispatch(setOpenSnackbar(true));
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      dispatch(setFormError({ key: FIELD_CONFIRM_PASSWORD, value: 'Passwords do not match.' }));
+      dispatch(setFormError({
+        key: FIELD_CONFIRM_PASSWORD,
+        value: 'Passwords do not match.'
+      }));
       dispatch(setSnackbarMessage('Passwords do not match.'));
       dispatch(setOpenSnackbar(true));
       return;
@@ -152,7 +162,9 @@ function LoginForm () {
       });
 
       if (response.status === 200) {
-        dispatch(setUserData(response.data.userData));
+        const { userId, firstName, lastName } = response.data.userData;
+
+        dispatch(setUserData({ userId, firstName, lastName }));
         dispatch(setSnackbarMessage('Login successful! Redirecting...'));
         dispatch(setOpenSnackbar(true));
         dispatch(setAuthToken(response.data.token));
@@ -181,7 +193,11 @@ function LoginForm () {
   return (
     <Grid container justifyContent='center'>
       <Paper className={classes.loginForm}>
-        <Typography variant='h4' align='center' className={classes.title}>
+        <Typography
+          variant='h4'
+          align='center'
+          className={classes.title}
+        >
           Login
         </Typography>
         <form noValidate autoComplete='off' onSubmit={handleSubmit}>
@@ -247,7 +263,11 @@ function LoginForm () {
             error={!!errors.confirmPassword}
             helperText={errors.confirmPassword || ' '}
           />
-          <Grid container direction='column' justifyContent='center' alignItems='center'>
+          <Grid
+            container direction='column'
+            justifyContent='center'
+            alignItems='center'
+          >
             <FormControlLabel
               className={classes.loginCheckbox}
               control={<Checkbox value='remember' color='primary' />}
@@ -263,15 +283,30 @@ function LoginForm () {
             >
               {isSubmitting ? <CircularProgress size={24} /> : 'Login'}
             </Button>
-            <Typography variant='body2' style={{ marginTop: '1rem', textAlign: 'center' }}>
+            <Typography
+              variant='body2'
+              style={{ marginTop: '1rem', textAlign: 'center' }}
+            >
               Forgot password?
-              <Button variant='text' color='primary' component={Link} to='#'>
+              <Button
+                variant='text'
+                color='primary'
+                component={Link} to='#'
+              >
                 Click here
               </Button>
             </Typography>
-            <Typography variant='body2' style={{ marginTop: '1rem', textAlign: 'center' }}>
+            <Typography
+              variant='body2'
+              style={{ marginTop: '1rem', textAlign: 'center' }}
+            >
               Don't have an account?
-              <Button variant='text' color='primary' component={Link} to='/registration'>
+              <Button
+                variant='text'
+                color='primary'
+                component={Link}
+                to='/registration'
+              >
                 Register here
               </Button>
             </Typography>
