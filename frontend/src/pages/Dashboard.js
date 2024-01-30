@@ -291,11 +291,10 @@ function Dashboard ({ reload, onTransactionCreated }) {
                 <AccountsList
                   classes={classes}
                   accountsData={accountsData}
-                  setSelectedAccount={setSelectedAccount}
+                  setSelectedAccount={(account) => dispatch(setSelectedAccount(account))}
                   refreshAccounts={refreshAccounts}
                 />
               </Grid>
-
               <Grid item xs={12} sm={8} md={6}>
                 <AccountSummary
                   classes={classes}

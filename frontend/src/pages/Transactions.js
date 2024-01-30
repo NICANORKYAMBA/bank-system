@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Container,
   Typography,
@@ -14,13 +15,23 @@ import {
   Select,
   MenuItem
 } from '@material-ui/core';
-import { fetchTransactions, fetchAccounts } from '../api/api';
 import QuickActions from '../components/QuickActions';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import CallMadeIcon from '@material-ui/icons/CallMade';
 import CallReceivedIcon from '@material-ui/icons/CallReceived';
+import {
+  fetchAccounts,
+  fetchTransactions,
+  setFilterFromAccount,
+  setFilterToAccount,
+  setFilterTransactionType,
+  clearFilters,
+  hideForms,
+  incrementTransactionCount
+} from '../redux/actions/TransactionActions';
+import { selectFilteredTransactions } from '../redux/selectors/TransactionSelectors';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -52,58 +63,49 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const formatDate = (dateString) => {
-  const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+  const options = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  };
   return new Date(dateString).toLocaleDateString('en-US', options);
 };
 
 const Transactions = () => {
   const classes = useStyles();
-  const [accounts, setAccounts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [showDepositForm, setShowDepositForm] = useState(false);
-  const [showTransferForm, setShowTransferForm] = useState(false);
-  const [showWithdrawalForm, setShowWithdrawalForm] = useState(false);
-  const [transactionCount, setTransactionCount] = useState(0);
-  const [filterFromAccount, setFilterFromAccount] = useState('');
-  const [filterToAccount, setFilterToAccount] = useState('');
-  const [allTransactions, setAllTransactions] = useState([]);
-  const [filterTransactionType, setFilterTransactionType] = useState('');
+  const dispatch = useDispatch();
+  const transactionState = useSelector(state => state.transaction);
+
+  const {
+    data: {
+      accounts
+    },
+    loading,
+    error,
+    showDepositForm,
+    showTransferForm,
+    showWithdrawalForm,
+    filterFromAccount,
+    filterToAccount,
+    filterTransactionType
+  } = transactionState;
+
+  const filteredTransactions = useSelector(
+    state => selectFilteredTransactions(state,
+      filterFromAccount, filterToAccount, filterTransactionType));
+
+  const userData = useSelector(state => state.loginForm.userData || {});
 
   useEffect(() => {
-    const userId = sessionStorage.getItem('userId');
-    fetchTransactions(userId, 500, 0, 'createdAt', 'DESC')
-      .then(data => {
-        setAllTransactions(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        setError(err.message);
-        setLoading(false);
-      });
-
-    fetchAccounts(userId)
-      .then(accountsData => {
-        setAccounts(accountsData);
-      })
-      .catch(err => {
-        console.log('Failed to fetch accounts:', err);
-      });
-  }, [transactionCount]);
-
-  const filteredTransactions = useMemo(() => {
-    return allTransactions.filter(transaction =>
-      (!filterFromAccount || transaction.sourceTransactionAccount.accountNumber.includes(filterFromAccount)) &&
-      (!filterToAccount || transaction.destinationTransactionAccount.accountNumber.includes(filterToAccount)) &&
-      (!filterTransactionType || transaction.type === filterTransactionType)
-    );
-  }, [allTransactions, filterFromAccount, filterToAccount, filterTransactionType]);
-
-  const clearFilters = () => {
-    setFilterFromAccount('');
-    setFilterToAccount('');
-    setFilterTransactionType('');
-  };
+    if (userData.userId) {
+      dispatch(fetchTransactions(userData.userId, 500, 0, 'createdAt', 'DESC'));
+      dispatch(fetchAccounts(userData.userId));
+    }
+  }, [userData.userId, dispatch]);
 
   const getTransactionIcon = (type) => {
     switch (type) {
@@ -118,19 +120,17 @@ const Transactions = () => {
     }
   };
 
-  const handleDepositClick = () => setShowDepositForm(true);
-  const handleTransferClick = () => setShowTransferForm(true);
-  const handleWithdrawalClick = () => setShowWithdrawalForm(true);
+  const handleDepositClick = () => dispatch(showDepositForm());
+  const handleTransferClick = () => dispatch(showTransferForm());
+  const handleWithdrawalClick = () => dispatch(showWithdrawalForm());
   const handleClose = () => {
-    setShowDepositForm(false);
-    setShowTransferForm(false);
-    setShowWithdrawalForm(false);
+    dispatch(hideForms());
   };
 
-  const userFirstName = sessionStorage.getItem('firstName') || 'User';
+  const userFirstName = userData.firstName || 'User';
 
   const handleTransactionCreated = () => {
-    setTransactionCount(count => count + 1);
+    dispatch(incrementTransactionCount());
   };
 
   return (
@@ -143,17 +143,23 @@ const Transactions = () => {
           label='Filter From Account'
           variant='outlined'
           value={filterFromAccount}
-          onChange={(e) => setFilterFromAccount(e.target.value)}
+          onChange={(e) => {
+            dispatch(setFilterFromAccount(e.target.value));
+          }}
         />
         <TextField
           label='Filter To Account'
           variant='outlined'
           value={filterToAccount}
-          onChange={(e) => setFilterToAccount(e.target.value)}
+          onChange={(e) => {
+            dispatch(setFilterToAccount(e.target.value));
+          }}
         />
         <Select
           value={filterTransactionType}
-          onChange={(e) => setFilterTransactionType(e.target.value)}
+          onChange={(e) => {
+            dispatch(setFilterTransactionType(e.target.value));
+          }}
           displayEmpty
           inputProps={{ 'aria-label': 'Without label' }}
         >
@@ -164,7 +170,11 @@ const Transactions = () => {
           <MenuItem value='withdrawal'>Withdrawal</MenuItem>
           <MenuItem value='transfer'>Transfer</MenuItem>
         </Select>
-        <Button variant='contained' color='secondary' onClick={clearFilters}>
+        <Button
+          variant='contained'
+          color='secondary'
+          onClick={() => dispatch(clearFilters())}
+        >
           Clear Filters
         </Button>
       </Box>
@@ -177,7 +187,13 @@ const Transactions = () => {
         </Typography>
       )}
       {!loading && !error && filteredTransactions.length === 0 && (
-        <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center' minHeight='50vh'>
+        <Box
+          display='flex'
+          flexDirection='column'
+          alignItems='center'
+          justifyContent='center'
+          minHeight='50vh'
+        >
           <Typography variant='h5' gutterBottom>
             Welcome, {userFirstName}!
           </Typography>
@@ -196,7 +212,6 @@ const Transactions = () => {
             handleCloseDeposit={handleClose}
             handleClose={handleClose}
             handleCloseWithdrawal={handleClose}
-            setTransactionCount={setTransactionCount}
             onTransactionCreated={handleTransactionCreated}
           />
         </Box>

@@ -86,22 +86,25 @@ export const fetchAllAccountsDataThunk = (userId) => async (dispatch) => {
 };
 
 export const fetchSelectedAccountDataThunk = (selectedAccountId) => async (dispatch) => {
- if (selectedAccountId) {
+  if (selectedAccountId) {
     dispatch(setLoading(true));
     try {
-       const accountData = await fetchAccount(selectedAccountId);
+      const accountData = await fetchAccount(selectedAccountId);
       dispatch(setSelectedAccountData(accountData));
-       
+
       const transactionsData = await fetchTransactionsByAccountId(selectedAccountId);
       dispatch(setTransactions(transactionsData));
+
+      dispatch(setLoading(false));
 
       return accountData;
     } catch (error) {
       console.error(error);
       dispatch(setError('Error fetching data for selected account'));
+    } finally {
+      dispatch(setLoading(false));
     }
-    dispatch(setLoading(false));
- }
+  }
 };
 
 export const handleTransactionCreatedThunk = (selectedAccountId) => async (dispatch) => {

@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, Typography, IconButton, Paper, Chip, Avatar, useMediaQuery, Box } from '@material-ui/core';
+import {
+  Card,
+  CardContent,
+  Typography,
+  IconButton,
+  Paper,
+  Chip,
+  Avatar,
+  useMediaQuery,
+  Box
+} from '@material-ui/core';
 import { useTheme, makeStyles } from '@material-ui/core/styles';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -67,7 +77,6 @@ const TransactionsList = ({
 
   useEffect(() => {
     setCurrentPage(0);
-    // Optionally, if you have a ref to a scrollable container, you may want to reset its scroll position
     if (transactionsScrollContainerRef.current) {
       transactionsScrollContainerRef.current.scrollTo(0, 0);
     }
