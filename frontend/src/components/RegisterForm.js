@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, Link } from 'react-router-dom';
+import { setUserData } from '../redux/actions/userActions';
 import {
-  setUserData,
   updateFormData,
   clearFormData,
   setFormError,
@@ -209,9 +209,9 @@ const RegisterForm = () => {
       });
 
       if (response.status === 201) {
-        const user = response.data.userData;
+        const { userId, firstName, lastName } = response.data.userData;
 
-        dispatch(setUserData(user));
+        dispatch(setUserData({ userId, firstName, lastName }));
         dispatch(setSnackbarMessage('Registration successful! Redirecting...'));
         dispatch(setOpenSnackbar(true));
 
@@ -245,11 +245,18 @@ const RegisterForm = () => {
     <Grid container justifyContent='center'>
       <Paper>
         <div className={classes.registerForm}>
-          <Typography variant='h4' align='center' className={classes.title}>
+          <Typography
+            variant='h4'
+            align='center'
+            className={classes.title}
+          >
             Register
           </Typography>
           {errorMessage && <Typography color='error'>{errorMessage}</Typography>}
-          <form noValidate autoComplete='off' onSubmit={handleSubmit}>
+          <form
+            noValidate autoComplete='off'
+            onSubmit={handleSubmit}
+          >
             <TextField
               label='Email'
               type='email'
