@@ -1,6 +1,10 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  getUserId,
+  getUserFirstName
+} from '../redux/selectors/userSelectors';
+import {
   Container,
   Typography,
   CircularProgress,
@@ -31,7 +35,9 @@ import {
   hideForms,
   incrementTransactionCount
 } from '../redux/actions/TransactionActions';
-import { selectFilteredTransactions } from '../redux/selectors/TransactionSelectors';
+import {
+  selectFilteredTransactions
+} from '../redux/selectors/TransactionSelectors';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -98,14 +104,15 @@ const Transactions = () => {
     state => selectFilteredTransactions(state,
       filterFromAccount, filterToAccount, filterTransactionType));
 
-  const userData = useSelector(state => state.loginForm.userData || {});
+  const userId = useSelector(getUserId);
+  const firstName = useSelector(getUserFirstName);
 
   useEffect(() => {
-    if (userData.userId) {
-      dispatch(fetchTransactions(userData.userId, 500, 0, 'createdAt', 'DESC'));
-      dispatch(fetchAccounts(userData.userId));
+    if (userId) {
+      dispatch(fetchTransactions(userId, 500, 0, 'createdAt', 'DESC'));
+      dispatch(fetchAccounts(userId));
     }
-  }, [userData.userId, dispatch]);
+  }, [userId, dispatch]);
 
   const getTransactionIcon = (type) => {
     switch (type) {
@@ -127,7 +134,7 @@ const Transactions = () => {
     dispatch(hideForms());
   };
 
-  const userFirstName = userData.firstName || 'User';
+  const userFirstName = firstName || 'User';
 
   const handleTransactionCreated = () => {
     dispatch(incrementTransactionCount());
@@ -216,33 +223,47 @@ const Transactions = () => {
           />
         </Box>
       )}
-      {!loading && !error && filteredTransactions.length > 0 && filteredTransactions.map((transaction) => (
-        <Card key={transaction.id} className={classes.card}>
-          <CardContent className={classes.cardContent}>
-            <div>
-              <Typography variant='h6' component='h2'>
-                {getTransactionIcon(transaction.type)}
-                {transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
-              </Typography>
-              <Typography color='textSecondary'>
-                {formatDate(transaction.createdAt)}
-              </Typography>
-            </div>
-            <div>
-              <Typography variant='h5'>
-                <MonetizationOnIcon className={classes.icon} color='action' />
-                {transaction.amount}
-              </Typography>
-              {transaction.sourceTransactionAccount && (
-                <Chip label={`From: ${transaction.sourceTransactionAccount.accountNumber}`} className={classes.chip} />
-              )}
-              {transaction.destinationTransactionAccount && (
-                <Chip label={`To: ${transaction.destinationTransactionAccount.accountNumber}`} className={classes.chip} />
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+      {!loading && !error && filteredTransactions.length > 0 &&
+        filteredTransactions.map((transaction) => (
+          <Card key={transaction.id} className={classes.card}>
+            <CardContent className={classes.cardContent}>
+              <div>
+                <Typography variant='h6' component='h2'>
+                  {getTransactionIcon(transaction.type)}
+                  {transaction.type.charAt(0).toUpperCase() +
+                    transaction.type.slice(1)}
+                </Typography>
+                <Typography color='textSecondary'>
+                  {formatDate(transaction.createdAt)}
+                </Typography>
+                <Typography color='textSecondary'>
+                  Fee: {transaction.fee}
+                </Typography>
+                <Typography color='textSecondary'>
+                  Exchange Rate: {transaction.exchangeRate}
+                </Typography>
+              </div>
+              <div>
+                <Typography variant='h5'>
+                  <MonetizationOnIcon className={classes.icon} color='action' />
+                  {transaction.amount}
+                </Typography>
+                {transaction.sourceTransactionAccount && (
+                  <Chip
+                    label={`From: ${transaction.sourceTransactionAccount.accountNumber}`}
+                    className={classes.chip}
+                  />
+                )}
+                {transaction.destinationTransactionAccount && (
+                  <Chip
+                    label={`To: ${transaction.destinationTransactionAccount.accountNumber}`}
+                    className={classes.chip}
+                  />
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
     </Container>
   );
 };
