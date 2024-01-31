@@ -175,9 +175,12 @@ export const createUser = [
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
-          phoneNumber: user.phoneNumber,
-          dateOfBirth: user.dateOfBirth,
-          isAdmin: user.isAdmin
+          phoneNumber: user.phoneNumber ? user.phoneNumber : 'No phone number available',
+          dateOfBirth: user.dateOfBirth ? user.dateOfBirth : 'No date of birth available',
+          isAdmin: user.isAdmin !== null ? user.isAdmin : 'No admin status available',
+          addresses: user.Addresses ? user.Addresses : 'No addresses available',
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt
         }
       });
     } catch (err) {
@@ -238,7 +241,10 @@ export const loginUser = [
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
-          addresses: user.Addresses
+          phoneNumber: user.phoneNumber ? user.phoneNumber : 'No phone number available',
+          dateOfBirth: user.dateOfBirth ? user.dateOfBirth : 'No date of birth available',
+          isAdmin: user.isAdmin !== null ? user.isAdmin : 'No admin status available',
+          addresses: user.Addresses ? user.Addresses : 'No addresses available'
         }
       });
     } catch (err) {

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, Link } from 'react-router-dom';
-import { setUserData } from '../redux/actions/userActions';
+import { setUserData, setUserAddress } from '../redux/actions/userActions';
 import {
   updateFormData,
   clearFormData,
@@ -209,9 +209,20 @@ const RegisterForm = () => {
       });
 
       if (response.status === 201) {
-        const { userId, firstName, lastName } = response.data.userData;
+        const {
+          userId,
+          firstName,
+          lastName,
+          email,
+          phoneNumber,
+          dateOfBirth,
+          addresses
+        } = response.data.userData;
 
-        dispatch(setUserData({ userId, firstName, lastName }));
+        dispatch(setUserData({
+          userId, firstName, lastName, email, phoneNumber, dateOfBirth
+        }));
+        dispatch(setUserAddress(addresses));
         dispatch(setSnackbarMessage('Registration successful! Redirecting...'));
         dispatch(setOpenSnackbar(true));
 
