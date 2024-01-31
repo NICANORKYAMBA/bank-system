@@ -241,6 +241,9 @@ export const loginUser = [
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
+          phoneNumber: user.phoneNumber,
+          dateOfBirth: user.dateOfBirth,
+          isAdmin: user.isAdmin,
           addresses: user.Addresses
         }
       });
