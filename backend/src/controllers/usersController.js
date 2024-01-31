@@ -177,7 +177,10 @@ export const createUser = [
           email: user.email,
           phoneNumber: user.phoneNumber,
           dateOfBirth: user.dateOfBirth,
-          isAdmin: user.isAdmin
+          isAdmin: user.isAdmin,
+          addresses: user.Addresses,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt
         }
       });
     } catch (err) {
