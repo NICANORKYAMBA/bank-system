@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUserData } from '../redux/actions/userActions';
+import { setUserData, setUserAddress } from '../redux/actions/userActions';
 import {
   updateFormData,
   setAuthToken,
@@ -162,9 +162,21 @@ function LoginForm () {
       });
 
       if (response.status === 200) {
-        const { userId, firstName, lastName } = response.data.userData;
+        const {
+          userId,
+          firstName,
+          lastName,
+          email,
+          phoneNumber,
+          dateOfBirth,
+          isAdmin,
+          addresses
+        } = response.data.userData;
 
-        dispatch(setUserData({ userId, firstName, lastName }));
+        dispatch(setUserData({
+          userId, firstName, lastName, email, phoneNumber, dateOfBirth, isAdmin
+        }));
+        dispatch(setUserAddress(addresses));
         dispatch(setSnackbarMessage('Login successful! Redirecting...'));
         dispatch(setOpenSnackbar(true));
         dispatch(setAuthToken(response.data.token));
@@ -200,7 +212,9 @@ function LoginForm () {
         >
           Login
         </Typography>
-        <form noValidate autoComplete='off' onSubmit={handleSubmit}>
+        <form
+          noValidate autoComplete='off'
+          onSubmit={handleSubmit}>
           <TextField
             className={classes.loginInput}
             label='Email'
