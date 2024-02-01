@@ -1,20 +1,24 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useFetchAccounts } from '../hooks/useFetchAccounts';
-import { useSelectedAccount } from '../hooks/useSelectedAccount';
 import {
-  setSelectedAccount,
-  setError,
-  setSearchTerm,
-  setSearchCategory,
   fetchAllAccountsDataThunk,
-  fetchSelectedAccountDataThunk
-} from '../redux/actions/DashboardActions';
+  fetchSelectedAccountDataThunk,
+  setError
+} from '../redux/actions/userActions';
+
 import {
   getUserId,
   getUserFirstName,
-  getUserLastName
+  getUserLastName,
+  getUserSelectedAccount,
+  getUserAccountsData,
+  getUserTransactions
 } from '../redux/selectors/userSelectors';
+
+import {
+  setSearchTerm,
+  setSearchCategory
+} from '../redux/actions/DashboardActions';
 
 import {
   CircularProgress,
@@ -157,7 +161,10 @@ const useDashboardStyles = makeStyles((theme) => ({
   dashboardCardButtonPaperTitle: {
     fontWeight: 'bold',
     color: theme.palette.primary.main
-  }
+  },
+  selectedTableRow: {
+    backgroundColor: theme.palette.success.light,
+ },
 }));
 
 function Alert (props) {
@@ -169,34 +176,41 @@ function Dashboard ({ reload, onTransactionCreated }) {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const drawerWidth = 240;
   const shouldAdjustForDrawer = !isMobile;
-  const classes = useDashboardStyles({ drawerWidth, shouldAdjustForDrawer });
+  const classes = useDashboardStyles({
+    drawerWidth,
+    shouldAdjustForDrawer
+  });
   const history = useHistory();
   const dispatch = useDispatch();
-
-  const dashboardState = useSelector(state => state.dashboard);
-
-  const {
-    selectedAccount = {},
-    selectedAccountData = {},
-    accountsData = [],
-    loading = false,
-    error = null,
-    transactions = [],
-    searchCategory = ''
-  } = dashboardState;
 
   const userId = useSelector(getUserId);
   const firstName = useSelector(getUserFirstName);
   const lastName = useSelector(getUserLastName);
+  const selectedAccount = useSelector(getUserSelectedAccount);
+  const transactions = useSelector(getUserTransactions);
+  const accountsData = useSelector(getUserAccountsData);
 
   useEffect(() => {
-    if (!userId || !firstName || !lastName) {
+    if (userId) {
+      dispatch(fetchAllAccountsDataThunk(userId));
+    } else {
       history.push('/login');
     }
-  }, [userId, firstName, lastName, history]);
+  }, [userId, dispatch, history]);
 
-  useFetchAccounts(userId);
-  useSelectedAccount(dashboardState.selectedAccount);
+  const handleAccountClick = (account) => {
+    dispatch(fetchSelectedAccountDataThunk(account.id));
+  };
+
+  const refreshAccounts = () => {
+    if (userId) {
+      dispatch(fetchAllAccountsDataThunk(userId));
+    }
+  };
+
+  const loading = useSelector(state => state.dashboard.loading);
+  const error = useSelector(state => state.dashboard.error);
+  const searchCategory = useSelector(state => state.dashboard.searchCategory);
 
   const transactionsScrollContainerRef = useRef(null);
 
@@ -207,21 +221,17 @@ function Dashboard ({ reload, onTransactionCreated }) {
   const handleTransactionCreated = () => {
     if (selectedAccount) {
       dispatch(fetchSelectedAccountDataThunk(selectedAccount.id));
-      dispatch(fetchAllAccountsDataThunk());
     }
   };
 
   const handleSearchChange = (event) => {
+    // Assuming setSearchTerm action creator exists
     dispatch(setSearchTerm(event.target.value));
-  };
-
-  const refreshAccounts = () => {
-    dispatch(fetchAllAccountsDataThunk(userId));
   };
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
-    console.log(`Searching transactions for: ${dashboardState.searchTerm}`);
+    console.log(`Searching transactions for: ${searchCategory}`);
     // Perform search logic here
   };
 
@@ -268,15 +278,14 @@ function Dashboard ({ reload, onTransactionCreated }) {
                 <AccountsList
                   classes={classes}
                   accountsData={accountsData}
-                  setSelectedAccount={(account) => dispatch(
-                    setSelectedAccount(account))}
+                  setSelectedAccount={handleAccountClick}
                   refreshAccounts={refreshAccounts}
                 />
               </Grid>
               <Grid item xs={12} sm={8} md={6}>
                 <AccountSummary
                   classes={classes}
-                  selectedAccount={selectedAccountData}
+                  selectedAccount={selectedAccount}
                 />
               </Grid>
               <Grid item xs={12} sm={4} md={6}>
@@ -290,8 +299,6 @@ function Dashboard ({ reload, onTransactionCreated }) {
               </Grid>
               <Grid item xs={12} sm={4} md={6}>
                 <QuickActions
-                  classes={classes}
-                  accountsData={accountsData}
                   onTransactionCreated={handleTransactionCreated}
                 />
               </Grid>

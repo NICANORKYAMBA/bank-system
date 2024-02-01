@@ -1,27 +1,15 @@
 import {
   SET_SELECTED_ACCOUNT,
-  SET_SELECTED_ACCOUNT_DATA,
-  SET_ACCOUNTS_DATA,
   SET_LOADING,
-    SET_ERROR,
-    SET_TRANSACTIONS,
-  SET_SHOW_DEPOSIT_FORM,
-  SET_SHOW_TRANSFER_FORM,
-  SET_SHOW_WITHDRAWAL_FORM,
+  SET_ERROR,
   SET_SEARCH_CATEGORY,
   SET_SEARCH_TERM
 } from '../actions/DashboardActions';
 
 const initialState = {
   selectedAccount: null,
-  selectedAccountData: null,
-  accountsData: [],
   loading: false,
   error: null,
-    transactions: [],
-  showTransferForm: false,
-  showWithdrawalForm: false,
-  showDepositForm: false,
   searchTerm: '',
   searchCategory: ''
 };
@@ -33,16 +21,6 @@ const dashboardReducer = (state = initialState, action) => {
         ...state,
         selectedAccount: action.payload
       };
-    case SET_SELECTED_ACCOUNT_DATA:
-      return {
-        ...state,
-        selectedAccountData: action.payload
-      };
-    case SET_ACCOUNTS_DATA:
-      return {
-        ...state,
-        accountsData: action.payload
-      };
     case SET_LOADING:
       return {
         ...state,
@@ -52,26 +30,6 @@ const dashboardReducer = (state = initialState, action) => {
       return {
         ...state,
         error: action.payload
-      };
-    case SET_TRANSACTIONS:
-      return {
-        ...state,
-        transactions: action.payload
-      };
-    case SET_SHOW_TRANSFER_FORM:
-      return {
-        ...state,
-        showTransferForm: action.payload
-      };
-    case SET_SHOW_WITHDRAWAL_FORM:
-      return {
-        ...state,
-        showWithdrawalForm: action.payload
-      };
-    case SET_SHOW_DEPOSIT_FORM:
-      return {
-        ...state,
-        showDepositForm: action.payload
       };
     case SET_SEARCH_TERM:
       return {

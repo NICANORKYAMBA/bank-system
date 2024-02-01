@@ -1,4 +1,11 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getSelectedAccountId
+} from '../redux/selectors/userSelectors';
+import {
+  setSelectedAccountId
+} from '../redux/actions/userActions';
 import {
   Card,
   CardContent,
@@ -34,6 +41,9 @@ const AccountsList = ({
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const itemsPerPage = 2;
 
+  const dispatch = useDispatch();
+  const selectedAccountId = useSelector(getSelectedAccountId);
+
   const handleNextPage = () => {
     setCurrentPage(prevPage => prevPage + 1);
     refreshAccounts();
@@ -53,6 +63,7 @@ const AccountsList = ({
   };
 
   const handleAccountClick = (account) => {
+    dispatch(setSelectedAccountId(account.id));
     setSelectedAccount(account);
   };
 
@@ -65,14 +76,28 @@ const AccountsList = ({
   return (
     <Card className={classes.dashboardCard} elevation={2}>
       <CardContent>
-        <Typography variant='h5' component='h2' gutterBottom style={{ display: 'flex', alignItems: 'center', color: theme.palette.primary.main }}>
-          <AccountCircleIcon style={{ marginRight: theme.spacing(1) }} /> Accounts
+        <Typography
+          variant='h5'
+          component='h2'
+          gutterBottom style={{
+            display: 'flex',
+            alignItems: 'center',
+            color: theme.palette.primary.main
+          }}
+        >
+          <AccountCircleIcon
+            style={{
+              marginRight: theme.spacing(1)
+            }}
+          />
+          Accounts
         </Typography>
         {!accountsData || accountsData.length === 0
           ? (
             <Box textAlign='center' color={theme.palette.text.secondary}>
               <Typography variant='body1' gutterBottom>
-                You currently have no accounts. Click the button below to create a new one.
+                You currently have no accounts.
+                Click the button below to create a new one.
               </Typography>
               <Button
                 variant='contained'
@@ -87,7 +112,10 @@ const AccountsList = ({
             )
           : (
             <>
-              <TableContainer component={Paper} style={{ marginTop: theme.spacing(2) }}>
+              <TableContainer
+                component={Paper}
+                style={{ marginTop: theme.spacing(2) }}
+              >
                 <Table aria-label='simple table'>
                   <TableHead>
                     <TableRow>
@@ -104,7 +132,7 @@ const AccountsList = ({
                             hover
                             onClick={() => handleAccountClick(account)}
                             style={{ cursor: 'pointer' }}
-                            className={classes.tableRow}
+                            className={account.id === selectedAccountId ? classes.selectedTableRow : classes.tableRow}
                           >
                             <TableCell component='th' scope='row'>
                               {account.name}
@@ -114,8 +142,18 @@ const AccountsList = ({
                           )
                         : (
                           <TableRow key={`empty-${index}`}>
-                            <TableCell colSpan={2} style={{ backgroundColor: theme.palette.background.default }}>
-                              <Box display='flex' justifyContent='center' alignItems='center' height='100%'>
+                            <TableCell
+                              colSpan={2}
+                              style={{
+                                backgroundColor: theme.palette.background.default
+                              }}
+                            >
+                              <Box
+                                display='flex'
+                                justifyContent='center'
+                                alignItems='center'
+                                height='100%'
+                              >
                                 Empty Slot
                               </Box>
                             </TableCell>
@@ -125,14 +163,32 @@ const AccountsList = ({
                   </TableBody>
                 </Table>
               </TableContainer>
-              <Box display='flex' justifyContent='center' alignItems='center' marginTop={theme.spacing(1)}>
-                <IconButton onClick={handlePrevPage} disabled={currentPage === 0} size='small'>
+              <Box
+                display='flex'
+                justifyContent='center'
+                alignItems='center'
+                marginTop={theme.spacing(1)}
+              >
+                <IconButton
+                  onClick={handlePrevPage}
+                  disabled={currentPage === 0}
+                  size='small'
+                >
                   <ChevronLeftIcon />
                 </IconButton>
-                <Typography variant='body2' style={{ margin: `0 ${theme.spacing(1)}px` }}>
+                <Typography
+                  variant='body2'
+                  style={{
+                    margin: `0 ${theme.spacing(1)}px`
+                  }}
+                >
                   Page {currentPage + 1} of {Math.ceil(accountsData.length / itemsPerPage)}
                 </Typography>
-                <IconButton onClick={handleNextPage} disabled={isLastPage} size='small'>
+                <IconButton
+                  onClick={handleNextPage}
+                  disabled={isLastPage}
+                  size='small'
+                >
                   <ChevronRightIcon />
                 </IconButton>
               </Box>
