@@ -8,15 +8,15 @@ import createAccountFormReducer from './reducers/CreateAccountFormReducers';
 import userReducer from './reducers/userReducer';
 
 const store = configureStore({
- reducer: {
+  reducer: {
     registerForm: registerFormReducer,
     loginForm: loginFormReducer,
     dashboard: dashboardReducer,
     transaction: TransactionReducer,
     quick: formReducer,
     createAccountForm: createAccountFormReducer,
-    user: userReducer,
- }
+    user: userReducer
+  }
 });
 
 export default store;
