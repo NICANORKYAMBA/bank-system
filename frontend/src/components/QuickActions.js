@@ -9,6 +9,9 @@ import {
   hideWithdrawalForm
 } from '../redux/actions/QuickActions';
 import {
+  getUserAccountsData
+} from '../redux/selectors/userSelectors';
+import {
   Card,
   CardContent,
   Typography,
@@ -86,14 +89,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const QuickActions = ({
-  accountsData,
-  handleDepositClick,
-  handleTransferClick,
-  handleWithdrawalClick,
   onTransactionCreated
 }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const accountsData = useSelector(getUserAccountsData);
+
   const showDepositFormState = useSelector(state => state.quick.showDepositForm);
   const showTransferFormState = useSelector(state => state.quick.showTransferForm);
   const showWithdrawalFormState = useSelector(state => state.quick.showWithdrawalForm);
@@ -123,7 +124,6 @@ const QuickActions = ({
                   startIcon={<DepositIcon />}
                   className={clsx(classes.dashboardButton, classes.depositButton)}
                   onClick={() => {
-                    handleDepositClick();
                     dispatch(showDepositForm());
                   }}
                   disabled={!accountsData || accountsData.length === 0}
@@ -158,7 +158,6 @@ const QuickActions = ({
                   startIcon={<TransferIcon />}
                   className={clsx(classes.dashboardButton, classes.transferButton)}
                   onClick={() => {
-                    handleTransferClick();
                     dispatch(showTransferForm());
                   }}
                   disabled={!accountsData || accountsData.length === 0}
@@ -192,7 +191,6 @@ const QuickActions = ({
                   startIcon={<WithdrawIcon />}
                   className={clsx(classes.dashboardButton, classes.withdrawButton)}
                   onClick={() => {
-                    handleWithdrawalClick();
                     dispatch(showWithdrawalForm());
                   }}
                   disabled={!accountsData || accountsData.length === 0}
