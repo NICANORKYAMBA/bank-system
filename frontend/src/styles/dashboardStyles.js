@@ -152,6 +152,9 @@ export const useStyles = makeStyles((theme) => ({
       backgroundColor: 'rgba(0, 0, 0, 0.04)'
     }
   },
+  selectedTableRow: {
+    backgroundColor: theme.palette.success.main,
+  },
   createButton: {
     marginTop: theme.spacing(2),
     borderRadius: theme.shape.borderRadius,

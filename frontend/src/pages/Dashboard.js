@@ -161,7 +161,10 @@ const useDashboardStyles = makeStyles((theme) => ({
   dashboardCardButtonPaperTitle: {
     fontWeight: 'bold',
     color: theme.palette.primary.main
-  }
+  },
+  selectedTableRow: {
+    backgroundColor: theme.palette.success.light,
+ },
 }));
 
 function Alert (props) {
