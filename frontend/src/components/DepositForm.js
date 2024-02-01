@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Button,
   Grid,
@@ -14,12 +15,16 @@ import {
   FormControl,
   OutlinedInput
 } from '@material-ui/core';
+import {
+  fetchAllAccountsDataThunk
+} from '../redux/actions/QuickActions';
 import MuiAlert from '@material-ui/lab/Alert';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MonetizationOn from '@material-ui/icons/MonetizationOn';
 import Description from '@material-ui/icons/Description';
 import * as ReactSpring from 'react-spring';
 import axios from 'axios';
+import { getUserId } from '../redux/selectors/userSelectors';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -78,36 +83,26 @@ const useStyles = makeStyles((theme) => ({
 
 const DepositForm = ({ handleClose, onTransactionCreated }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     type: 'deposit',
     amount: '',
     sourceAccountNumber: '',
     description: ''
   });
-  const [accounts, setAccounts] = useState([]);
+
+  const accounts = useSelector(state => state.quick.accountsData);
+  const userId = useSelector(getUserId);
+
   const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   useEffect(() => {
-    const fetchAccounts = async () => {
-      setLoading(true);
-      const userId = sessionStorage.getItem('userId');
-      try {
-        const response = await axios.get(`http://localhost:5000/api/accounts/user/${userId}`);
-        setAccounts(response.data.accounts);
-      } catch (error) {
-        setSnackbarMessage('Failed to fetch accounts.');
-        setSnackbarSeverity('error');
-        setSnackbarOpen(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAccounts();
-  }, []);
+    dispatch(fetchAllAccountsDataThunk(userId));
+  }, [userId, dispatch]);
 
   const handleChange = (event) => {
     setFormData({
@@ -134,7 +129,7 @@ const DepositForm = ({ handleClose, onTransactionCreated }) => {
     setLoading(true);
     const data = {
       ...formData,
-      userId: sessionStorage.getItem('userId')
+      userId
     };
 
     try {
