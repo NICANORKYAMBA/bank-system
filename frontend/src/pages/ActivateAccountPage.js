@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { getUserId } from '../redux/selectors/userSelectors';
 import axios from 'axios';
 import {
   Button,
@@ -24,11 +26,11 @@ const ActivateAccountPage = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const history = useHistory();
+  const userId = useSelector(getUserId);
 
   useEffect(() => {
     const loadInactiveAccounts = async () => {
       try {
-        const userId = sessionStorage.getItem('userId');
         const accounts = await fetchAccountsByStatus(userId, 'inactive');
         if (accounts.length === 0) {
           setSnackbarMessage('No inactive accounts found.');
@@ -46,7 +48,7 @@ const ActivateAccountPage = () => {
     };
 
     loadInactiveAccounts();
-  }, []);
+  }, [userId]);
 
   const handleActivateAccount = async (event) => {
     event.preventDefault();
@@ -118,7 +120,12 @@ const ActivateAccountPage = () => {
                       </FormControl>
                     </Grid>
                     <Grid item xs={12}>
-                      <Button type='submit' color='primary' variant='contained' fullWidth>
+                      <Button
+                        type='submit'
+                        color='primary'
+                        variant='contained'
+                        fullWidth
+                      >
                         Activate Account
                       </Button>
                     </Grid>
@@ -130,7 +137,10 @@ const ActivateAccountPage = () => {
                   There are no inactive accounts available for activation.
                 </Typography>
                 )}
-            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+            <Snackbar
+              open={openSnackbar}
+              autoHideDuration={6000}
+              onClose={handleCloseSnackbar}>
               <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
                 {snackbarMessage}
               </Alert>
