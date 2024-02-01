@@ -296,8 +296,6 @@ function Dashboard ({ reload, onTransactionCreated }) {
               </Grid>
               <Grid item xs={12} sm={4} md={6}>
                 <QuickActions
-                  classes={classes}
-                  accountsData={accountsData}
                   onTransactionCreated={handleTransactionCreated}
                 />
               </Grid>
