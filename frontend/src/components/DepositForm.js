@@ -129,7 +129,12 @@ const DepositForm = ({ handleClose, onTransactionCreated }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const requiredFields = ['amount', 'sourceAccountNumber'];
+    const requiredFields = [
+      'amount',
+      'sourceAccountNumber',
+      'transactionReference',
+      'channel'
+    ];
     for (const field of requiredFields) {
       if (!formData[field]) {
         setSnackbarMessage(`Please fill in the ${field} field.`);
@@ -144,14 +149,14 @@ const DepositForm = ({ handleClose, onTransactionCreated }) => {
       type: formData.type,
       amount: formData.amount,
       sourceAccountNumber: formData.sourceAccountNumber,
+      transactionReference: formData.transactionReference,
+      channel: formData.channel,
       userId
     };
 
     if (formData.description) data.description = formData.description;
     if (formData.fee) data.fee = formData.fee;
     if (formData.exchangeRate) data.exchangeRate = formData.exchangeRate;
-    if (formData.transactionReference) data.transactionReference = formData.transactionReference;
-    if (formData.channel) data.channel = formData.channel;
     if (formData.ipAddress) data.ipAddress = formData.ipAddress;
     if (formData.deviceInformation) data.deviceInformation = formData.deviceInformation;
     if (formData.checkNumber) data.checkNumber = formData.checkNumber;
