@@ -163,8 +163,8 @@ const useDashboardStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main
   },
   selectedTableRow: {
-    backgroundColor: theme.palette.success.light,
- },
+    backgroundColor: theme.palette.success.light
+  }
 }));
 
 function Alert (props) {
@@ -219,13 +219,16 @@ function Dashboard ({ reload, onTransactionCreated }) {
   };
 
   const handleTransactionCreated = () => {
-    if (selectedAccount) {
-      dispatch(fetchSelectedAccountDataThunk(selectedAccount.id));
+    if (userId) {
+      dispatch(fetchAllAccountsDataThunk(userId));
+
+      if (selectedAccount) {
+        dispatch(fetchSelectedAccountDataThunk(selectedAccount.id));
+      }
     }
   };
 
   const handleSearchChange = (event) => {
-    // Assuming setSearchTerm action creator exists
     dispatch(setSearchTerm(event.target.value));
   };
 
