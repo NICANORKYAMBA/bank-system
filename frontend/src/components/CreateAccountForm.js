@@ -95,11 +95,11 @@ const CreateAccountForm = ({ onAccountCreated }) => {
     const newErrors = {};
     const missingFields = [];
     if (!formData.name) {
-      newErrors.name = 'Name is required';
+      newErrors.name = 'Name must be only alphabetical chars and spaces';
       missingFields.push('Name');
     }
-    if (!formData.balance || isNaN(formData.balance)) {
-      newErrors.balance = 'Balance must be a number';
+    if (!formData.balance || isNaN(formData.balance) || formData.balance < 100) {
+      newErrors.balance = 'Balance must be a number and at least 100';
       missingFields.push('Balance');
     }
     if (![
@@ -113,16 +113,28 @@ const CreateAccountForm = ({ onAccountCreated }) => {
       'businessChecking',
       'studentChecking',
       'travelersCheck'].includes(formData.accountType)) {
-      newErrors.accountType = 'Invalid account type';
+      newErrors.accountType = 'Account type must be one of: checking, savings, credit';
       missingFields.push('Account Type');
     }
     if (!['USD', 'EUR', 'GBP', 'KSH'].includes(formData.currency)) {
-      newErrors.currency = 'Invalid currency';
+      newErrors.currency = 'Currency must be one of: USD, EUR, GBP';
       missingFields.push('Currency');
     }
     if (!['active', 'inactive'].includes(formData.status)) {
-      newErrors.status = 'Invalid status';
+      newErrors.status = 'Status must be one of: active, inactive';
       missingFields.push('Status');
+    }
+    if (formData.interestRate && isNaN(formData.interestRate)) {
+      newErrors.interestRate = 'Interest rate must be a number';
+      missingFields.push('Interest Rate');
+    }
+    if (formData.overdraftLimit && isNaN(formData.overdraftLimit)) {
+      newErrors.overdraftLimit = 'Overdraft limit must be a number';
+      missingFields.push('Overdraft Limit');
+    }
+    if (formData.lastTransactionDate && !isValidDate(formData.lastTransactionDate)) {
+      newErrors.lastTransactionDate = 'Last transaction date must be a valid ISO 8601 date';
+      missingFields.push('Last Transaction Date');
     }
 
     dispatch(setErrors(newErrors));
@@ -130,7 +142,7 @@ const CreateAccountForm = ({ onAccountCreated }) => {
     if (missingFields.length > 0) {
       dispatch(setSnackbarState(
         true,
-        `Please fill in the following fields: ${missingFields.join(', ')}`, 'error'
+      `Please fill in the following fields: ${missingFields.join(', ')}`, 'error'
       ));
     } else {
       dispatch(submitForm(formData));
@@ -138,6 +150,11 @@ const CreateAccountForm = ({ onAccountCreated }) => {
 
     return Object.keys(newErrors).length === 0;
   };
+
+  function isValidDate (dateString) {
+    const date = new Date(dateString);
+    return !isNaN(date.getTime());
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -154,8 +171,17 @@ const CreateAccountForm = ({ onAccountCreated }) => {
       return;
     }
     try {
-      const response = await axios.post('http://localhost:5000/api/accounts',
-        { ...formData, userId });
+      const payload = {
+        ...formData,
+        userId,
+        interestRate: formData.interestRate === '' ? null : formData.interestRate,
+        overdraftLimit: formData.overdraftLimit === '' ? null : formData.overdraftLimit
+      };
+
+      const response = await axios.post('http://localhost:5000/api/accounts', payload, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+      console.log(response);
       dispatch(setSnackbarState(true, response.data.message, 'success'));
       dispatch(resetForm());
       dispatch(setLoading(false));
@@ -164,6 +190,7 @@ const CreateAccountForm = ({ onAccountCreated }) => {
       dispatch(setSnackbarState(
         true, error.response?.data?.message || 'An error occurred', 'error'
       ));
+      dispatch(resetForm());
       dispatch(setLoading(false));
     }
   };
@@ -173,8 +200,15 @@ const CreateAccountForm = ({ onAccountCreated }) => {
   };
 
   return (
-    <form className={classes.form} onSubmit={handleSubmit} noValidate>
-      <Grid container spacing={2} className={classes.formContainer}>
+    <form
+      className={classes.form}
+      onSubmit={handleSubmit}
+      noValidate
+    >
+      <Grid
+        container spacing={2}
+        className={classes.formContainer}
+      >
         <Grid item xs={12}>
           <TextField
             variant='outlined'
