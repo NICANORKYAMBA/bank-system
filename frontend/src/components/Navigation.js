@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  fetchAllAccountsDataThunk
+} from '../redux/actions/userActions';
+import {
+  getUserId
+} from '../redux/selectors/userSelectors';
 import {
   IconButton,
   Drawer,
@@ -59,9 +66,11 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const Navigation = ({ onTransactionCreated }) => {
+const Navigation = () => {
   const classes = useStyles();
   const theme = useTheme();
+  const dispatch = useDispatch();
+  const userId = useSelector(getUserId);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const {
@@ -80,12 +89,10 @@ const Navigation = ({ onTransactionCreated }) => {
     setCreateAccountOpen(false);
   };
 
-  const handleTransactionCreated = () => {
-    handleCreateAccountClose();
-    if (onTransactionCreated) {
-      onTransactionCreated();
-    }
+  const handleAccountCreation = () => {
+    dispatch(fetchAllAccountsDataThunk(userId));
   };
+
 
   const handleLogout = () => {
     sessionStorage.clear();
@@ -95,27 +102,39 @@ const Navigation = ({ onTransactionCreated }) => {
 
   const navItems = (
     <List component='nav'>
-      <ListItem button key='Home' component={Link} to='/'>
+      <ListItem
+        button key='Home'
+        component={Link} to='/'>
         <ListItemIcon><HomeIcon /></ListItemIcon>
         <ListItemText primary='Home' />
       </ListItem>
-      <ListItem button key='Dashboard' component={Link} to='/dashboard'>
+      <ListItem
+        button key='Dashboard'
+        component={Link} to='/dashboard'>
         <ListItemIcon><DashboardIcon /></ListItemIcon>
         <ListItemText primary='Dashboard' />
       </ListItem>
-      <ListItem button key='Account Overview' component={Link} to='/account-overview'>
+      <ListItem
+        button key='Account Overview'
+        component={Link} to='/account-overview'>
         <ListItemIcon><AccountBalanceIcon /></ListItemIcon>
         <ListItemText primary='Account Overview' />
       </ListItem>
-      <ListItem button key='Transactions' component={Link} to='/transactions'>
+      <ListItem
+        button key='Transactions'
+        component={Link} to='/transactions'>
         <ListItemIcon><ListIcon /></ListItemIcon>
         <ListItemText primary='Transactions' />
       </ListItem>
-      <ListItem button key='Create Account' onClick={handleCreateAccountOpen}>
+      <ListItem
+        button key='Create Account'
+        onClick={handleCreateAccountOpen}>
         <ListItemIcon><AddCircleOutlineIcon /></ListItemIcon>
         <ListItemText primary='Create Account' />
       </ListItem>
-      <ListItem button key='Activate Account' component={Link} to='/activate-account'>
+      <ListItem
+        button key='Activate Account'
+        component={Link} to='/activate-account'>
         <ListItemIcon><VerifiedUserIcon /></ListItemIcon>
         <ListItemText primary='Activate Account' />
       </ListItem>
@@ -238,7 +257,7 @@ const Navigation = ({ onTransactionCreated }) => {
         onClose={handleCreateAccountClose}
         aria-labelledby='form-dialog-title'
       >
-        <CreateAccountForm onAccountCreated={handleTransactionCreated} />
+        <CreateAccountForm onAccountCreated={handleAccountCreation} />
       </Dialog>
     </div>
   );

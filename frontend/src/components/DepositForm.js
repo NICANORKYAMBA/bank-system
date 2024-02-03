@@ -22,6 +22,13 @@ import MuiAlert from '@material-ui/lab/Alert';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MonetizationOn from '@material-ui/icons/MonetizationOn';
 import Description from '@material-ui/icons/Description';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import SyncAltIcon from '@material-ui/icons/SyncAlt';
+import ReferenceIcon from '@material-ui/icons/AssignmentTurnedIn';
+import PublicIcon from '@material-ui/icons/Public';
+import DevicesOtherIcon from '@material-ui/icons/DevicesOther';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import LinkIcon from '@material-ui/icons/Link';
 import * as ReactSpring from 'react-spring';
 import axios from 'axios';
 import { getUserId } from '../redux/selectors/userSelectors';
@@ -89,7 +96,15 @@ const DepositForm = ({ handleClose, onTransactionCreated }) => {
     type: 'deposit',
     amount: '',
     sourceAccountNumber: '',
-    description: ''
+    description: '',
+    fee: '',
+    exchangeRate: '',
+    transactionReference: '',
+    channel: '',
+    ipAddress: '',
+    deviceInformation: '',
+    checkNumber: '',
+    attachmentUrl: ''
   });
 
   const accounts = useSelector(state => state.quick.accountsData);
@@ -114,27 +129,46 @@ const DepositForm = ({ handleClose, onTransactionCreated }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!formData.amount) {
-      setSnackbarMessage('Please fill in the Amount Field.');
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
-      return;
-    } else if (!formData.sourceAccountNumber) {
-      setSnackbarMessage('Please fill in a Source Account Number.');
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
-      return;
+    const requiredFields = [
+      'amount',
+      'sourceAccountNumber',
+      'transactionReference',
+      'channel'
+    ];
+    for (const field of requiredFields) {
+      if (!formData[field]) {
+        setSnackbarMessage(`Please fill in the ${field} field.`);
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+        return;
+      }
     }
 
     setLoading(true);
     const data = {
-      ...formData,
+      type: formData.type,
+      amount: formData.amount,
+      sourceAccountNumber: formData.sourceAccountNumber,
+      transactionReference: formData.transactionReference,
+      channel: formData.channel,
       userId
     };
 
+    if (formData.description) data.description = formData.description;
+    if (formData.fee) data.fee = formData.fee;
+    if (formData.exchangeRate) data.exchangeRate = formData.exchangeRate;
+    if (formData.ipAddress) data.ipAddress = formData.ipAddress;
+    if (formData.deviceInformation) data.deviceInformation = formData.deviceInformation;
+    if (formData.checkNumber) data.checkNumber = formData.checkNumber;
+    if (formData.attachmentUrl) data.attachmentUrl = formData.attachmentUrl;
+
     try {
       // eslint-disable-next-line no-unused-vars
-      const response = await axios.post('http://localhost:5000/api/transactions', data);
+      const response = await axios.post('http://localhost:5000/api/transactions', data, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       setSnackbarMessage('Deposit successful!');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
@@ -143,6 +177,7 @@ const DepositForm = ({ handleClose, onTransactionCreated }) => {
         handleClose();
       }, 6000);
     } catch (error) {
+      console.error('Error during deposit:', error);
       setSnackbarMessage('Failed to make a deposit.');
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
@@ -275,6 +310,182 @@ const DepositForm = ({ handleClose, onTransactionCreated }) => {
                 />
               </FormControl>
             </Grid>
+            <Grid item xs={12}>
+              <FormControl
+                variant='outlined'
+                fullWidth className={classes.formControl}
+              >
+                <OutlinedInput
+                  id='fee'
+                  name='fee'
+                  type='number'
+                  value={formData.fee}
+                  onChange={handleChange}
+                  startAdornment={
+                    <InputAdornment
+                      position='start'
+                    >
+                      <AttachMoneyIcon />
+                    </InputAdornment>
+                  }
+                  labelWidth={0}
+                  placeholder='Fee'
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl
+                variant='outlined'
+                fullWidth className={classes.formControl}
+              >
+                <OutlinedInput
+                  id='exchange-rate'
+                  name='exchangeRate'
+                  type='number'
+                  value={formData.exchangeRate}
+                  onChange={handleChange}
+                  startAdornment={
+                    <InputAdornment
+                      position='start'
+                    >
+                      <SyncAltIcon />
+                    </InputAdornment>
+                  }
+                  labelWidth={0}
+                  placeholder='Exchange Rate'
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl
+                variant='outlined'
+                fullWidth className={classes.formControl}
+              >
+                <OutlinedInput
+                  id='transaction-reference'
+                  name='transactionReference'
+                  type='text'
+                  value={formData.transactionReference}
+                  onChange={handleChange}
+                  startAdornment={
+                    <InputAdornment position='start'>
+                      <ReferenceIcon />
+                    </InputAdornment>
+                  }
+                  labelWidth={0}
+                  placeholder='Transaction Reference *'
+                  required
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl
+                variant='outlined'
+                fullWidth className={classes.formControl}
+              >
+                <InputLabel htmlFor='channel'>Channel</InputLabel>
+                <Select
+                  value={formData.channel}
+                  onChange={handleChange}
+                  label='Channel *'
+                  inputProps={{
+                    name: 'channel',
+                    id: 'channel'
+                  }}
+                  required
+                >
+                  <MenuItem value='online'>Online</MenuItem>
+                  <MenuItem value='branch'>Branch</MenuItem>
+                  <MenuItem value='ATM'>ATM</MenuItem>
+                  <MenuItem value='mobile'>Mobile</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl
+                variant='outlined'
+                fullWidth className={classes.formControl}
+              >
+                <OutlinedInput
+                  id='ip-address'
+                  name='ipAddress'
+                  type='text'
+                  value={formData.ipAddress}
+                  onChange={handleChange}
+                  startAdornment={
+                    <InputAdornment position='start'>
+                      <PublicIcon />
+                    </InputAdornment>
+                  }
+                  labelWidth={0}
+                  placeholder='IP Address'
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl
+                variant='outlined'
+                fullWidth className={classes.formControl}
+              >
+                <OutlinedInput
+                  id='device-information'
+                  name='deviceInformation'
+                  type='text'
+                  value={formData.deviceInformation}
+                  onChange={handleChange}
+                  startAdornment={
+                    <InputAdornment position='start'>
+                      <DevicesOtherIcon />
+                    </InputAdornment>
+                  }
+                  labelWidth={0}
+                  placeholder='Device Information'
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl
+                variant='outlined'
+                fullWidth className={classes.formControl}
+              >
+                <OutlinedInput
+                  id='check-number'
+                  name='checkNumber'
+                  type='text'
+                  value={formData.checkNumber}
+                  onChange={handleChange}
+                  startAdornment={
+                    <InputAdornment position='start'>
+                      <CheckCircleOutlineIcon />
+                    </InputAdornment>
+                  }
+                  labelWidth={0}
+                  placeholder='Check Number'
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl
+                variant='outlined'
+                fullWidth className={classes.formControl}
+              >
+                <OutlinedInput
+                  id='attachment-url'
+                  name='attachmentUrl'
+                  type='text'
+                  value={formData.attachmentUrl}
+                  onChange={handleChange}
+                  startAdornment={
+                    <InputAdornment position='start'>
+                      <LinkIcon />
+                    </InputAdornment>
+                  }
+                  labelWidth={0}
+                  placeholder='Attachment URL'
+                />
+              </FormControl>
+            </Grid>
+
             <Grid item xs={12}>
               <Button
                 className={classes.formButton}

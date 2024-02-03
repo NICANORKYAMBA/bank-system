@@ -107,12 +107,14 @@ const Transactions = () => {
   const userId = useSelector(getUserId);
   const firstName = useSelector(getUserFirstName);
 
+  const transactionCount = useSelector(state => state.transaction.transactionCount);
+
   useEffect(() => {
     if (userId) {
       dispatch(fetchTransactions(userId, 500, 0, 'createdAt', 'DESC'));
       dispatch(fetchAccounts(userId));
     }
-  }, [userId, dispatch]);
+  }, [userId, dispatch, transactionCount]);
 
   const getTransactionIcon = (type) => {
     switch (type) {
