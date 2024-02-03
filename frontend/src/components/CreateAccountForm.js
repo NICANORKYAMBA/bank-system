@@ -168,6 +168,7 @@ const CreateAccountForm = ({ onAccountCreated }) => {
         true, 'User ID is missing. Please log in again.', 'error'
       ));
       dispatch(setLoading(false));
+      onAccountCreated();
       return;
     }
     try {
@@ -181,7 +182,6 @@ const CreateAccountForm = ({ onAccountCreated }) => {
       const response = await axios.post('http://localhost:5000/api/accounts', payload, {
         headers: { 'Content-Type': 'application/json' }
       });
-      console.log(response);
       dispatch(setSnackbarState(true, response.data.message, 'success'));
       dispatch(resetForm());
       dispatch(setLoading(false));
@@ -192,6 +192,7 @@ const CreateAccountForm = ({ onAccountCreated }) => {
       ));
       dispatch(resetForm());
       dispatch(setLoading(false));
+      onAccountCreated();
     }
   };
 
