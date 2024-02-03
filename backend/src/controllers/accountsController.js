@@ -342,15 +342,46 @@ export const getAccountsByUserId = [
 ];
 
 export const createAccount = [
-  body('name').matches(/^[a-zA-Z ]+$/).withMessage('Name must be only alphabetical chars and spaces'),
-  body('balance').isNumeric().withMessage('Balance must be a number'),
-  body('accountType').isIn(['checking', 'savings', 'credit', 'CD', 'moneyMarket', 'prepaid', 'businessChecking', 'studentChecking', 'travelersCheck', 'paypal']).withMessage('Account type must be one of: checking, savings, credit'),
-  body('currency').isIn(['USD', 'EUR', 'GBP', 'KSH']).withMessage('Currency must be one of: USD, EUR, GBP'),
-  body('status').isIn(['active', 'inactive']).withMessage('Status must be one of: active, inactive'),
-  body('userId').isUUID().withMessage('User ID must be a valid UUID'),
-  body('interestRate').optional().isNumeric().withMessage('Interest rate must be a number'),
-  body('overdraftLimit').optional().isNumeric().withMessage('Overdraft limit must be a number'),
-  body('lastTransactionDate').optional().isISO8601().withMessage('Last transaction date must be a valid ISO 8601 date'),
+  body('name')
+    .matches(/^[a-zA-Z ]+$/)
+    .withMessage('Name must be only alphabetical chars and spaces'),
+  body('balance')
+    .isNumeric()
+    .withMessage('Balance must be a number'),
+  body('accountType')
+    .isIn([
+      'checking',
+      'savings',
+      'credit',
+      'CD',
+      'moneyMarket',
+      'prepaid',
+      'businessChecking',
+      'studentChecking',
+      'travelersCheck',
+      'paypal'
+    ])
+    .withMessage('Account type must be one of: checking, savings, credit'),
+  body('currency')
+    .isIn(['USD', 'EUR', 'GBP', 'KSH'])
+    .withMessage('Currency must be one of: USD, EUR, GBP'),
+  body('status')
+    .isIn(['active', 'inactive'])
+    .withMessage('Status must be one of: active, inactive'),
+  body('userId')
+    .isUUID()
+    .withMessage('User ID must be a valid UUID'),
+  body('interestRate')
+    .optional({ checkFalsy: true })
+    .isNumeric().withMessage('Interest rate must be a number'),
+
+  body('overdraftLimit')
+    .optional({ checkFalsy: true })
+    .isNumeric().withMessage('Overdraft limit must be a number'),
+
+  body('lastTransactionDate')
+    .optional().isISO8601()
+    .withMessage('Last transaction date must be a valid ISO 8601 date'),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
