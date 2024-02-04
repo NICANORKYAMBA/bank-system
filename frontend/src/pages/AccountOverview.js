@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { fetchAccounts, updateAccountsName } from '../api/api';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { getUserId } from '../redux/selectors/userSelectors';
 import {
   CircularProgress,
   Typography,
@@ -194,6 +196,8 @@ const AccountOverview = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
+  const userId = useSelector(getUserId);
+
   const handleOpenUpdateDialog = (account) => {
     setCurrentAccount(account);
     setOpenUpdateDialog(true);
@@ -242,8 +246,6 @@ const AccountOverview = () => {
   const handleCloseCreateAccountDialog = () => {
     setOpenCreateAccountDialog(false);
   };
-
-  const userId = useMemo(() => sessionStorage.getItem('userId'), []);
 
   const filteredAccounts = useMemo(() => {
     return accounts.filter(account =>
@@ -311,10 +313,14 @@ const AccountOverview = () => {
           <Grid item>
             <Paper className={classes.paper}>
               <Box className={classes.noAccountsContainer}>
-                <Typography variant='h4' gutterBottom className={classes.noAccountsHeader}>
+                <Typography
+                  variant='h4'
+                  gutterBottom className={classes.noAccountsHeader}>
                   Welcome to FinTrust!
                 </Typography>
-                <Typography variant='h6' className={classes.noAccountsMessage}>
+                <Typography
+                  variant='h6'
+                  className={classes.noAccountsMessage}>
                   You currently have no accounts.
                 </Typography>
                 <Button
@@ -329,7 +335,10 @@ const AccountOverview = () => {
             </Paper>
           </Grid>
         </Grid>
-        <Dialog open={openCreateAccountDialog} onClose={handleCloseCreateAccountDialog}>
+        <Dialog
+          open={openCreateAccountDialog}
+          onClose={handleCloseCreateAccountDialog}
+        >
           <DialogContent>
             <CreateAccountForm onAccountCreated={() => {
               handleCloseCreateAccountDialog();
@@ -351,8 +360,13 @@ const AccountOverview = () => {
       )}
 
       {error && (
-        <Snackbar open={open} autoHideDuration={6000} onClose={() => setOpen(false)}>
-          <Alert onClose={() => setOpen(false)} severity='error'>
+        <Snackbar
+          open={open}
+          autoHideDuration={6000}
+          onClose={() => setOpen(false)}
+        >
+          <Alert
+            onClose={() => setOpen(false)} severity='error'>
             {error}
           </Alert>
         </Snackbar>
@@ -364,13 +378,19 @@ const AccountOverview = () => {
         autoHideDuration={6000}
         onClose={() => setSnackbarOpen(false)}
       >
-        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>
       <Container className={classes.container}>
         <Paper className={classes.paper}>
-          <Typography variant='h4' gutterBottom className={classes.header}>
+          <Typography
+            variant='h4'
+            gutterBottom className={classes.header}
+          >
             Accounts Overview
           </Typography>
           <TextField
@@ -438,8 +458,15 @@ const AccountOverview = () => {
               </ListItem>
             ))}
           </List>
-          <Dialog open={openUpdateDialog} onClose={handleCloseUpdateDialog} aria-labelledby='form-dialog-title'>
-            <DialogTitle id='form-dialog-title' className={classes.dialogTitle}>
+          <Dialog
+            open={openUpdateDialog}
+            onClose={handleCloseUpdateDialog}
+            aria-labelledby='form-dialog-title'
+          >
+            <DialogTitle
+              id='form-dialog-title'
+              className={classes.dialogTitle}
+            >
               Update Account Name
             </DialogTitle>
             <DialogContent>
@@ -454,14 +481,24 @@ const AccountOverview = () => {
                 type='text'
                 fullWidth
                 value={currentAccount?.name || ''}
-                onChange={(e) => setCurrentAccount({ ...currentAccount, name: e.target.value })}
+                onChange={(e) => setCurrentAccount({
+                  ...currentAccount, name: e.target.value
+                })}
               />
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleCloseUpdateDialog} color='secondary'>
+              <Button
+                onClick={handleCloseUpdateDialog}
+                color='secondary'
+              >
                 Cancel
               </Button>
-              <Button onClick={() => updateAccountName()} color='primary' variant='contained' startIcon={<SaveIcon />}>
+              <Button
+                onClick={() => updateAccountName()}
+                color='primary'
+                variant='contained'
+                startIcon={<SaveIcon />}
+              >
                 Update
               </Button>
             </DialogActions>
