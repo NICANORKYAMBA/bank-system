@@ -27,30 +27,53 @@ const updateAccountBalance = async (accountId, amount, transaction = null) => {
   return account;
 };
 
-function buildTransactionMessage (type, amount, currency, sourceAccount, destinationAccount, balance) {
-  let message = `A ${type} transaction of ${amount} ${currency} was made on account ${sourceAccount.accountNumber}`;
+function buildTransactionMessage (
+  type,
+  amount,
+  currency,
+  sourceAccount,
+  destinationAccount,
+  balance) {
+  let message = `A ${type} transaction of ${amount} 
+  ${currency} was made on account ${sourceAccount.accountNumber}`;
   if (type === 'transfer') {
-    message += ` The amount ${amount} was transferred to ${destinationAccount.accountNumber}`;
+    message += ` The amount ${amount} was transferred to 
+    ${destinationAccount.accountNumber}`;
   }
   message += ` The balance after the transaction is ${balance} ${currency}`;
   return message;
 }
 
 export const createTransaction = [
-  body('type').isIn(['deposit', 'withdrawal', 'transfer']).withMessage('Must be one of: deposit, withdrawal, transfer'),
-  body('amount').isNumeric().withMessage('Must be a number'),
-  body('sourceAccountNumber').isString().withMessage('Must be a valid account number'),
-  body('destinationAccountNumber').optional().isString().withMessage('Must be a valid account number'),
-  body('userId').isUUID().withMessage('Must be a valid UUID'),
-  body('description').optional().isString().withMessage('Must be a string'),
-  body('fee').optional().isNumeric().withMessage('Fee must be a number'),
-  body('exchangeRate').optional().isNumeric().withMessage('Exchange rate must be a number'),
-  body('transactionReference').optional().isString().withMessage('Transaction reference must be a string'),
-  body('channel').optional().isIn(['online', 'branch', 'ATM', 'mobile']).withMessage('Channel must be one of: online, branch, ATM, mobile'),
-  body('ipAddress').optional().isIP().withMessage('IP address must be a valid IP address'),
-  body('deviceInformation').optional().isString().withMessage('Device information must be a string'),
-  body('checkNumber').optional().isString().withMessage('Check number must be a string'),
-  body('attachmentUrl').optional().isURL().withMessage('Attachment URL must be a valid URL'),
+  body('type')
+    .isIn(['deposit', 'withdrawal', 'transfer'])
+    .withMessage('Must be one of: deposit, withdrawal, transfer'),
+  body('amount')
+    .isNumeric().withMessage('Must be a number'),
+  body('sourceAccountNumber').isString()
+    .withMessage('Must be a valid account number'),
+  body('destinationAccountNumber').optional().isString()
+    .withMessage('Must be a valid account number'),
+  body('userId').isUUID()
+    .withMessage('Must be a valid UUID'),
+  body('description').optional().isString()
+    .withMessage('Must be a string'),
+  body('fee').optional().isNumeric()
+    .withMessage('Fee must be a number'),
+  body('exchangeRate').optional().isNumeric()
+    .withMessage('Exchange rate must be a number'),
+  body('transactionReference').optional().isString()
+    .withMessage('Transaction reference must be a string'),
+  body('channel').optional().isIn(['online', 'branch', 'ATM', 'mobile'])
+    .withMessage('Channel must be one of: online, branch, ATM, mobile'),
+  body('ipAddress').optional().isIP()
+    .withMessage('IP address must be a valid IP address'),
+  body('deviceInformation').optional().isString()
+    .withMessage('Device information must be a string'),
+  body('checkNumber').optional().isString()
+    .withMessage('Check number must be a string'),
+  body('attachmentUrl').optional().isURL()
+    .withMessage('Attachment URL must be a valid URL'),
 
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -75,20 +98,29 @@ export const createTransaction = [
       attachmentUrl
     } = req.body;
 
-    if ((type === 'deposit' && amount < 10) || (type !== 'deposit' && amount < 100)) {
+    if ((type === 'deposit' && amount < 10) ||
+      (type !== 'deposit' && amount < 100)) {
       return handleValidationError(
-        res, `The transaction amount for a ${type} must be at least ${type === 'deposit' ? 10 : 100}`);
+        res, `The transaction amount for a ${type} must be at least 
+        ${type === 'deposit' ? 10 : 100}`
+      );
     }
 
     const transaction = await sequelize.transaction();
     try {
-      let sourceAccount = await Account.findOne({ where: { accountNumber: sourceAccountNumber } });
+      let sourceAccount = await Account.findOne({
+        where: {
+          accountNumber: sourceAccountNumber
+        }
+      });
       if (!sourceAccount) {
-        throw new Error(`Source account with number ${sourceAccountNumber} not found`);
+        throw new Error(
+          `Source account with number ${sourceAccountNumber} not found`);
       }
 
       if (sourceAccount.userId !== userId) {
-        throw new Error('The userId in the transaction does not match the userId of the source account');
+        throw new Error(
+          'The userId in the transaction does not match the userId of the source account');
       }
 
       if (sourceAccount.status !== 'active') {
@@ -104,7 +136,9 @@ export const createTransaction = [
           throw new Error('Insufficient balance');
         }
 
-        sourceAccount = await updateAccountBalance(sourceAccount.id, -amount, transaction);
+        sourceAccount = await updateAccountBalance(
+          sourceAccount.id, -amount, transaction
+        );
       }
 
       if (type === 'withdrawal') {
@@ -112,25 +146,36 @@ export const createTransaction = [
           throw new Error('Insufficient balance');
         }
 
-        sourceAccount = await updateAccountBalance(sourceAccount.id, -amount, transaction);
+        sourceAccount = await updateAccountBalance(
+          sourceAccount.id, -amount, transaction
+        );
       }
 
       if (type === 'deposit') {
-        sourceAccount = await updateAccountBalance(sourceAccount.id, amount, transaction);
+        sourceAccount = await updateAccountBalance(
+          sourceAccount.id, amount, transaction
+        );
       }
 
       let destinationAccount;
       if (type === 'transfer') {
-        destinationAccount = await Account.findOne({ where: { accountNumber: destinationAccountNumber } });
+        destinationAccount = await Account.findOne({
+          where: {
+            accountNumber: destinationAccountNumber
+          }
+        });
         if (!destinationAccount) {
-          throw new Error(`Destination account with number ${destinationAccountNumber} not found`);
+          throw new Error(
+            `Destination account with number ${destinationAccountNumber} not found`);
         }
 
         if (destinationAccount.status !== 'active') {
           throw new Error('Destination account is not active');
         }
 
-        destinationAccount = await updateAccountBalance(destinationAccount.id, amount, transaction);
+        destinationAccount = await updateAccountBalance(
+          destinationAccount.id, amount, transaction
+        );
       }
 
       const transactionData = {
@@ -148,19 +193,31 @@ export const createTransaction = [
         currency: sourceAccount.currency,
         status: 'completed',
         sourceAccount: sourceAccount.accountNumber,
-        destinationAccount: destinationAccount ? destinationAccount.accountNumber : sourceAccount.accountNumber,
+        destinationAccount: destinationAccount
+          ? destinationAccount.accountNumber
+          : sourceAccount.accountNumber,
         userId,
         accountId: sourceAccount.id,
         sourceAccountId: sourceAccount.id,
-        destinationAccountId: destinationAccount ? destinationAccount.id : sourceAccount.id,
+        destinationAccountId: destinationAccount
+          ? destinationAccount.id
+          : sourceAccount.id,
         description
       };
 
-      const newTransaction = await Transaction.create(transactionData, { transaction });
+      const newTransaction = await Transaction.create(
+        transactionData, { transaction });
 
       await transaction.commit();
 
-      const message = buildTransactionMessage(type, amount, sourceAccount.currency, sourceAccount, destinationAccount, sourceAccount.balance);
+      const message = buildTransactionMessage(
+        type,
+        amount,
+        sourceAccount.currency,
+        sourceAccount,
+        destinationAccount,
+        sourceAccount.balance
+      );
 
       const sourceAccountAfter = await Account.findByPk(sourceAccount.id);
       let destinationAccountAfter;
@@ -174,18 +231,31 @@ export const createTransaction = [
           ...transactionData
         },
         sourceAccountBalanceAfter: sourceAccountAfter.balance,
-        destinationAccountBalanceAfter: destinationAccountAfter ? destinationAccountAfter.balance : null,
+        destinationAccountBalanceAfter: destinationAccountAfter
+          ? destinationAccountAfter.balance
+          : null,
         message
       });
       const user = await User.findByPk(userId);
       const phoneNumber = user.phoneNumber;
       const deviceToken = user.deviceToken;
 
-      const notificationMessage = buildTransactionMessage(type, amount, sourceAccount.currency, sourceAccount, destinationAccount, sourceAccount.balance);
+      const notificationMessage = buildTransactionMessage(
+        type,
+        amount,
+        sourceAccount.currency,
+        sourceAccount,
+        destinationAccount,
+        sourceAccount.balance
+      );
 
       await sendSMS(phoneNumber, notificationMessage);
 
-      await sendPushNotification(deviceToken, 'New Transaction', notificationMessage);
+      await sendPushNotification(
+        deviceToken,
+        'New Transaction',
+        notificationMessage
+      );
     } catch (err) {
       if (transaction.finished !== 'commit') {
         await transaction.rollback();
@@ -196,12 +266,18 @@ export const createTransaction = [
 ];
 
 export const getAllTransactions = [
-  query('limit').optional().isInt({ min: 1 }).withMessage('Limit must be an integer greater than 0'),
-  query('offset').optional().isInt({ min: 0 }).withMessage('Offset must be an integer greater than or equal to 0'),
-  query('sort').optional().isIn(['createdAt', 'updatedAt', 'id']).withMessage('Sort must be one of: createdAt, updatedAt, id'),
-  query('order').optional().isIn(['ASC', 'DESC']).withMessage('Order must be one of: ASC, DESC'),
-  query('type').optional().isIn(['deposit', 'withdrawal', 'transfer']).withMessage('Type must be one of: deposit, withdrawal, transfer'),
-  query('status').optional().isIn(['pending', 'completed', 'failed']).withMessage('Status must be one of: pending, completed, failed'),
+  query('limit').optional().isInt({ min: 1 })
+    .withMessage('Limit must be an integer greater than 0'),
+  query('offset').optional().isInt({ min: 0 })
+    .withMessage('Offset must be an integer greater than or equal to 0'),
+  query('sort').optional().isIn(['createdAt', 'updatedAt', 'id'])
+    .withMessage('Sort must be one of: createdAt, updatedAt, id'),
+  query('order').optional().isIn(['ASC', 'DESC'])
+    .withMessage('Order must be one of: ASC, DESC'),
+  query('type').optional().isIn(['deposit', 'withdrawal', 'transfer'])
+    .withMessage('Type must be one of: deposit, withdrawal, transfer'),
+  query('status').optional().isIn(['pending', 'completed', 'failed'])
+    .withMessage('Status must be one of: pending, completed, failed'),
 
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -353,14 +429,21 @@ export const getTransactionById = [
 ];
 
 export const getTransactionsByAccountNumber = [
-  param('accountNumber').isString().withMessage('Account number must be a string'),
+  param('accountNumber').isString()
+    .withMessage('Account number must be a string'),
 
-  query('limit').optional().isInt({ min: 1 }).withMessage('Limit must be an integer greater than 0'),
-  query('offset').optional().isInt({ min: 0 }).withMessage('Offset must be an integer greater than or equal to 0'),
-  query('sort').optional().isIn(['createdAt', 'updatedAt', 'id']).withMessage('Sort must be one of: createdAt, updatedAt, id'),
-  query('order').optional().isIn(['ASC', 'DESC']).withMessage('Order must be one of: ASC, DESC'),
-  query('type').optional().isIn(['deposit', 'withdrawal', 'transfer']).withMessage('Type must be one of: deposit, withdrawal, transfer'),
-  query('status').optional().isIn(['pending', 'completed', 'failed']).withMessage('Status must be one of: pending, completed, failed'),
+  query('limit').optional().isInt({ min: 1 })
+    .withMessage('Limit must be an integer greater than 0'),
+  query('offset').optional().isInt({ min: 0 })
+    .withMessage('Offset must be an integer greater than or equal to 0'),
+  query('sort').optional().isIn(['createdAt', 'updatedAt', 'id'])
+    .withMessage('Sort must be one of: createdAt, updatedAt, id'),
+  query('order').optional().isIn(['ASC', 'DESC'])
+    .withMessage('Order must be one of: ASC, DESC'),
+  query('type').optional().isIn(['deposit', 'withdrawal', 'transfer'])
+    .withMessage('Type must be one of: deposit, withdrawal, transfer'),
+  query('status').optional().isIn(['pending', 'completed', 'failed'])
+    .withMessage('Status must be one of: pending, completed, failed'),
 
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -454,12 +537,18 @@ export const getTransactionsByAccountNumber = [
 export const getTransactionsByUserId = [
   param('userId').isUUID().withMessage('User ID must be a valid UUID'),
 
-  query('limit').optional().isInt({ min: 1 }).withMessage('Limit must be an integer greater than 0'),
-  query('offset').optional().isInt({ min: 0 }).withMessage('Offset must be an integer greater than or equal to 0'),
-  query('sort').optional().isIn(['createdAt', 'updatedAt', 'id']).withMessage('Sort must be one of: createdAt, updatedAt, id'),
-  query('order').optional().isIn(['ASC', 'DESC']).withMessage('Order must be one of: ASC, DESC'),
-  query('type').optional().isIn(['deposit', 'withdrawal', 'transfer']).withMessage('Type must be one of: deposit, withdrawal, transfer'),
-  query('status').optional().isIn(['pending', 'completed', 'failed']).withMessage('Status must be one of: pending, completed, failed'),
+  query('limit').optional().isInt({ min: 1 })
+    .withMessage('Limit must be an integer greater than 0'),
+  query('offset').optional().isInt({ min: 0 })
+    .withMessage('Offset must be an integer greater than or equal to 0'),
+  query('sort').optional().isIn(['createdAt', 'updatedAt', 'id'])
+    .withMessage('Sort must be one of: createdAt, updatedAt, id'),
+  query('order').optional().isIn(['ASC', 'DESC'])
+    .withMessage('Order must be one of: ASC, DESC'),
+  query('type').optional().isIn(['deposit', 'withdrawal', 'transfer'])
+    .withMessage('Type must be one of: deposit, withdrawal, transfer'),
+  query('status').optional().isIn(['pending', 'completed', 'failed'])
+    .withMessage('Status must be one of: pending, completed, failed'),
 
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -470,7 +559,6 @@ export const getTransactionsByUserId = [
     const { userId } = req.params;
     const { limit, offset, sort, order } = req.query;
 
-    // Check if user exists
     const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({
@@ -540,12 +628,18 @@ export const getTransactionsByUserId = [
 export const getTransactionsByAccountId = [
   param('accountId').isUUID().withMessage('Account ID must be a valid UUID'),
 
-  query('limit').optional().isInt({ min: 1 }).withMessage('Limit must be an integer greater than 0'),
-  query('offset').optional().isInt({ min: 0 }).withMessage('Offset must be an integer greater than or equal to 0'),
-  query('sort').optional().isIn(['createdAt', 'updatedAt', 'id']).withMessage('Sort must be one of: createdAt, updatedAt, id'),
-  query('order').optional().isIn(['ASC', 'DESC']).withMessage('Order must be one of: ASC, DESC'),
-  query('type').optional().isIn(['deposit', 'withdrawal', 'transfer']).withMessage('Type must be one of: deposit, withdrawal, transfer'),
-  query('status').optional().isIn(['pending', 'completed', 'failed']).withMessage('Status must be one of: pending, completed, failed'),
+  query('limit').optional().isInt({ min: 1 })
+    .withMessage('Limit must be an integer greater than 0'),
+  query('offset').optional().isInt({ min: 0 })
+    .withMessage('Offset must be an integer greater than or equal to 0'),
+  query('sort').optional().isIn(['createdAt', 'updatedAt', 'id'])
+    .withMessage('Sort must be one of: createdAt, updatedAt, id'),
+  query('order').optional().isIn(['ASC', 'DESC'])
+    .withMessage('Order must be one of: ASC, DESC'),
+  query('type').optional().isIn(['deposit', 'withdrawal', 'transfer'])
+    .withMessage('Type must be one of: deposit, withdrawal, transfer'),
+  query('status').optional().isIn(['pending', 'completed', 'failed'])
+    .withMessage('Status must be one of: pending, completed, failed'),
 
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -598,7 +692,9 @@ export const getTransactionsByAccountId = [
         order: sort && order ? [[sort, order]] : undefined
       });
 
-      const message = transactions.length === 0 ? 'No transactions found' : `${transactions.length} transaction(s) found`;
+      const message = transactions.length === 0
+        ? 'No transactions found'
+        : `${transactions.length} transaction(s) found`;
       res.status(200).json({
         message,
         transactions
@@ -670,7 +766,9 @@ export const deleteTransactionsByAccountId = [
         });
       }
 
-      const deletedTransactions = await Transaction.destroy({ where: { accountId } });
+      const deletedTransactions = await Transaction.destroy({
+        where: { accountId }
+      });
 
       if (deletedTransactions === 0) {
         return res.status(404).json({
@@ -679,7 +777,8 @@ export const deleteTransactionsByAccountId = [
       }
 
       res.status(200).json({
-        message: `Deleted ${deletedTransactions} transactions for account with ID ${accountId}`
+        message: `Deleted ${deletedTransactions} transactions for account with ID 
+        ${accountId}`
       });
     } catch (err) {
       if (err instanceof Sequelize.ValidationError) {
@@ -694,7 +793,8 @@ export const deleteTransactionsByAccountId = [
 ];
 
 export const deleteTransactionsByAccountNumber = [
-  param('accountNumber').isString().withMessage('Account number must be a valid string'),
+  param('accountNumber').isString()
+    .withMessage('Account number must be a valid string'),
 
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -729,7 +829,8 @@ export const deleteTransactionsByAccountNumber = [
       }
 
       res.status(200).json({
-        message: `Deleted ${deletedTransactions} transactions for account with number ${accountNumber}`
+        message: `Deleted ${deletedTransactions} transactions for account 
+        with number ${accountNumber}`
       });
     } catch (err) {
       console.error(err);
@@ -767,7 +868,9 @@ export const deleteTransactionsByUserId = [
         });
       }
 
-      const deletedTransactions = await Transaction.destroy({ where: { userId } });
+      const deletedTransactions = await Transaction.destroy({
+        where: { userId }
+      });
 
       if (deletedTransactions === 0) {
         return res.status(404).json({
@@ -776,7 +879,8 @@ export const deleteTransactionsByUserId = [
       }
 
       res.status(200).json({
-        message: `Deleted ${deletedTransactions} transactions for user with ID ${userId}`
+        message: `Deleted ${deletedTransactions} transactions for user with ID 
+        ${userId}`
       });
     } catch (err) {
       if (err instanceof Sequelize.ValidationError) {
@@ -813,7 +917,8 @@ export const reverseTransaction = [
         throw new Error(`Transaction ${id} is already reversed`);
       }
 
-      if (originalTransaction.type === 'deposit' || originalTransaction.type === 'withdrawal') {
+      if (originalTransaction.type === 'deposit' ||
+        originalTransaction.type === 'withdrawal') {
         throw new Error(`Cannot reverse a ${originalTransaction.type} transaction`);
       }
 
@@ -827,10 +932,18 @@ export const reverseTransaction = [
           throw new Error(`Invalid transaction type: ${originalTransaction.type}`);
       }
 
-      await updateAccountBalance(originalTransaction.destinationAccountId, reverseType === 'deposit' ? originalTransaction.amount : -originalTransaction.amount, transaction);
+      await updateAccountBalance(
+        originalTransaction.destinationAccountId,
+        reverseType === 'deposit'
+          ? originalTransaction.amount
+          : -originalTransaction.amount,
+        transaction);
 
       if (reverseType === 'transfer') {
-        await updateAccountBalance(originalTransaction.sourceAccountId, originalTransaction.amount, transaction);
+        await updateAccountBalance(
+          originalTransaction.sourceAccountId,
+          originalTransaction.amount,
+          transaction);
       }
 
       originalTransaction.reversed = true;
@@ -852,17 +965,21 @@ export const reverseTransaction = [
         description: `Reverse of transaction ${id}`
       };
 
-      const sourceAccountAfter = await Account.findByPk(originalTransaction.destinationAccountId);
+      const sourceAccountAfter = await Account.findByPk(
+        originalTransaction.destinationAccountId);
       let destinationAccountAfter;
       if (reverseType === 'transfer') {
-        destinationAccountAfter = await Account.findByPk(originalTransaction.sourceAccountId);
+        destinationAccountAfter = await Account.findByPk(
+          originalTransaction.sourceAccountId);
       }
 
       res.status(201).json({
         message: `Transaction ${id} reversed`,
         transaction: reverseTransactionData,
         sourceAccountBalanceAfter: sourceAccountAfter.balance,
-        destinationAccountBalanceAfter: destinationAccountAfter ? destinationAccountAfter.balance : null
+        destinationAccountBalanceAfter: destinationAccountAfter
+          ? destinationAccountAfter.balance
+          : null
       });
     } catch (err) {
       await transaction.rollback();
@@ -872,9 +989,12 @@ export const reverseTransaction = [
 ];
 
 export const getAccountStatement = [
-  param('accountNumber').isString().withMessage('Account number must be a valid string'),
-  query('startDate').isISO8601().withMessage('startDate must be in ISO 8601 format (YYYY-MM-DD)'),
-  query('endDate').isISO8601().withMessage('endDate must be in ISO 8601 format (YYYY-MM-DD)'),
+  param('accountNumber').isString()
+    .withMessage('Account number must be a valid string'),
+  query('startDate').isISO8601()
+    .withMessage('startDate must be in ISO 8601 format (YYYY-MM-DD)'),
+  query('endDate').isISO8601()
+    .withMessage('endDate must be in ISO 8601 format (YYYY-MM-DD)'),
 
   async (req, res, next) => {
     const errors = validationResult(req);

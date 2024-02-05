@@ -159,7 +159,11 @@ const SingleAccountOverview = () => {
 
   if (error) {
     return (
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
         <Alert onClose={handleClose} severity='error'>
           Error: {error}
         </Alert>
@@ -176,7 +180,9 @@ const SingleAccountOverview = () => {
             Account Overview
           </Typography>
           <Tooltip title='Refresh'>
-            <IconButton onClick={handleRefresh} className={classes.refreshButton}>
+            <IconButton
+              onClick={handleRefresh}
+              className={classes.refreshButton}>
               <RefreshIcon />
             </IconButton>
           </Tooltip>
@@ -189,7 +195,9 @@ const SingleAccountOverview = () => {
                   <ListItemIcon>
                     <PermIdentityIcon className={classes.icon} />
                   </ListItemIcon>
-                  <ListItemText primary='Account Number' secondary={account.accountNumber} />
+                  <ListItemText
+                    primary='Account Number'
+                    secondary={account.accountNumber} />
                 </ListItem>
               </CardContent>
             </Card>
@@ -201,7 +209,9 @@ const SingleAccountOverview = () => {
                   <ListItemIcon>
                     <PersonOutlineIcon className={classes.icon} />
                   </ListItemIcon>
-                  <ListItemText primary='Account Name' secondary={account.name} />
+                  <ListItemText
+                    primary='Account Name'
+                    secondary={account.name} />
                 </ListItem>
               </CardContent>
             </Card>
@@ -213,7 +223,9 @@ const SingleAccountOverview = () => {
                   <ListItemIcon>
                     <AccountBalanceIcon className={classes.icon} />
                   </ListItemIcon>
-                  <ListItemText primary='Account Type' secondary={account.accountType} />
+                  <ListItemText
+                    primary='Account Type'
+                    secondary={account.accountType} />
                 </ListItem>
               </CardContent>
             </Card>
@@ -237,7 +249,9 @@ const SingleAccountOverview = () => {
                   <ListItemIcon>
                     <MonetizationOnIcon className={classes.icon} />
                   </ListItemIcon>
-                  <ListItemText primary='Balance' secondary={account.balance} />
+                  <ListItemText
+                    primary='Balance'
+                    secondary={account.balance} />
                 </ListItem>
               </CardContent>
             </Card>
@@ -261,7 +275,9 @@ const SingleAccountOverview = () => {
                   <ListItemIcon>
                     <DateRangeIcon className={classes.icon} />
                   </ListItemIcon>
-                  <ListItemText primary='Date of Creation' secondary={new Date(account.createdAt).toLocaleDateString()} />
+                  <ListItemText
+                    primary='Date of Creation'
+                    secondary={new Date(account.createdAt).toLocaleDateString()} />
                 </ListItem>
               </CardContent>
             </Card>
