@@ -316,7 +316,7 @@ const AccountOverview = () => {
                 <Typography
                   variant='h4'
                   gutterBottom className={classes.noAccountsHeader}>
-                  Welcome to FinTrust!
+                  Welcome to FinTrust Account Overview Page!
                 </Typography>
                 <Typography
                   variant='h6'
