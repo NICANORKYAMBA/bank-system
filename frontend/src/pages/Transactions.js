@@ -14,7 +14,8 @@ import {
   CardContent,
   Chip,
   Box,
-  TextField,
+  Grid,
+  InputLabel,
   Button,
   Select,
   MenuItem
@@ -64,8 +65,36 @@ const useStyles = makeStyles((theme) => ({
     color: '#fff'
   },
   chip: {
-    marginLeft: theme.spacing(1)
-  }
+    marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(1),
+  },
+  welcomeMessage: {
+    marginBottom: theme.spacing(4)
+  },
+  quickActions: {
+    marginTop: theme.spacing(4)
+  },
+  transactionCard: {
+    boxShadow: theme.shadows[3],
+    borderRadius: theme.shape.borderRadius
+  },
+  transactionDetails: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: theme.spacing(2),
+    alignItems: 'center',
+    padding: theme.spacing(2),
+ },
+ transactionAmount: {
+    fontWeight: theme.typography.fontWeightBold,
+    marginBottom: theme.spacing(2),
+ },
+ transactionStatus: {
+    color: theme.palette.success.main,
+    fontWeight: theme.typography.fontWeightMedium,
+    marginBottom: theme.spacing(1),
+ },
+
 }));
 
 const formatDate = (dateString) => {
@@ -148,22 +177,46 @@ const Transactions = () => {
         Transactions
       </Typography>
       <Box display='flex' justifyContent='space-between' mb={2}>
-        <TextField
-          label='Filter From Account'
-          variant='outlined'
+        <Select
+          labelId='filter-from-account-label'
+          id='filter-from-account-select'
           value={filterFromAccount}
           onChange={(e) => {
             dispatch(setFilterFromAccount(e.target.value));
           }}
-        />
-        <TextField
-          label='Filter To Account'
-          variant='outlined'
+        >
+          <MenuItem value=''>
+            <em>None</em>
+          </MenuItem>
+          {accounts.map((account) => (
+            <MenuItem key={account.id} value={account.id}>
+              {account.number}
+            </MenuItem>
+          ))}
+        </Select>
+        <InputLabel htmlFor='filter-from-account-select'>
+          Filter From Account
+        </InputLabel>
+        <Select
+          labelId='filter-to-account-label'
+          id='filter-to-account-select'
           value={filterToAccount}
           onChange={(e) => {
             dispatch(setFilterToAccount(e.target.value));
           }}
-        />
+        >
+          <MenuItem value=''>
+            <em>None</em>
+          </MenuItem>
+          {accounts.map((account) => (
+            <MenuItem key={account.id} value={account.id}>
+              {account.number}
+            </MenuItem>
+          ))}
+        </Select>
+        <InputLabel htmlFor='filter-from-account-select'>
+          Filter To Account
+        </InputLabel>
         <Select
           value={filterTransactionType}
           onChange={(e) => {
@@ -202,6 +255,7 @@ const Transactions = () => {
           alignItems='center'
           justifyContent='center'
           minHeight='50vh'
+          className={classes.welcomeMessage}
         >
           <Typography variant='h5' gutterBottom>
             Welcome, {userFirstName}!
@@ -222,21 +276,22 @@ const Transactions = () => {
             handleClose={handleClose}
             handleCloseWithdrawal={handleClose}
             onTransactionCreated={handleTransactionCreated}
+            className={classes.quickActions}
           />
         </Box>
       )}
       {!loading && !error && filteredTransactions.length > 0 &&
         filteredTransactions.map((transaction) => (
-          <Card key={transaction.id} className={classes.card}>
-            <CardContent className={classes.cardContent}>
-              <div>
+          <Card key={transaction.id}
+            className={`${classes.card} ${classes.transactionCard}`}>
+            <CardContent className={classes.transactionDetails}>
+              <Grid item xs={12} md={6}>
                 <Typography variant='h6' component='h2'>
                   {getTransactionIcon(transaction.type)}
-                  {transaction.type.charAt(0).toUpperCase() +
-                    transaction.type.slice(1)}
+                  {transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
                 </Typography>
                 <Typography color='textSecondary'>
-                  {formatDate(transaction.createdAt)}
+                  Date: {formatDate(transaction.createdAt)}
                 </Typography>
                 <Typography color='textSecondary'>
                   Fee: {transaction.fee}
@@ -244,11 +299,18 @@ const Transactions = () => {
                 <Typography color='textSecondary'>
                   Exchange Rate: {transaction.exchangeRate}
                 </Typography>
-              </div>
-              <div>
-                <Typography variant='h5'>
+                <Typography color='textSecondary'
+                  className={classes.transactionStatus}>
+                  Status: {transaction.status}
+                </Typography>
+                <Typography color='textSecondary'>
+                  Channel: {transaction.channel}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Typography variant='h6' className={classes.transactionAmount}>
                   <MonetizationOnIcon className={classes.icon} color='action' />
-                  {transaction.amount}
+                  Amount: {transaction.amount} {transaction.currency}
                 </Typography>
                 {transaction.sourceTransactionAccount && (
                   <Chip
@@ -262,7 +324,7 @@ const Transactions = () => {
                     className={classes.chip}
                   />
                 )}
-              </div>
+              </Grid>
             </CardContent>
           </Card>
         ))}
