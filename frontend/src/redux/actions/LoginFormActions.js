@@ -99,3 +99,11 @@ export const setOpenSnackbar = (value) => ({
   type: SET_OPEN_SNACKBAR,
   payload: value
 });
+
+export const resetShowPassword = () => ({
+  type: 'RESET_SHOW_PASSWORD'
+});
+
+export const resetShowConfirmPassword = () => ({
+  type: 'RESET_SHOW_CONFIRM_PASSWORD'
+});

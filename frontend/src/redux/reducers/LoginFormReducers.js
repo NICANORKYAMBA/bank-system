@@ -140,6 +140,17 @@ const loginFormReducer = (state = initialState, action) => {
         ...state,
         errorMessage: action.payload
       };
+    case 'RESET_SHOW_PASSWORD':
+      return {
+        ...state,
+        showPassword: false
+      };
+
+    case 'RESET_SHOW_CONFIRM_PASSWORD':
+      return {
+        ...state,
+        showConfirmPassword: false
+      };
     default:
       return state;
   }

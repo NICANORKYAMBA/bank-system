@@ -14,7 +14,9 @@ import {
   toggleShowConfirmPassword,
   setIsSubmitting,
   setSnackbarMessage,
-  setOpenSnackbar
+  setOpenSnackbar,
+  resetShowPassword,
+  resetShowConfirmPassword
 } from '../redux/actions/LoginFormActions';
 import {
   Button,
@@ -220,8 +222,13 @@ function LoginForm () {
       }
       dispatch(setSnackbarMessage(errorMessage));
       dispatch(setOpenSnackbar(true));
+
+      dispatch(clearFormData());
+      dispatch(clearFormErrors());
     } finally {
       dispatch(setIsSubmitting(false));
+      dispatch(resetShowPassword());
+      dispatch(resetShowConfirmPassword());
     }
   };
 
