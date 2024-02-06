@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  fetchAllAccountsDataThunk
+  fetchAllAccountsDataThunk,
+  resetUserState
 } from '../redux/actions/userActions';
 import {
   getUserId
@@ -95,6 +96,8 @@ const Navigation = () => {
 
 
   const handleLogout = () => {
+    dispatch(resetUserState());
+
     sessionStorage.clear();
 
     window.location.href = '/';
