@@ -12,6 +12,7 @@ export const SET_USER_SELECTED_ACCOUNT = 'SET_USER_SELECTED_ACCOUNT';
 export const SET_USER_TRANSACTIONS = 'SET_USER_TRANSACTIONS';
 export const SET_LOADING = 'SET_LOADING';
 export const SET_ERROR = 'SET_ERROR';
+export const RESET_USER_STATE = 'RESET_USER_STATE';
 export const LOGOUT = 'LOGOUT';
 
 export const setUserData = (userData) => ({
@@ -53,6 +54,11 @@ export const setError = (errorMessage) => ({
   type: SET_ERROR,
   payload: errorMessage
 });
+
+export const resetUserState = () => ({
+  type: RESET_USER_STATE
+});
+
 
 export const logout = () => ({
   type: LOGOUT

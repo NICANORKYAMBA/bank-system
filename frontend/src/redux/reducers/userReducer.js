@@ -7,6 +7,7 @@ import {
   SET_USER_TRANSACTIONS,
   SET_LOADING,
   SET_ERROR,
+  RESET_USER_STATE,
   LOGOUT
 } from '../actions/userActions';
 
@@ -65,6 +66,8 @@ const userReducer = (state = initialState, action) => {
         ...state,
         error: action.payload
       };
+    case RESET_USER_STATE:
+      return initialState;
     case LOGOUT:
       return initialState;
     default:
