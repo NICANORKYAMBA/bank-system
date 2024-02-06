@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUserData, setUserAddress } from '../redux/actions/userActions';
+import {
+  setUserData, setUserAddress
+} from '../redux/actions/userActions';
 import {
   updateFormData,
   setAuthToken,
@@ -88,12 +90,27 @@ function LoginForm () {
 
   const formData = useSelector(state => state.loginForm.formData || {});
   const errors = useSelector(state => state.loginForm.errors || {});
-  const isSubmitting = useSelector(state => state.loginForm.isSubmitting || false);
-  const openSnackbar = useSelector(state => state.loginForm.openSnackbar || false);
-  const snackbarMessage = useSelector(state => state.loginForm.snackbarMessage || '');
-  const showPassword = useSelector(state => state.loginForm.showPassword || false);
+  const isSubmitting = useSelector(
+    state => state.loginForm.isSubmitting || false);
+  const openSnackbar = useSelector(
+    state => state.loginForm.openSnackbar || false);
+  const snackbarMessage = useSelector(
+    state => state.loginForm.snackbarMessage || '');
+  const showPassword = useSelector(
+    state => state.loginForm.showPassword || false);
   const showConfirmPassword = useSelector(
     state => state.loginForm.showConfirmPassword || false);
+
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
+
+  useEffect(() => {
+    if (formData.password && formData.confirmPassword &&
+      formData.password !== formData.confirmPassword) {
+      setConfirmPasswordError('Passwords do not match.');
+    } else {
+      setConfirmPasswordError('');
+    }
+  }, [formData]);
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
@@ -174,7 +191,13 @@ function LoginForm () {
         } = response.data.userData;
 
         dispatch(setUserData({
-          userId, firstName, lastName, email, phoneNumber, dateOfBirth, isAdmin
+          userId,
+          firstName,
+          lastName,
+          email,
+          phoneNumber,
+          dateOfBirth,
+          isAdmin
         }));
         dispatch(setUserAddress(addresses));
         dispatch(setSnackbarMessage('Login successful! Redirecting...'));
@@ -214,7 +237,8 @@ function LoginForm () {
         </Typography>
         <form
           noValidate autoComplete='off'
-          onSubmit={handleSubmit}>
+          onSubmit={handleSubmit}
+        >
           <TextField
             className={classes.loginInput}
             label='Email'
@@ -269,13 +293,13 @@ function LoginForm () {
                     aria-label='toggle password visibility'
                     onClick={handleClickShowConfirmPassword}
                   >
-                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                    {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
                   </IconButton>
                 </InputAdornment>
               )
             }}
-            error={!!errors.confirmPassword}
-            helperText={errors.confirmPassword || ' '}
+            error={!!confirmPasswordError}
+            helperText={confirmPasswordError || ' '}
           />
           <Grid
             container direction='column'
