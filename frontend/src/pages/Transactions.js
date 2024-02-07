@@ -178,10 +178,14 @@ const Transactions = () => {
         Transactions
       </Typography>
       <Box display='flex' justifyContent='space-between' mb={2}>
-        <Grid container spacing={2}>
+        <Grid container spacing={4}>
           <Grid item xs={12} sm={6}>
             <FormControl variant='outlined' fullWidth>
-              <InputLabel id='filter-from-account-label'>Filter From Account</InputLabel>
+              <InputLabel
+                id='filter-from-account-label'
+              >
+                Filter From Account
+              </InputLabel>
               <Select
                 labelId='filter-from-account-label'
                 id='filter-from-account-select'
@@ -208,7 +212,8 @@ const Transactions = () => {
           <Grid item xs={12} sm={6}>
             <FormControl variant='outlined' fullWidth>
               <InputLabel
-                id='filter-to-account-label'>
+                id='filter-to-account-label'
+              >
                 Filter To Account
               </InputLabel>
               <Select
@@ -235,11 +240,12 @@ const Transactions = () => {
             </FormControl>
           </Grid>
         </Grid>
-        <Grid container spacing={2}>
+        <Grid container spacing={4}>
           <Grid item xs={12} sm={6}>
             <FormControl variant='outlined' fullWidth>
               <InputLabel
-                id='filter-transaction-type-label'>
+                id='filter-transaction-type-label'
+              >
                 Transaction Type
               </InputLabel>
               <Select
