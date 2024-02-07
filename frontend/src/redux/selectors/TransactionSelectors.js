@@ -1,4 +1,8 @@
-export const selectFilteredTransactions = (state, filterFromAccount, filterToAccount, filterTransactionType) => {
+export const selectFilteredTransactions = (
+  state,
+  filterFromAccount,
+  filterToAccount,
+  filterTransactionType) => {
   if (!state.transaction.data) {
     return [];
   }
