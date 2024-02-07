@@ -182,18 +182,16 @@ const Transactions = () => {
           id='filter-from-account-select'
           value={filterFromAccount}
           onChange={(e) => {
-            const selectedAccount = accounts.find(account => account.id === e.target.value);
-            dispatch(setFilterFromAccount(selectedAccount ? selectedAccount.accountNumber : ''));
+            dispatch(setFilterFromAccount(e.target.value));
           }}
         >
-
           <MenuItem value=''>
             <em>None</em>
           </MenuItem>
           {accounts.map((account) => (
             <MenuItem
-              key={account.id}
-              value={account.id}
+              key={account.accountNumber}
+              value={account.accountNumber}
             >
               {account.accountNumber}
             </MenuItem>
@@ -202,13 +200,13 @@ const Transactions = () => {
         <InputLabel htmlFor='filter-from-account-select'>
           Filter From Account
         </InputLabel>
+
         <Select
           labelId='filter-to-account-label'
           id='filter-to-account-select'
           value={filterToAccount}
           onChange={(e) => {
-            const selectedAccount = accounts.find(account => account.id === e.target.value);
-            dispatch(setFilterToAccount(selectedAccount ? selectedAccount.accountNumber : ''));
+            dispatch(setFilterToAccount(e.target.value));
           }}
         >
           <MenuItem value=''>
@@ -216,8 +214,8 @@ const Transactions = () => {
           </MenuItem>
           {accounts.map((account) => (
             <MenuItem
-              key={account.id}
-              value={account.id}
+              key={account.accountNumber}
+              value={account.accountNumber}
             >
               {account.accountNumber}
             </MenuItem>
