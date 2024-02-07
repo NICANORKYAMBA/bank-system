@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
   },
   chip: {
     marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(1)
   },
   welcomeMessage: {
     marginBottom: theme.spacing(4)
@@ -83,17 +83,17 @@ const useStyles = makeStyles((theme) => ({
     gridTemplateColumns: 'repeat(2, 1fr)',
     gap: theme.spacing(2),
     alignItems: 'center',
-    padding: theme.spacing(2),
- },
- transactionAmount: {
+    padding: theme.spacing(2)
+  },
+  transactionAmount: {
     fontWeight: theme.typography.fontWeightBold,
-    marginBottom: theme.spacing(2),
- },
- transactionStatus: {
+    marginBottom: theme.spacing(2)
+  },
+  transactionStatus: {
     color: theme.palette.success.main,
     fontWeight: theme.typography.fontWeightMedium,
-    marginBottom: theme.spacing(1),
- },
+    marginBottom: theme.spacing(1)
+  }
 
 }));
 
@@ -182,15 +182,20 @@ const Transactions = () => {
           id='filter-from-account-select'
           value={filterFromAccount}
           onChange={(e) => {
-            dispatch(setFilterFromAccount(e.target.value));
+            const selectedAccount = accounts.find(account => account.id === e.target.value);
+            dispatch(setFilterFromAccount(selectedAccount ? selectedAccount.accountNumber : ''));
           }}
         >
+
           <MenuItem value=''>
             <em>None</em>
           </MenuItem>
           {accounts.map((account) => (
-            <MenuItem key={account.id} value={account.id}>
-              {account.number}
+            <MenuItem
+              key={account.id}
+              value={account.id}
+            >
+              {account.accountNumber}
             </MenuItem>
           ))}
         </Select>
@@ -202,19 +207,23 @@ const Transactions = () => {
           id='filter-to-account-select'
           value={filterToAccount}
           onChange={(e) => {
-            dispatch(setFilterToAccount(e.target.value));
+            const selectedAccount = accounts.find(account => account.id === e.target.value);
+            dispatch(setFilterToAccount(selectedAccount ? selectedAccount.accountNumber : ''));
           }}
         >
           <MenuItem value=''>
             <em>None</em>
           </MenuItem>
           {accounts.map((account) => (
-            <MenuItem key={account.id} value={account.id}>
-              {account.number}
+            <MenuItem
+              key={account.id}
+              value={account.id}
+            >
+              {account.accountNumber}
             </MenuItem>
           ))}
         </Select>
-        <InputLabel htmlFor='filter-from-account-select'>
+        <InputLabel htmlFor='filter-to-account-select'>
           Filter To Account
         </InputLabel>
         <Select
@@ -282,8 +291,10 @@ const Transactions = () => {
       )}
       {!loading && !error && filteredTransactions.length > 0 &&
         filteredTransactions.map((transaction) => (
-          <Card key={transaction.id}
-            className={`${classes.card} ${classes.transactionCard}`}>
+          <Card
+            key={transaction.id}
+            className={`${classes.card} ${classes.transactionCard}`}
+          >
             <CardContent className={classes.transactionDetails}>
               <Grid item xs={12} md={6}>
                 <Typography variant='h6' component='h2'>
@@ -299,8 +310,10 @@ const Transactions = () => {
                 <Typography color='textSecondary'>
                   Exchange Rate: {transaction.exchangeRate}
                 </Typography>
-                <Typography color='textSecondary'
-                  className={classes.transactionStatus}>
+                <Typography
+                  color='textSecondary'
+                  className={classes.transactionStatus}
+                >
                   Status: {transaction.status}
                 </Typography>
                 <Typography color='textSecondary'>
