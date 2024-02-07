@@ -18,6 +18,7 @@ import {
   InputLabel,
   Button,
   Select,
+  FormControl,
   MenuItem
 } from '@material-ui/core';
 import QuickActions from '../components/QuickActions';
@@ -177,76 +178,101 @@ const Transactions = () => {
         Transactions
       </Typography>
       <Box display='flex' justifyContent='space-between' mb={2}>
-        <Select
-          labelId='filter-from-account-label'
-          id='filter-from-account-select'
-          value={filterFromAccount}
-          onChange={(e) => {
-            dispatch(setFilterFromAccount(e.target.value));
-          }}
-        >
-          <MenuItem value=''>
-            <em>None</em>
-          </MenuItem>
-          {accounts.map((account) => (
-            <MenuItem
-              key={account.accountNumber}
-              value={account.accountNumber}
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <FormControl variant='outlined' fullWidth>
+              <InputLabel id='filter-from-account-label'>Filter From Account</InputLabel>
+              <Select
+                labelId='filter-from-account-label'
+                id='filter-from-account-select'
+                value={filterFromAccount}
+                onChange={(e) => {
+                  dispatch(setFilterFromAccount(e.target.value));
+                }}
+                label='Filter From Account'
+              >
+                <MenuItem value=''>
+                  <em>None</em>
+                </MenuItem>
+                {accounts.map((account) => (
+                  <MenuItem
+                    key={account.accountNumber}
+                    value={account.accountNumber}
+                  >
+                    {account.accountNumber}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl variant='outlined' fullWidth>
+              <InputLabel
+                id='filter-to-account-label'>
+                Filter To Account
+              </InputLabel>
+              <Select
+                labelId='filter-to-account-label'
+                id='filter-to-account-select'
+                value={filterToAccount}
+                onChange={(e) => {
+                  dispatch(setFilterToAccount(e.target.value));
+                }}
+                label='Filter To Account'
+              >
+                <MenuItem value=''>
+                  <em>None</em>
+                </MenuItem>
+                {accounts.map((account) => (
+                  <MenuItem
+                    key={account.accountNumber}
+                    value={account.accountNumber}
+                  >
+                    {account.accountNumber}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <FormControl variant='outlined' fullWidth>
+              <InputLabel
+                id='filter-transaction-type-label'>
+                Transaction Type
+              </InputLabel>
+              <Select
+                labelId='filter-transaction-type-label'
+                id='filter-transaction-type-select'
+                value={filterTransactionType}
+                onChange={(e) => {
+                  dispatch(setFilterTransactionType(e.target.value));
+                }}
+                label='Transaction Type'
+              >
+                <MenuItem value=''>
+                  <em>All Types</em>
+                </MenuItem>
+                <MenuItem value='deposit'>Deposit</MenuItem>
+                <MenuItem value='withdrawal'>Withdrawal</MenuItem>
+                <MenuItem value='transfer'>Transfer</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Button
+              variant='contained'
+              color='secondary'
+              fullWidth
+              onClick={() => dispatch(clearFilters())}
             >
-              {account.accountNumber}
-            </MenuItem>
-          ))}
-        </Select>
-        <InputLabel htmlFor='filter-from-account-select'>
-          Filter From Account
-        </InputLabel>
-
-        <Select
-          labelId='filter-to-account-label'
-          id='filter-to-account-select'
-          value={filterToAccount}
-          onChange={(e) => {
-            dispatch(setFilterToAccount(e.target.value));
-          }}
-        >
-          <MenuItem value=''>
-            <em>None</em>
-          </MenuItem>
-          {accounts.map((account) => (
-            <MenuItem
-              key={account.accountNumber}
-              value={account.accountNumber}
-            >
-              {account.accountNumber}
-            </MenuItem>
-          ))}
-        </Select>
-        <InputLabel htmlFor='filter-to-account-select'>
-          Filter To Account
-        </InputLabel>
-        <Select
-          value={filterTransactionType}
-          onChange={(e) => {
-            dispatch(setFilterTransactionType(e.target.value));
-          }}
-          displayEmpty
-          inputProps={{ 'aria-label': 'Without label' }}
-        >
-          <MenuItem value=''>
-            <em>All Types</em>
-          </MenuItem>
-          <MenuItem value='deposit'>Deposit</MenuItem>
-          <MenuItem value='withdrawal'>Withdrawal</MenuItem>
-          <MenuItem value='transfer'>Transfer</MenuItem>
-        </Select>
-        <Button
-          variant='contained'
-          color='secondary'
-          onClick={() => dispatch(clearFilters())}
-        >
-          Clear Filters
-        </Button>
+              Clear Filters
+            </Button>
+          </Grid>
+        </Grid>
       </Box>
+
       <Backdrop className={classes.backdrop} open={loading}>
         <CircularProgress color='inherit' />
       </Backdrop>
