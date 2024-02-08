@@ -8,6 +8,7 @@ import {
   Paper,
   makeStyles,
   Box,
+  Button,
   Card,
   CardContent,
   IconButton,
@@ -28,6 +29,9 @@ import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import EuroSymbolIcon from '@material-ui/icons/EuroSymbol';
 import DateRangeIcon from '@material-ui/icons/DateRange';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import CreditCardIcon from '@material-ui/icons/CreditCard';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -69,19 +73,21 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Roboto, sans-serif'
   },
   refreshButton: {
-    position: 'absolute',
-    olor: theme.palette.primary.contrastText,
-    right: theme.spacing(2),
-    top: theme.spacing(2)
+    color: theme.palette.primary.contrastText,
+    marginLeft: 'auto',
+    marginRight: theme.spacing(2),
+    marginTop: theme.spacing(1)
   },
   header: {
     display: 'flex',
     alignItems: 'center',
-    marginBottom: theme.spacing(2),
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing(4),
     padding: theme.spacing(2),
     backgroundColor: theme.palette.secondary.main,
     color: theme.palette.secondary.contrastText,
-    borderRadius: theme.shape.borderRadius
+    borderRadius: theme.shape.borderRadius,
+    boxShadow: '0  4px  8px  0 rgba(0,0,0,0.2)'
   },
   gridContainer: {
     flexGrow: 1,
@@ -145,6 +151,9 @@ const SingleAccountOverview = () => {
     return (
       <Box className={classes.loadingBox}>
         <CircularProgress />
+        <Typography variant='body1' className={classes.typography}>
+          Loading account details...
+        </Typography>
       </Box>
     );
   }
@@ -164,8 +173,16 @@ const SingleAccountOverview = () => {
         autoHideDuration={6000}
         onClose={handleClose}
       >
-        <Alert onClose={handleClose} severity='error'>
-          Error: {error}
+        <Alert
+          onClose={handleClose}
+          severity='error'
+        >
+          {error}
+          <Button
+            onClick={handleRefresh} s
+            ize='small'
+          >Retry
+          </Button>
         </Alert>
       </Snackbar>
     );
@@ -182,7 +199,8 @@ const SingleAccountOverview = () => {
           <Tooltip title='Refresh'>
             <IconButton
               onClick={handleRefresh}
-              className={classes.refreshButton}>
+              className={classes.refreshButton}
+            >
               <RefreshIcon />
             </IconButton>
           </Tooltip>
@@ -197,7 +215,8 @@ const SingleAccountOverview = () => {
                   </ListItemIcon>
                   <ListItemText
                     primary='Account Number'
-                    secondary={account.accountNumber} />
+                    secondary={account.accountNumber}
+                  />
                 </ListItem>
               </CardContent>
             </Card>
@@ -211,7 +230,8 @@ const SingleAccountOverview = () => {
                   </ListItemIcon>
                   <ListItemText
                     primary='Account Name'
-                    secondary={account.name} />
+                    secondary={account.name}
+                  />
                 </ListItem>
               </CardContent>
             </Card>
@@ -225,7 +245,8 @@ const SingleAccountOverview = () => {
                   </ListItemIcon>
                   <ListItemText
                     primary='Account Type'
-                    secondary={account.accountType} />
+                    secondary={account.accountType}
+                  />
                 </ListItem>
               </CardContent>
             </Card>
@@ -251,7 +272,8 @@ const SingleAccountOverview = () => {
                   </ListItemIcon>
                   <ListItemText
                     primary='Balance'
-                    secondary={account.balance} />
+                    secondary={account.balance}
+                  />
                 </ListItem>
               </CardContent>
             </Card>
@@ -273,11 +295,57 @@ const SingleAccountOverview = () => {
               <CardContent>
                 <ListItem>
                   <ListItemIcon>
+                    <TrendingUpIcon className={classes.icon} />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary='Interest Rate'
+                    secondary={account.interestRate}
+                  />
+                </ListItem>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} className={classes.gridItem}>
+            <Card className={classes.card}>
+              <CardContent>
+                <ListItem>
+                  <ListItemIcon>
+                    <CreditCardIcon className={classes.icon} />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary='Overdraft Limit'
+                    secondary={account.overdraftLimit}
+                  />
+                </ListItem>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} className={classes.gridItem}>
+            <Card className={classes.card}>
+              <CardContent>
+                <ListItem>
+                  <ListItemIcon>
+                    <AccessTimeIcon className={classes.icon} />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary='Last Transaction Date'
+                    secondary={new Date(account.lastTransactionDate).toLocaleDateString()}
+                  />
+                </ListItem>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4} className={classes.gridItem}>
+            <Card className={classes.card}>
+              <CardContent>
+                <ListItem>
+                  <ListItemIcon>
                     <DateRangeIcon className={classes.icon} />
                   </ListItemIcon>
                   <ListItemText
                     primary='Date of Creation'
-                    secondary={new Date(account.createdAt).toLocaleDateString()} />
+                    secondary={new Date(account.createdAt).toLocaleDateString()}
+                  />
                 </ListItem>
               </CardContent>
             </Card>
