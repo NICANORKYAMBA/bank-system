@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { getUserId } from '../redux/selectors/userSelectors';
 import { useUserContext } from './userContext';
 import {
   Button,
@@ -40,17 +42,17 @@ const ProfileManagementForm = () => {
   const [formErrors, setFormErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const storedUserId = useSelector((state) => getUserId(state));
 
   const history = useHistory();
 
   useEffect(() => {
-    const storedUserId = sessionStorage.getItem('userId');
     if (storedUserId) {
       setUserId(storedUserId);
     } else {
       history.push('/login');
     }
-  }, [history]);
+  }, [storedUserId, history]);
 
   const handleInputChange = (setter) => (event) => {
     setter(event.target.value);
@@ -142,7 +144,7 @@ const ProfileManagementForm = () => {
         const response = await updateUserProfile(userId, userData);
         if (response.data && response.data.status === 200) {
           setSnackbarOpen(true);
-          setSnackbarMessage('Profile updated successfully');
+          setSnackbarMessage('Profile updated successfully. You will be redirected to your dashboard shortly.');
           setSnackbarSeverity('success');
           updateUser({
             firstName: userData.firstName,
@@ -184,6 +186,7 @@ const ProfileManagementForm = () => {
                     onChange={handleInputChange(setFirstName)}
                     autoComplete='given-name'
                     error={!!formErrors.firstName}
+                    placeholder='Enter your updated first name'
                     helperText={formErrors.firstName}
                   />
                 </Grid>
@@ -199,6 +202,7 @@ const ProfileManagementForm = () => {
                     onChange={handleInputChange(setLastName)}
                     autoComplete='family-name'
                     error={!!formErrors.lastName}
+                    placeholder='Enter your updated last name'
                     helperText={formErrors.lastName}
                   />
                 </Grid>
@@ -215,6 +219,7 @@ const ProfileManagementForm = () => {
                     onChange={handleInputChange(setEmail)}
                     autoComplete='email'
                     error={!!formErrors.email}
+                    placeholder='Enter your New Email Address'
                     helperText={formErrors.email}
                   />
                 </Grid>
@@ -230,6 +235,7 @@ const ProfileManagementForm = () => {
                     onChange={handlePasswordChange}
                     autoComplete='new-password'
                     error={!!formErrors.password}
+                    placeholder='Enter New Password'
                     helperText={formErrors.password}
                     InputProps={{
                       endAdornment: (
@@ -260,6 +266,7 @@ const ProfileManagementForm = () => {
                     autoComplete='new-password'
                     error={!!formErrors.confirmPassword}
                     helperText={formErrors.confirmPassword}
+                    placeholder='Enter New Confirm Password'
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position='end'>
@@ -285,6 +292,7 @@ const ProfileManagementForm = () => {
                     value={address.street}
                     onChange={handleAddressChange('street')}
                     autoComplete='street-address'
+                    placeholder='Enter New Street Name'
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -297,6 +305,7 @@ const ProfileManagementForm = () => {
                     value={address.city}
                     onChange={handleAddressChange('city')}
                     autoComplete='address-level2'
+                    placeholder='Enter New City Name'
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -309,6 +318,7 @@ const ProfileManagementForm = () => {
                     value={address.state}
                     onChange={handleAddressChange('state')}
                     autoComplete='address-level1'
+                    placeholder='Enter New State Name'
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -321,6 +331,7 @@ const ProfileManagementForm = () => {
                     value={address.country}
                     onChange={handleAddressChange('country')}
                     autoComplete='country'
+                    placeholder='Enter New Country Name'
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -333,6 +344,7 @@ const ProfileManagementForm = () => {
                     value={address.zipCode}
                     onChange={handleAddressChange('zipCode')}
                     autoComplete='postal-code'
+                    placeholder='Enter New Zip Code'
                   />
                 </Grid>
               </Grid>
