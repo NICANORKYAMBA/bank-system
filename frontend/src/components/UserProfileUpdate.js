@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { getUserId } from '../redux/selectors/userSelectors';
-import { useUserContext } from './userContext';
+import { setUserData } from '../redux/actions/userActions';
 import {
   Button,
   TextField,
@@ -22,6 +22,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import { updateUserProfile } from '../api/api';
 
 const ProfileManagementForm = () => {
+  const dispatch = useDispatch();
   const [userId, setUserId] = useState(null);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -65,8 +66,6 @@ const ProfileManagementForm = () => {
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
-
-  const { updateUser } = useUserContext();
 
   const handleConfirmPasswordChange = (event) => {
     setConfirmPassword(event.target.value);
@@ -146,10 +145,7 @@ const ProfileManagementForm = () => {
           setSnackbarOpen(true);
           setSnackbarMessage('Profile updated successfully. You will be redirected to your dashboard shortly.');
           setSnackbarSeverity('success');
-          updateUser({
-            firstName: userData.firstName,
-            lastName: userData.lastName
-          });
+          dispatch(setUserData(response.data.user));
           history.push('/dashboard');
         } else {
           setSnackbarOpen(true);
