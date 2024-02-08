@@ -1,6 +1,6 @@
 export const getUserData = (state) => state.user.userData;
 
-export const getUserId = (state) => state.user.userData?.userId;
+export const getUserId = (state) => state.user && state.user.userData ? state.user.userData.userId : null;
 
 export const getUserFirstName = (state) => state.user.userData?.firstName;
 

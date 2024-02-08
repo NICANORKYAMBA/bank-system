@@ -190,13 +190,19 @@ function Dashboard ({ reload, onTransactionCreated }) {
   const transactions = useSelector(getUserTransactions);
   const accountsData = useSelector(getUserAccountsData);
 
+  const prevUserIdRef = useRef();
+  useEffect(() => {
+    prevUserIdRef.current = userId;
+  });
+  const prevUserId = prevUserIdRef.current;
+
   useEffect(() => {
     if (userId) {
       dispatch(fetchAllAccountsDataThunk(userId));
-    } else {
+    } else if (prevUserId !== undefined && prevUserId !== userId) {
       history.push('/login');
     }
-  }, [userId, dispatch, history]);
+  }, [userId, dispatch, history, prevUserId]);
 
   const handleAccountClick = (account) => {
     dispatch(fetchSelectedAccountDataThunk(account.id));
