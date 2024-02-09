@@ -329,7 +329,9 @@ const SingleAccountOverview = () => {
                   </ListItemIcon>
                   <ListItemText
                     primary='Last Transaction Date'
-                    secondary={new Date(account.lastTransactionDate).toLocaleDateString()}
+                    secondary={
+                      new Date(account.lastTransactionDate).toLocaleDateString()
+                    }
                   />
                 </ListItem>
               </CardContent>
