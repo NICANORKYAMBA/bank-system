@@ -285,10 +285,17 @@ export const getAccountByStatus = [
 
 export const getAccountsByUserId = [
   param('userId').isUUID().withMessage('User ID must be a valid UUID'),
-  query('limit').optional().isInt({ min: 1 }).withMessage('Limit must be an integer greater than 0'),
-  query('offset').optional().isInt({ min: 0 }).withMessage('Offset must be an integer greater than or equal to 0'),
-  query('sort').optional().isIn(['createdAt', 'updatedAt', 'id']).withMessage('Sort must be one of: createdAt, updatedAt, id'),
-  query('order').optional().isIn(['ASC', 'DESC']).withMessage('Order must be one of: ASC, DESC'),
+  query('limit')
+    .optional().isInt({ min: 1 })
+    .withMessage('Limit must be an integer greater than 0'),
+  query('offset')
+    .optional().isInt({ min: 0 })
+    .withMessage('Offset must be an integer greater than or equal to 0'),
+  query('sort').optional()
+    .isIn(['createdAt', 'updatedAt', 'id'])
+    .withMessage('Sort must be one of: createdAt, updatedAt, id'),
+  query('order').optional()
+    .isIn(['ASC', 'DESC']).withMessage('Order must be one of: ASC, DESC'),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

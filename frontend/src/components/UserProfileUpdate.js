@@ -143,7 +143,9 @@ const ProfileManagementForm = () => {
         const response = await updateUserProfile(userId, userData);
         if (response.data && response.data.status === 200) {
           setSnackbarOpen(true);
-          setSnackbarMessage('Profile updated successfully. You will be redirected to your dashboard shortly.');
+          setSnackbarMessage(
+            'Profile updated successfully. You will be redirected to your dashboard shortly.'
+          );
           setSnackbarSeverity('success');
           dispatch(setUserData(response.data.user));
           history.push('/dashboard');
