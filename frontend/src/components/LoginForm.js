@@ -215,7 +215,6 @@ function LoginForm () {
         throw new Error(`Server responded with a status: ${response.status}`);
       }
     } catch (error) {
-      console.error(error);
       let errorMessage = 'An unexpected error occurred. Please try again later.';
       if (error.response) {
         errorMessage = error.response.data.message;
