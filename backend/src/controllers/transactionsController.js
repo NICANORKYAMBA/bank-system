@@ -595,7 +595,6 @@ export const getTransactionsByUserId = [
         });
       }
     } catch (err) {
-      console.log('Error expecte:', error);
       if (err instanceof Sequelize.ValidationError) {
         return handleValidationError(res, err.message);
       }
