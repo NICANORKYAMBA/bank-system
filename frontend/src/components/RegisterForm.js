@@ -235,8 +235,6 @@ const RegisterForm = () => {
         throw new Error('Server responded with a status other than 201');
       }
     } catch (error) {
-      console.error(error);
-
       if (error.response && error.response.status === 400) {
         if (error.response.data.message.includes('already exists')) {
           dispatch(setFormErrors({ email: 'Email already exists' }));
