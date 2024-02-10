@@ -266,18 +266,12 @@ export const createTransaction = [
 ];
 
 export const getAllTransactions = [
-  query('limit').optional().isInt({ min: 1 })
-    .withMessage('Limit must be an integer greater than 0'),
-  query('offset').optional().isInt({ min: 0 })
-    .withMessage('Offset must be an integer greater than or equal to 0'),
-  query('sort').optional().isIn(['createdAt', 'updatedAt', 'id'])
-    .withMessage('Sort must be one of: createdAt, updatedAt, id'),
-  query('order').optional().isIn(['ASC', 'DESC'])
-    .withMessage('Order must be one of: ASC, DESC'),
-  query('type').optional().isIn(['deposit', 'withdrawal', 'transfer'])
-    .withMessage('Type must be one of: deposit, withdrawal, transfer'),
-  query('status').optional().isIn(['pending', 'completed', 'failed'])
-    .withMessage('Status must be one of: pending, completed, failed'),
+  query('limit').optional().isInt({ min: 1 }).withMessage('Limit must be an integer greater than 0'),
+  query('offset').optional().isInt({ min: 0 }).withMessage('Offset must be an integer greater than or equal to 0'),
+  query('sort').optional().isIn(['createdAt', 'updatedAt', 'id']).withMessage('Sort must be one of: createdAt, updatedAt, id'),
+  query('order').optional().isIn(['ASC', 'DESC']).withMessage('Order must be one of: ASC, DESC'),
+  query('type').optional().isIn(['deposit', 'withdrawal', 'transfer']).withMessage('Type must be one of: deposit, withdrawal, transfer'),
+  query('status').optional().isIn(['pending', 'completed', 'failed']).withMessage('Status must be one of: pending, completed, failed'),
 
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -429,21 +423,14 @@ export const getTransactionById = [
 ];
 
 export const getTransactionsByAccountNumber = [
-  param('accountNumber').isString()
-    .withMessage('Account number must be a string'),
+  param('accountNumber').isString().withMessage('Account number must be a string'),
 
-  query('limit').optional().isInt({ min: 1 })
-    .withMessage('Limit must be an integer greater than 0'),
-  query('offset').optional().isInt({ min: 0 })
-    .withMessage('Offset must be an integer greater than or equal to 0'),
-  query('sort').optional().isIn(['createdAt', 'updatedAt', 'id'])
-    .withMessage('Sort must be one of: createdAt, updatedAt, id'),
-  query('order').optional().isIn(['ASC', 'DESC'])
-    .withMessage('Order must be one of: ASC, DESC'),
-  query('type').optional().isIn(['deposit', 'withdrawal', 'transfer'])
-    .withMessage('Type must be one of: deposit, withdrawal, transfer'),
-  query('status').optional().isIn(['pending', 'completed', 'failed'])
-    .withMessage('Status must be one of: pending, completed, failed'),
+  query('limit').optional().isInt({ min: 1 }).withMessage('Limit must be an integer greater than 0'),
+  query('offset').optional().isInt({ min: 0 }).withMessage('Offset must be an integer greater than or equal to 0'),
+  query('sort').optional().isIn(['createdAt', 'updatedAt', 'id']).withMessage('Sort must be one of: createdAt, updatedAt, id'),
+  query('order').optional().isIn(['ASC', 'DESC']).withMessage('Order must be one of: ASC, DESC'),
+  query('type').optional().isIn(['deposit', 'withdrawal', 'transfer']).withMessage('Type must be one of: deposit, withdrawal, transfer'),
+  query('status').optional().isIn(['pending', 'completed', 'failed']).withMessage('Status must be one of: pending, completed, failed'),
 
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -537,18 +524,12 @@ export const getTransactionsByAccountNumber = [
 export const getTransactionsByUserId = [
   param('userId').isUUID().withMessage('User ID must be a valid UUID'),
 
-  query('limit').optional().isInt({ min: 1 })
-    .withMessage('Limit must be an integer greater than 0'),
-  query('offset').optional().isInt({ min: 0 })
-    .withMessage('Offset must be an integer greater than or equal to 0'),
-  query('sort').optional().isIn(['createdAt', 'updatedAt', 'id'])
-    .withMessage('Sort must be one of: createdAt, updatedAt, id'),
-  query('order').optional().isIn(['ASC', 'DESC'])
-    .withMessage('Order must be one of: ASC, DESC'),
-  query('type').optional().isIn(['deposit', 'withdrawal', 'transfer'])
-    .withMessage('Type must be one of: deposit, withdrawal, transfer'),
-  query('status').optional().isIn(['pending', 'completed', 'failed'])
-    .withMessage('Status must be one of: pending, completed, failed'),
+  query('limit').optional().isInt({ min: 1 }).withMessage('Limit must be an integer greater than 0'),
+  query('offset').optional().isInt({ min: 0 }).withMessage('Offset must be an integer greater than or equal to 0'),
+  query('sort').optional().isIn(['createdAt', 'updatedAt', 'id']).withMessage('Sort must be one of: createdAt, updatedAt, id'),
+  query('order').optional().isIn(['ASC', 'DESC']).withMessage('Order must be one of: ASC, DESC'),
+  query('type').optional().isIn(['deposit', 'withdrawal', 'transfer']).withMessage('Type must be one of: deposit, withdrawal, transfer'),
+  query('status').optional().isIn(['pending', 'completed', 'failed']).withMessage('Status must be one of: pending, completed, failed'),
 
   async (req, res, next) => {
     const errors = validationResult(req);
