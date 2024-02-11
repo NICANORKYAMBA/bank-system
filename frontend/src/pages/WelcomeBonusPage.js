@@ -10,7 +10,11 @@ import {
   ListItem,
   ListItemText
 } from '@material-ui/core';
-import { FaGift, FaQuestionCircle, FaUserCheck } from 'react-icons/fa';
+import { 
+  FaGift, 
+  FaQuestionCircle, 
+  FaUserCheck 
+} from 'react-icons/fa';
 
 const useStyles = makeStyles((theme) => ({
   container: {
