@@ -131,8 +131,8 @@ const Transactions = () => {
   } = transactionState;
 
   const filteredTransactions = useSelector(
-    state => selectFilteredTransactions(state,
-      filterFromAccount, filterToAccount, filterTransactionType));
+    state => selectFilteredTransactions(
+      state, filterFromAccount, filterToAccount, filterTransactionType));
 
   const userId = useSelector(getUserId);
   const firstName = useSelector(getUserFirstName);

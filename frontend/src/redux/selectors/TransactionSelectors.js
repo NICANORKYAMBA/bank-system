@@ -7,19 +7,14 @@ export const selectFilteredTransactions = (
     return [];
   }
 
-  const {
-    allTransactions
-  } = state.transaction.data;
+  const { allTransactions } = state.transaction.data;
 
   return allTransactions
-    ? allTransactions.filter(transaction =>
-      (!filterFromAccount || (transaction.sourceTransactionAccount &&
-       transaction.sourceTransactionAccount.accountNumber &&
-       transaction.sourceTransactionAccount.accountNumber.startsWith(filterFromAccount))) &&
-    (!filterToAccount || (transaction.destinationTransactionAccount &&
-       transaction.destinationTransactionAccount.accountNumber &&
-       transaction.destinationTransactionAccount.accountNumber.startsWith(filterToAccount))) &&
-    (!filterTransactionType || transaction.type === filterTransactionType)
-    )
-    : [];
+    ? allTransactions.filter(transaction => (!filterFromAccount || (transaction.sourceTransactionAccount &&
+      transaction.sourceTransactionAccount.accountNumber &&
+      transaction.sourceTransactionAccount.accountNumber.startsWith(filterFromAccount))) &&
+      (!filterToAccount || (transaction.destinationTransactionAccount &&
+        transaction.destinationTransactionAccount.accountNumber &&
+        transaction.destinationTransactionAccount.accountNumber.startsWith(filterToAccount))) &&
+      (!filterTransactionType || transaction.type === filterTransactionType)) : [];
 };
