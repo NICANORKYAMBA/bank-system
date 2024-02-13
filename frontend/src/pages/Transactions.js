@@ -149,13 +149,21 @@ const Transactions = () => {
   const getTransactionIcon = (type) => {
     switch (type) {
       case 'transfer':
-        return <SwapHorizIcon className={classes.icon} color='action' />;
+        return <SwapHorizIcon
+          className={classes.icon}
+          color='action' />;
       case 'withdrawal':
-        return <CallMadeIcon className={classes.icon} color='action' />;
+        return <CallMadeIcon
+          className={classes.icon}
+          color='action' />;
       case 'deposit':
-        return <CallReceivedIcon className={classes.icon} color='action' />;
+        return <CallReceivedIcon
+          className={classes.icon}
+          color='action' />;
       default:
-        return <AccountBalanceIcon className={classes.icon} color='action' />;
+        return <AccountBalanceIcon
+          className={classes.icon}
+          color='action' />;
     }
   };
 
@@ -173,11 +181,16 @@ const Transactions = () => {
   };
 
   return (
-    <Container maxWidth='lg' className={classes.container}>
+    <Container
+      maxWidth='lg'
+      className={classes.container}>
       <Typography variant='h4' gutterBottom>
         Transactions
       </Typography>
-      <Box display='flex' justifyContent='space-between' mb={2}>
+      <Box
+        display='flex' j
+        ustifyContent='space-between'
+        mb={2}>
         <Grid container spacing={4}>
           <Grid item xs={12} sm={6}>
             <FormControl variant='outlined' fullWidth>
@@ -279,11 +292,18 @@ const Transactions = () => {
         </Grid>
       </Box>
 
-      <Backdrop className={classes.backdrop} open={loading}>
+      <Backdrop
+        className={classes.backdrop}
+        open={loading}
+      >
         <CircularProgress color='inherit' />
       </Backdrop>
       {error && (
-        <Typography variant='h6' color='error' align='center'>
+        <Typography
+          variant='h6'
+          color='error'
+          align='center'
+        >
           {error}
         </Typography>
       )}
