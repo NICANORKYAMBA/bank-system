@@ -361,13 +361,16 @@ const Transactions = () => {
                   {getTransactionIcon(transaction.type)}
                   {transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
                 </Typography>
-                <Typography color='textSecondary'>
+                <Typography
+                  color='textSecondary'>
                   Date: {formatDate(transaction.createdAt)}
                 </Typography>
-                <Typography color='textSecondary'>
+                <Typography
+                  color='textSecondary'>
                   Fee: {transaction.fee}
                 </Typography>
-                <Typography color='textSecondary'>
+                <Typography
+                  color='textSecondary'>
                   Exchange Rate: {transaction.exchangeRate}
                 </Typography>
                 <Typography
