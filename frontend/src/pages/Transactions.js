@@ -307,7 +307,8 @@ const Transactions = () => {
           {error}
         </Typography>
       )}
-      {!loading && !error && filteredTransactions.length === 0 && (
+      {!loading && !error &&
+        filteredTransactions.length === 0 && (
         <Box
           display='flex'
           flexDirection='column'
@@ -316,10 +317,16 @@ const Transactions = () => {
           minHeight='50vh'
           className={classes.welcomeMessage}
         >
-          <Typography variant='h5' gutterBottom>
+          <Typography
+            variant='h5'
+            gutterBottom
+          >
             Welcome, {userFirstName}!
           </Typography>
-          <Typography variant='subtitle1' align='center'>
+          <Typography
+            variant='subtitle1'
+            align='center'
+          >
             It looks like you haven't made any transactions yet. <br />
             Get started with one of the actions below!
           </Typography>
@@ -347,7 +354,10 @@ const Transactions = () => {
           >
             <CardContent className={classes.transactionDetails}>
               <Grid item xs={12} md={6}>
-                <Typography variant='h6' component='h2'>
+                <Typography
+                  variant='h6'
+                  component='h2'
+                >
                   {getTransactionIcon(transaction.type)}
                   {transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
                 </Typography>
@@ -371,8 +381,12 @@ const Transactions = () => {
                 </Typography>
               </Grid>
               <Grid item xs={12} md={6}>
-                <Typography variant='h6' className={classes.transactionAmount}>
-                  <MonetizationOnIcon className={classes.icon} color='action' />
+                <Typography
+                  variant='h6'
+                  className={classes.transactionAmount}>
+                  <MonetizationOnIcon
+                    className={classes.icon}
+                    color='action' />
                   Amount: {transaction.amount} {transaction.currency}
                 </Typography>
                 {transaction.sourceTransactionAccount && (
