@@ -16,7 +16,9 @@ import {
   FormControl,
   InputLabel
 } from '@material-ui/core';
-import { fetchAccountsByStatus } from '../api/api';
+import { 
+  fetchAccountsByStatus 
+} from '../api/api';
 import MuiAlert from '@material-ui/lab/Alert';
 
 const ActivateAccountPage = () => {
