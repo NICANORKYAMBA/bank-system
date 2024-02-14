@@ -7,7 +7,14 @@ import {
   Tooltip,
   makeStyles
 } from '@material-ui/core';
-import { FaRegMoneyBillAlt, FaLock, FaInfoCircle, FaMobileAlt, FaHeadset, FaChartLine } from 'react-icons/fa';
+import { 
+FaRegMoneyBillAlt, 
+FaLock, 
+FaInfoCircle, 
+FaMobileAlt, 
+FaHeadset, 
+FaChartLine 
+} from 'react-icons/fa';
 
 const useStyles = makeStyles((theme) => ({
   section: {
