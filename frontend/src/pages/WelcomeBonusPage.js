@@ -111,13 +111,16 @@ function WelcomeBonusPage () {
           </Typography>
           <List>
             <ListItem>
-              <ListItemText primary='What is the welcome bonus?' />
+              <ListItemText 
+              primary='What is the welcome bonus?' />
             </ListItem>
             <ListItem>
-              <ListItemText primary='How do I claim my welcome bonus?' />
+              <ListItemText 
+              primary='How do I claim my welcome bonus?' />
             </ListItem>
             <ListItem>
-              <ListItemText primary='Is there a limit to the number of times I can claim the welcome bonus?' />
+              <ListItemText 
+              primary='Is there a limit to the number of times I can claim the welcome bonus?' />
             </ListItem>
           </List>
         </CardContent>
@@ -130,10 +133,14 @@ function WelcomeBonusPage () {
           </Typography>
           <List>
             <ListItem>
-              <ListItemText primary='I received my welcome bonus and it helped me start my financial journey!' secondary='- Happy Customer' />
+              <ListItemText 
+              primary='I received my welcome bonus and it helped me start my financial journey!' 
+              secondary='- Happy Customer' />
             </ListItem>
             <ListItem>
-              <ListItemText primary='This was a great way to kick off my banking experience with FinTrust!' secondary='- Satisfied Customer' />
+              <ListItemText 
+              primary='This was a great way to kick off my banking experience with FinTrust!' 
+              secondary='- Satisfied Customer' />
             </ListItem>
           </List>
         </CardContent>
